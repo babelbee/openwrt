@@ -1,0 +1,231 @@
+diff --exclude '*Image' --exclude '*.cmd' --exclude '.config*' --exclude asm-offsets.s --exclude vmlinux.lds --exclude '*.mod.c' --exclude '*.o' --exclude '*.ko' --exclude 'modules.*' --exclude Module.symvers --exclude System.map --exclude auto.conf --exclude tristate.conf --exclude bounds.s --exclude autoconf.h --exclude compile.h --exclude build --exclude .tmp_versions --exclude .version -c -N -r linux-2.6.38.8.ref/arch/arm/mach-at91/include/mach/board.h linux-2.6.38.8/arch/arm/mach-at91/include/mach/board.h
+*** linux-2.6.38.8.ref/arch/arm/mach-at91/include/mach/board.h	2011-06-03 03:35:11.000000000 +0200
+--- linux-2.6.38.8/arch/arm/mach-at91/include/mach/board.h	2013-01-07 16:28:47.921958563 +0100
+***************
+*** 71,80 ****
+    /* at91_mci platform config */
+  struct at91_mmc_data {
+  	u8		det_pin;	/* card detect IRQ */
+  	unsigned	slot_b:1;	/* uses Slot B */
+  	unsigned	wire4:1;	/* (SD) supports DAT0..DAT3 */
+  	u8		wp_pin;		/* (SD) writeprotect detect */
+! 	u8		vcc_pin;	/* power switching (high == on) */
+  };
+  extern void __init at91_add_device_mmc(short mmc_id, struct at91_mmc_data *data);
+  
+--- 71,84 ----
+    /* at91_mci platform config */
+  struct at91_mmc_data {
+  	u8		det_pin;	/* card detect IRQ */
++ 	u8		det_active_low;	/* det pin is active low */
+  	unsigned	slot_b:1;	/* uses Slot B */
+  	unsigned	wire4:1;	/* (SD) supports DAT0..DAT3 */
+  	u8		wp_pin;		/* (SD) writeprotect detect */
+! 	u8		reset_pin;	/* bus reset pin */
+! 	u8		reset_active_low; /* true == reset_pin is active low */
+! 	u8		vcc_pin;	/* power switching */
+! 	u8		vcc_active_low;	/* true == vcc_pin is active low */
+  };
+  extern void __init at91_add_device_mmc(short mmc_id, struct at91_mmc_data *data);
+  
+diff --exclude '*Image' --exclude '*.cmd' --exclude '.config*' --exclude asm-offsets.s --exclude vmlinux.lds --exclude '*.mod.c' --exclude '*.o' --exclude '*.ko' --exclude 'modules.*' --exclude Module.symvers --exclude System.map --exclude auto.conf --exclude tristate.conf --exclude bounds.s --exclude autoconf.h --exclude compile.h --exclude build --exclude .tmp_versions --exclude .version -c -N -r linux-2.6.38.8.ref/drivers/mmc/host/at91_mci.c linux-2.6.38.8/drivers/mmc/host/at91_mci.c
+*** linux-2.6.38.8.ref/drivers/mmc/host/at91_mci.c	2011-06-03 03:35:11.000000000 +0200
+--- linux-2.6.38.8/drivers/mmc/host/at91_mci.c	2013-01-07 16:26:56.142618921 +0100
+***************
+*** 107,112 ****
+--- 107,114 ----
+  #define MCI_BLKATONCE 		256
+  #define MCI_BUFSIZE 		(MCI_BLKSIZE * MCI_BLKATONCE)
+  
++ #define BUS_RESET_TIME		100 /* ms */
++ 
+  /*
+   * Low level type for this driver
+   */
+***************
+*** 147,152 ****
+--- 149,166 ----
+  	struct timer_list timer;
+  };
+  
++ static void at91_reset_mmc_bus(struct at91mci_host *host)
++ {
++ 	int pin = host->board->reset_pin;
++ 	int active_low = host->board->reset_active_low;
++ 
++ 	if (pin) {
++ 		gpio_set_value(pin, !active_low);
++ 		msleep_interruptible(BUS_RESET_TIME);
++ 		gpio_set_value(pin, active_low);
++ 	}
++ }
++ 
+  /*
+   * Reset the controller and restore most of the state
+   */
+***************
+*** 419,424 ****
+--- 433,441 ----
+  
+  	/* use Slot A or B (only one at same time) */
+  	at91_mci_write(host, AT91_MCI_SDCR, host->board->slot_b);
++ 
++ 	/* reset the bus */
++ 	at91_reset_mmc_bus(host);
+  }
+  
+  /*
+***************
+*** 673,681 ****
+  					cmd->error = -EIO;
+  			}
+  
+! 			pr_debug("Error detected and set to %d/%d (cmd = %d, retries = %d)\n",
+  				cmd->error, data ? data->error : 0,
+! 				 cmd->opcode, cmd->retries);
+  		}
+  	}
+  	else
+--- 690,702 ----
+  					cmd->error = -EIO;
+  			}
+  
+! 			printk(KERN_DEBUG "Status = %08X/%08x [%08X %08X %08X %08X]\n",
+! 				status, at91_mci_read(host, AT91_MCI_SR),
+! 				cmd->resp[0], cmd->resp[1], cmd->resp[2], cmd->resp[3]);
+! 
+! 			printk(KERN_DEBUG "Error detected and set to %d/%d (cmd = %d, retries = %d)\n",
+  				cmd->error, data ? data->error : 0,
+! 				cmd->opcode, cmd->retries);
+  		}
+  	}
+  	else
+***************
+*** 743,752 ****
+  	if (host->board->vcc_pin) {
+  		switch (ios->power_mode) {
+  			case MMC_POWER_OFF:
+! 				gpio_set_value(host->board->vcc_pin, 0);
+  				break;
+  			case MMC_POWER_UP:
+! 				gpio_set_value(host->board->vcc_pin, 1);
+  				break;
+  			case MMC_POWER_ON:
+  				break;
+--- 764,774 ----
+  	if (host->board->vcc_pin) {
+  		switch (ios->power_mode) {
+  			case MMC_POWER_OFF:
+! 				gpio_set_value(host->board->vcc_pin, host->board->vcc_active_low);
+  				break;
+  			case MMC_POWER_UP:
+! 				gpio_set_value(host->board->vcc_pin, !host->board->vcc_active_low);
+! 				at91_reset_mmc_bus(host);
+  				break;
+  			case MMC_POWER_ON:
+  				break;
+***************
+*** 865,874 ****
+  	return IRQ_HANDLED;
+  }
+  
+  static irqreturn_t at91_mmc_det_irq(int irq, void *_host)
+  {
+  	struct at91mci_host *host = _host;
+! 	int present = !gpio_get_value(irq_to_gpio(irq));
+  
+  	/*
+  	 * we expect this irq on both insert and remove,
+--- 887,905 ----
+  	return IRQ_HANDLED;
+  }
+  
++ static int
++ at91_mmc_card_is_present(struct at91mci_host *host)
++ {
++ 	int value = gpio_get_value(host->board->det_pin);
++ 	int high_active = !host->board->det_active_low;
++ 
++ 	return (!value && !high_active) || (value && high_active);
++ }
++ 
+  static irqreturn_t at91_mmc_det_irq(int irq, void *_host)
+  {
+  	struct at91mci_host *host = _host;
+! 	int present = at91_mmc_card_is_present(host);
+  
+  	/*
+  	 * we expect this irq on both insert and remove,
+***************
+*** 984,990 ****
+  
+  	/*
+  	 * Reserve GPIOs ... board init code makes sure these pins are set
+! 	 * up as GPIOs with the right direction (input, except for vcc)
+  	 */
+  	if (host->board->det_pin) {
+  		ret = gpio_request(host->board->det_pin, "mmc_detect");
+--- 1015,1021 ----
+  
+  	/*
+  	 * Reserve GPIOs ... board init code makes sure these pins are set
+! 	 * up as GPIOs with the right direction (input, except for vcc and reset)
+  	 */
+  	if (host->board->det_pin) {
+  		ret = gpio_request(host->board->det_pin, "mmc_detect");
+***************
+*** 993,998 ****
+--- 1024,1036 ----
+  			goto fail4b;
+  		}
+  	}
++ 	if (host->board->reset_pin) {
++ 		ret = gpio_request(host->board->reset_pin, "mmc_reset");
++ 		if (ret < 0) {
++ 			dev_dbg(&pdev->dev, "couldn't claim card reset pin\n");
++ 			goto fail4a;
++ 		}
++ 	}
+  	if (host->board->wp_pin) {
+  		ret = gpio_request(host->board->wp_pin, "mmc_wp");
+  		if (ret < 0) {
+***************
+*** 1053,1059 ****
+  	 * Add host to MMC layer
+  	 */
+  	if (host->board->det_pin) {
+! 		host->present = !gpio_get_value(host->board->det_pin);
+  	}
+  	else
+  		host->present = -1;
+--- 1091,1097 ----
+  	 * Add host to MMC layer
+  	 */
+  	if (host->board->det_pin) {
+! 		host->present = at91_mmc_card_is_present(host);
+  	}
+  	else
+  		host->present = -1;
+***************
+*** 1088,1093 ****
+--- 1126,1134 ----
+  	if (host->board->wp_pin)
+  		gpio_free(host->board->wp_pin);
+  fail4:
++ 	if (host->board->reset_pin)
++ 		gpio_free(host->board->reset_pin);
++ fail4a:
+  	if (host->board->det_pin)
+  		gpio_free(host->board->det_pin);
+  fail4b:
+***************
+*** 1137,1142 ****
+--- 1178,1185 ----
+  
+  	if (host->board->vcc_pin)
+  		gpio_free(host->board->vcc_pin);
++ 	if (host->board->reset_pin)
++ 		gpio_free(host->board->reset_pin);
+  	if (host->board->wp_pin)
+  		gpio_free(host->board->wp_pin);
+  
