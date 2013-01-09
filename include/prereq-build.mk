@@ -151,7 +151,7 @@ $(eval $(call RequireCommand,wget, \
 ))
 
 define Require/git
-	git --version | awk '($$$$1 == "git") && ($$$$2 == "version") && ($$$$3 >= "1.6.5") { print "ok" }' | grep ok > /dev/null
+	git --version | awk '($$$$1 == "git") && ($$$$2 == "version") && ($$$$3 >= "1.5.2") { print "ok" }' | grep ok > /dev/null
 endef
 
 $(eval $(call Require,git, \
