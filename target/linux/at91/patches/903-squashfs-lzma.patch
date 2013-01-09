@@ -1,0 +1,266 @@
+diff -c -N --exclude '*.o' --exclude '*.cmd' --exclude '*.svn' --exclude 'modules.*' linux-2.6.38.8/fs/squashfs/decompressor.c linux/fs/squashfs/decompressor.c
+*** linux-2.6.38.8/fs/squashfs/decompressor.c	2011-06-03 03:35:11.000000000 +0200
+--- linux/fs/squashfs/decompressor.c	2012-04-16 16:05:12.000000000 +0200
+***************
+*** 35,50 ****
+   * Squashfs, allowing multiple decompressors to be easily supported
+   */
+  
+- static const struct squashfs_decompressor squashfs_lzma_unsupported_comp_ops = {
+- 	NULL, NULL, NULL, LZMA_COMPRESSION, "lzma", 0
+- };
+- 
+  #ifndef CONFIG_SQUASHFS_LZO
+  static const struct squashfs_decompressor squashfs_lzo_comp_ops = {
+  	NULL, NULL, NULL, LZO_COMPRESSION, "lzo", 0
+  };
+  #endif
+  
+  #ifndef CONFIG_SQUASHFS_XZ
+  static const struct squashfs_decompressor squashfs_xz_comp_ops = {
+  	NULL, NULL, NULL, XZ_COMPRESSION, "xz", 0
+--- 35,52 ----
+   * Squashfs, allowing multiple decompressors to be easily supported
+   */
+  
+  #ifndef CONFIG_SQUASHFS_LZO
+  static const struct squashfs_decompressor squashfs_lzo_comp_ops = {
+  	NULL, NULL, NULL, LZO_COMPRESSION, "lzo", 0
+  };
+  #endif
+  
++ #ifndef CONFIG_SQUASHFS_LZMA
++ static const struct squashfs_decompressor squashfs_lzma_comp_ops = {
++ 	NULL, NULL, NULL, LZMA_COMPRESSION, "lzma", 0
++ };
++ #endif
++ 
+  #ifndef CONFIG_SQUASHFS_XZ
+  static const struct squashfs_decompressor squashfs_xz_comp_ops = {
+  	NULL, NULL, NULL, XZ_COMPRESSION, "xz", 0
+***************
+*** 58,65 ****
+  static const struct squashfs_decompressor *decompressor[] = {
+  	&squashfs_zlib_comp_ops,
+  	&squashfs_lzo_comp_ops,
+  	&squashfs_xz_comp_ops,
+- 	&squashfs_lzma_unsupported_comp_ops,
+  	&squashfs_unknown_comp_ops
+  };
+  
+--- 60,67 ----
+  static const struct squashfs_decompressor *decompressor[] = {
+  	&squashfs_zlib_comp_ops,
+  	&squashfs_lzo_comp_ops,
++ 	&squashfs_lzma_comp_ops,
+  	&squashfs_xz_comp_ops,
+  	&squashfs_unknown_comp_ops
+  };
+  
+diff -c -N --exclude '*.o' --exclude '*.cmd' --exclude '*.svn' --exclude 'modules.*' linux-2.6.38.8/fs/squashfs/decompressor.h linux/fs/squashfs/decompressor.h
+*** linux-2.6.38.8/fs/squashfs/decompressor.h	2011-06-03 03:35:11.000000000 +0200
+--- linux/fs/squashfs/decompressor.h	2012-04-16 16:05:12.000000000 +0200
+***************
+*** 53,58 ****
+--- 53,62 ----
+  		length, srclength, pages);
+  }
+  
++ #ifdef CONFIG_SQUASHFS_LZMA
++ extern const struct squashfs_decompressor squashfs_lzma_comp_ops;
++ #endif
++ 
+  #ifdef CONFIG_SQUASHFS_XZ
+  extern const struct squashfs_decompressor squashfs_xz_comp_ops;
+  #endif
+diff -c -N --exclude '*.o' --exclude '*.cmd' --exclude '*.svn' --exclude 'modules.*' linux-2.6.38.8/fs/squashfs/Kconfig linux/fs/squashfs/Kconfig
+*** linux-2.6.38.8/fs/squashfs/Kconfig	2011-06-03 03:35:11.000000000 +0200
+--- linux/fs/squashfs/Kconfig	2012-04-16 16:05:12.000000000 +0200
+***************
+*** 36,41 ****
+--- 36,50 ----
+  
+  	  If unsure, say N.
+  
++ config SQUASHFS_LZMA
++ 	bool "Include support for LZMA compressed file systems"
++ 	depends on SQUASHFS
++ 	default n
++ 	select DECOMPRESS_LZMA
++ 	help
++ 	  Saying Y here includes support for reading Squashfs file systems
++ 	  compressed with LZMA compresssion.
++ 
+  config SQUASHFS_LZO
+  	bool "Include support for LZO compressed file systems"
+  	depends on SQUASHFS
+diff -c -N --exclude '*.o' --exclude '*.cmd' --exclude '*.svn' --exclude 'modules.*' linux-2.6.38.8/fs/squashfs/lzma_wrapper.c linux/fs/squashfs/lzma_wrapper.c
+*** linux-2.6.38.8/fs/squashfs/lzma_wrapper.c	1970-01-01 01:00:00.000000000 +0100
+--- linux/fs/squashfs/lzma_wrapper.c	2012-04-16 16:05:12.000000000 +0200
+***************
+*** 0 ****
+--- 1,152 ----
++ /*
++  * Squashfs - a compressed read only filesystem for Linux
++  *
++  * Copyright (c) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009
++  * Phillip Lougher <phillip@lougher.demon.co.uk>
++  *
++  * This program is free software; you can redistribute it and/or
++  * modify it under the terms of the GNU General Public License
++  * as published by the Free Software Foundation; either version 2,
++  * or (at your option) any later version.
++  *
++  * This program is distributed in the hope that it will be useful,
++  * but WITHOUT ANY WARRANTY; without even the implied warranty of
++  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++  * GNU General Public License for more details.
++  *
++  * You should have received a copy of the GNU General Public License
++  * along with this program; if not, write to the Free Software
++  * Foundation, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
++  *
++  * lzma_wrapper.c
++  */
++ 
++ #include <asm/unaligned.h>
++ #include <linux/buffer_head.h>
++ #include <linux/mutex.h>
++ #include <linux/vmalloc.h>
++ #include <linux/slab.h>
++ #include <linux/decompress/unlzma.h>
++ 
++ #include "squashfs_fs.h"
++ #include "squashfs_fs_sb.h"
++ #include "squashfs_fs_i.h"
++ #include "squashfs.h"
++ #include "decompressor.h"
++ 
++ struct squashfs_lzma {
++ 	void	*input;
++ 	void	*output;
++ };
++ 
++ /* decompress_unlzma.c is currently non re-entrant... */
++ DEFINE_MUTEX(lzma_mutex);
++ 
++ /* decompress_unlzma.c doesn't provide any context in its callbacks... */
++ static int lzma_error;
++ 
++ static void error(char *m)
++ {
++ 	ERROR("unlzma error: %s\n", m);
++ 	lzma_error = 1;
++ }
++ 
++ 	
++ static void *lzma_init(struct squashfs_sb_info *msblk)
++ {
++ 	struct squashfs_lzma *stream = kzalloc(sizeof(*stream), GFP_KERNEL);
++ 	if (stream == NULL)
++ 		goto failed;
++ 	stream->input = vmalloc(msblk->block_size);
++ 	if (stream->input == NULL)
++ 		goto failed;
++ 	stream->output = vmalloc(msblk->block_size);
++ 	if (stream->output == NULL)
++ 		goto failed2;
++ 
++ 	return stream;
++ 
++ failed2:
++ 	vfree(stream->input);
++ failed:
++ 	ERROR("failed to allocate lzma workspace\n");
++ 	kfree(stream);
++ 	return NULL;
++ }
++ 
++ 
++ static void lzma_free(void *strm)
++ {
++ 	struct squashfs_lzma *stream = strm;
++ 
++ 	if (stream) {
++ 		vfree(stream->input);
++ 		vfree(stream->output);
++ 	}
++ 	kfree(stream);
++ }
++ 
++ 
++ static int lzma_uncompress(struct squashfs_sb_info *msblk, void **buffer,
++ 	struct buffer_head **bh, int b, int offset, int length, int srclength,
++ 	int pages)
++ {
++ 	struct squashfs_lzma *stream = msblk->stream;
++ 	void *buff = stream->input;
++ 	int avail, i, bytes = length, res;
++ 
++ 	mutex_lock(&lzma_mutex);
++ 
++ 	for (i = 0; i < b; i++) {
++ 		wait_on_buffer(bh[i]);
++ 		if (!buffer_uptodate(bh[i]))
++ 			goto block_release;
++ 
++ 		avail = min(bytes, msblk->devblksize - offset);
++ 		memcpy(buff, bh[i]->b_data + offset, avail);
++ 		buff += avail;
++ 		bytes -= avail;
++ 		offset = 0;
++ 		put_bh(bh[i]);
++ 	}
++ 
++ 	lzma_error = 0;
++ 	res = unlzma(stream->input, length, NULL, NULL, stream->output, NULL,
++ 							error);
++ 	if (res || lzma_error)
++ 		goto failed;
++ 
++ 	/* uncompressed size is stored in the LZMA header (5 byte offset) */
++ 	res = bytes = get_unaligned_le32(stream->input + 5);
++ 	for (i = 0, buff = stream->output; bytes && i < pages; i++) {
++ 		avail = min_t(int, bytes, PAGE_CACHE_SIZE);
++ 		memcpy(buffer[i], buff, avail);
++ 		buff += avail;
++ 		bytes -= avail;
++ 	}
++ 	if (bytes)
++ 		goto failed;
++ 
++ 	mutex_unlock(&lzma_mutex);
++ 	return res;
++ 
++ block_release:
++ 	for (; i < b; i++)
++ 		put_bh(bh[i]);
++ 
++ failed:
++ 	mutex_unlock(&lzma_mutex);
++ 
++ 	ERROR("lzma decompression failed, data probably corrupt\n");
++ 	return -EIO;
++ }
++ 
++ const struct squashfs_decompressor squashfs_lzma_comp_ops = {
++ 	.init = lzma_init,
++ 	.free = lzma_free,
++ 	.decompress = lzma_uncompress,
++ 	.id = LZMA_COMPRESSION,
++ 	.name = "lzma",
++ 	.supported = 1
++ };
++ 
+diff -c -N --exclude '*.o' --exclude '*.cmd' --exclude '*.svn' --exclude 'modules.*' linux-2.6.38.8/fs/squashfs/Makefile linux/fs/squashfs/Makefile
+*** linux-2.6.38.8/fs/squashfs/Makefile	2011-06-03 03:35:11.000000000 +0200
+--- linux/fs/squashfs/Makefile	2012-04-16 16:05:12.000000000 +0200
+***************
+*** 6,10 ****
+--- 6,11 ----
+  squashfs-y += block.o cache.o dir.o export.o file.o fragment.o id.o inode.o
+  squashfs-y += namei.o super.o symlink.o zlib_wrapper.o decompressor.o
+  squashfs-$(CONFIG_SQUASHFS_XATTR) += xattr.o xattr_id.o
++ squashfs-$(CONFIG_SQUASHFS_LZMA) += lzma_wrapper.o
+  squashfs-$(CONFIG_SQUASHFS_LZO) += lzo_wrapper.o
+  squashfs-$(CONFIG_SQUASHFS_XZ) += xz_wrapper.o
