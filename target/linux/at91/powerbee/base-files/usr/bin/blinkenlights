@@ -1,0 +1,35 @@
+#! /bin/sh
+echo 105 >/sys/class/gpio/export
+echo 106 >/sys/class/gpio/export
+for i in 60 81 82 83 93 94 95
+do
+	echo $i >/sys/class/gpio/export
+	echo out >/sys/class/gpio/gpio$i/direction
+done
+while :
+do
+	i=0
+	while [ "$i" -lt 8 ]
+	do
+		if [ $i == 1 -o $i == 3 -o $i == 5 -o $i == 7 ]
+		then
+			echo 0 >/sys/class/gpio/gpio93/value
+		else
+			echo 1 >/sys/class/gpio/gpio93/value
+		fi
+		if [ $i == 2 -o $i == 3 -o $i == 6 -o $i == 7 ]
+		then
+			echo 0 >/sys/class/gpio/gpio94/value
+		else
+			echo 1 >/sys/class/gpio/gpio94/value
+		fi
+		if [ $i == 4 -o $i == 5 -o $i == 6 -o $i == 7 ]
+		then
+			echo 0 >/sys/class/gpio/gpio95/value
+		else
+			echo 1 >/sys/class/gpio/gpio95/value
+		fi
+		sleep 1
+		i=$((i+1))
+	done
+done
