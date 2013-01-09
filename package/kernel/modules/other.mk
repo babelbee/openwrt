@@ -768,3 +768,31 @@ define KernelPackage/zram/description
 endef
 
 $(eval $(call KernelPackage,zram))
+
+define KernelPackage/ade7854
+  SUBMENU:=$(OTHER_MENU)
+  TITLE:=ADE7854 Support
+  KCONFIG:=CONFIG_ADE7854
+  FILES:=$(LINUX_DIR)/drivers/staging/iio/meter/ade7854.ko
+  AUTOLOAD:=$(call AutoLoad,10,ade7854)
+endef
+
+define KernelPackage/ade7854/description
+  Support for ade7854 energy meter
+endef
+
+$(eval $(call KernelPackage,ade7854))
+
+define KernelPackage/ade7854-spi
+  SUBMENU:=$(OTHER_MENU)
+  TITLE:=ADE7854 SPI Support
+  KCONFIG:=CONFIG_ADE7854_SPI
+  FILES:=$(LINUX_DIR)/drivers/staging/iio/meter/ade7854-spi.ko
+  AUTOLOAD:=$(call AutoLoad,20,ade7854-spi)
+endef
+
+define KernelPackage/ade7854-spi/description
+  Support for access to ade7854 via spi
+endef
+
+$(eval $(call KernelPackage,ade7854-spi))
