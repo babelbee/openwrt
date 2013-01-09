@@ -1,0 +1,19 @@
+*** linux-2.6.38.8.orig/drivers/i2c/busses/Kconfig	2013-01-10 00:09:36.015848360 +0100
+--- linux-2.6.38.8/drivers/i2c/busses/Kconfig	2013-01-10 00:10:16.922672336 +0100
+***************
+*** 283,289 ****
+  
+  config I2C_AT91
+  	tristate "Atmel AT91 I2C Two-Wire interface (TWI)"
+! 	depends on ARCH_AT91 && EXPERIMENTAL && BROKEN
+  	help
+  	  This supports the use of the I2C interface on Atmel AT91
+  	  processors.
+--- 283,289 ----
+  
+  config I2C_AT91
+  	tristate "Atmel AT91 I2C Two-Wire interface (TWI)"
+! 	depends on ARCH_AT91 && EXPERIMENTAL
+  	help
+  	  This supports the use of the I2C interface on Atmel AT91
+  	  processors.
