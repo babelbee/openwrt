@@ -1,0 +1,31 @@
+diff -c -N --exclude '*.o' --exclude '*.o.cmd' --exclude '*.cmd' --exclude scripts --exclude System.map --exclude '.tmp*' --exclude '.config*' --exclude version.h --exclude crc32table.h --exclude '*.a' --exclude vmlinuz --exclude .version --exclude .missing-syscalls.d --exclude generated --exclude config --exclude bounds.s --exclude timeconst.h --exclude Module.symvers --exclude vmlinux --exclude gen_crc32table --exclude '*Image' --exclude compressed --exclude vmlinux.lds --exclude asm-offsets.s -r linux-2.6.38.8/arch/arm/mach-at91/Kconfig linux-2.6.38.8.work/arch/arm/mach-at91/Kconfig
+*** linux-2.6.38.8/arch/arm/mach-at91/Kconfig	2011-06-03 03:35:11.000000000 +0200
+--- linux-2.6.38.8.work/arch/arm/mach-at91/Kconfig	2013-01-07 00:00:53.329112250 +0100
+***************
+*** 70,75 ****
+--- 70,81 ----
+  	select HAVE_AT91_USART5
+  	select HAVE_NET_MACB
+  
++ config MACH_PP_AT91SAM
++ 	bool "Raritan AT91SAM-based systems (e.g. PX2)"
++ 	depends on ARCH_AT91SAM9G20
++ 	help
++ 	  Select this if you are using a Raritan AT91-based system (e.g. PX2).
++ 
+  config ARCH_AT91SAM9G45
+  	bool "AT91SAM9G45"
+  	select CPU_ARM926T
+diff -c -N --exclude '*.o' --exclude '*.o.cmd' --exclude '*.cmd' --exclude scripts --exclude System.map --exclude '.tmp*' --exclude '.config*' --exclude version.h --exclude crc32table.h --exclude '*.a' --exclude vmlinuz --exclude .version --exclude .missing-syscalls.d --exclude generated --exclude config --exclude bounds.s --exclude timeconst.h --exclude Module.symvers --exclude vmlinux --exclude gen_crc32table --exclude '*Image' --exclude compressed --exclude vmlinux.lds --exclude asm-offsets.s -r linux-2.6.38.8/arch/arm/mach-at91/Makefile linux-2.6.38.8.work/arch/arm/mach-at91/Makefile
+*** linux-2.6.38.8/arch/arm/mach-at91/Makefile	2011-06-03 03:35:11.000000000 +0200
+--- linux-2.6.38.8.work/arch/arm/mach-at91/Makefile	2013-01-06 23:56:54.853544403 +0100
+***************
+*** 62,67 ****
+--- 62,68 ----
+  
+  # AT91SAM9G20 board-specific support
+  obj-$(CONFIG_MACH_AT91SAM9G20EK) += board-sam9g20ek.o
++ obj-$(CONFIG_MACH_PP_AT91SAM)   += board-pp-at91sam.o
+  obj-$(CONFIG_MACH_CPU9G20)	+= board-cpu9krea.o
+  obj-$(CONFIG_MACH_ACMENETUSFOXG20) += board-foxg20.o
+  obj-$(CONFIG_MACH_STAMP9G20)	+= board-stamp9g20.o
