@@ -292,6 +292,29 @@ static struct at91_eth_data __initdata ek_macb_data = {
 #endif
 };
 
+static struct gpio_led ek_leds[] = {
+        {
+                .name                   = "blue",
+                .gpio                   = AT91_PIN_PB29,
+                .active_low             = 1,
+        },
+        {
+                .name                   = "green",
+                .gpio                   = AT91_PIN_PB30,
+                .active_low             = 1,
+        },
+        {
+                .name                   = "red",
+                .gpio                   = AT91_PIN_PB31,
+                .active_low             = 1,
+        },
+};
+
+static struct platform_device powerbee_gpio_device = {
+	.name                   = "powerbee-gpio",
+        .id                     = -1,
+};      
+
 /*
  * I2C Devices
  */
@@ -378,6 +401,39 @@ static void __init ek_board_init(void)
 	at91_add_device_eth(&ek_macb_data);
 	/* I2C -- bus and RTC chip */
 	at91_add_device_i2c(ek_i2c_devices, ARRAY_SIZE(ek_i2c_devices));
+	at91_gpio_leds(ek_leds, ARRAY_SIZE(ek_leds));
+
+        platform_device_register(&powerbee_gpio_device);
+
+	gpio_request(AT91_PIN_PB17, NULL);
+        gpio_direction_output(AT91_PIN_PB17, 0);
+        gpio_export(AT91_PIN_PB17, 0);
+	gpio_export_link(&powerbee_gpio_device.dev, "L2", AT91_PIN_PB17);
+
+	gpio_request(AT91_PIN_PB18, NULL);
+        gpio_direction_output(AT91_PIN_PB18, 0);
+        gpio_export(AT91_PIN_PB18, 0);
+	gpio_export_link(&powerbee_gpio_device.dev, "L1", AT91_PIN_PB18);
+
+	gpio_request(AT91_PIN_PB19, NULL);
+        gpio_direction_output(AT91_PIN_PB19, 0);
+        gpio_export(AT91_PIN_PB19, 0);
+	gpio_export_link(&powerbee_gpio_device.dev, "L3", AT91_PIN_PB19);
+
+	gpio_request(AT91_PIN_PA28, NULL);
+        gpio_direction_output(AT91_PIN_PA28, 0);
+        gpio_export(AT91_PIN_PA28, 0);
+	gpio_export_link(&powerbee_gpio_device.dev, "latch", AT91_PIN_PA28);
+
+	gpio_request(AT91_PIN_PC9, NULL);
+        gpio_direction_input(AT91_PIN_PC9);
+        gpio_export(AT91_PIN_PC9, 0);
+	gpio_export_link(&powerbee_gpio_device.dev, "button1", AT91_PIN_PC9);
+
+	gpio_request(AT91_PIN_PC10, NULL);
+        gpio_direction_input(AT91_PIN_PC10);
+        gpio_export(AT91_PIN_PC10, 0);
+	gpio_export_link(&powerbee_gpio_device.dev, "button2", AT91_PIN_PC10);
 }
 
 // FIXME: Register our own mach type
