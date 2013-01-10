@@ -1,0 +1,286 @@
+*** linux-2.6.38.8.orig/drivers/staging/iio/meter/ade7854.c	2011-06-03 03:35:11.000000000 +0200
+--- linux-2.6.38.8/drivers/staging/iio/meter/ade7854.c	2013-01-10 13:29:19.998630999 +0100
+***************
+*** 39,44 ****
+--- 39,61 ----
+  	return sprintf(buf, "%u\n", val);
+  }
+  
++ static ssize_t ade7854_read_16bits(struct device *dev,
++ 		struct device_attribute *attr,
++ 		char *buf)
++ {
++ 	int ret;
++ 	s16 val = 0;
++ 	struct iio_dev *indio_dev = dev_get_drvdata(dev);
++ 	struct ade7854_state *st = iio_dev_get_devdata(indio_dev);
++ 	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
++ 
++ 	ret = st->read_reg_16(dev, this_attr->address, &val);
++ 	if (ret)
++ 		return ret;
++ 
++ 	return sprintf(buf, "%d\n", val);
++ }
++ 
+  static ssize_t ade7854_read_16bit(struct device *dev,
+  		struct device_attribute *attr,
+  		char *buf)
+***************
+*** 56,62 ****
+  	return sprintf(buf, "%u\n", val);
+  }
+  
+! static ssize_t ade7854_read_24bit(struct device *dev,
+  		struct device_attribute *attr,
+  		char *buf)
+  {
+--- 73,79 ----
+  	return sprintf(buf, "%u\n", val);
+  }
+  
+! static ssize_t ade7854_read_24bitu(struct device *dev,
+  		struct device_attribute *attr,
+  		char *buf)
+  {
+***************
+*** 66,76 ****
+  	struct ade7854_state *st = iio_dev_get_devdata(indio_dev);
+  	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
+  
+! 	ret = st->read_reg_24(dev, this_attr->address, &val);
+  	if (ret)
+  		return ret;
+  
+! 	return sprintf(buf, "%u\n", val & 0xFFFFFF);
+  }
+  
+  static ssize_t ade7854_read_32bit(struct device *dev,
+--- 83,128 ----
+  	struct ade7854_state *st = iio_dev_get_devdata(indio_dev);
+  	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
+  
+! 	ret = st->read_reg_32(dev, this_attr->address, &val);
+! 	if (ret)
+! 		return ret;
+! 	return sprintf(buf, "%u\n", val);
+! }
+! 
+! static ssize_t ade7854_read_24bit(struct device *dev,
+! 		struct device_attribute *attr,
+! 		char *buf)
+! {
+! 	int ret;
+! 	s32 val = 0;
+! 	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+! 	struct ade7854_state *st = iio_dev_get_devdata(indio_dev);
+! 	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
+! 
+! 	ret = st->read_reg_32(dev, this_attr->address, &val);
+  	if (ret)
+  		return ret;
++ 	if (val >= 0x800000)
++ 		val-=0x1000000;
+  
+! 	return sprintf(buf, "%d\n", val);
+! }
+! 
+! static ssize_t ade7854_read_32bitu(struct device *dev,
+! 		struct device_attribute *attr,
+! 		char *buf)
+! {
+! 	int ret;
+! 	s32 val = 0;
+! 	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
+! 	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+! 	struct ade7854_state *st = iio_dev_get_devdata(indio_dev);
+! 
+! 	ret = st->read_reg_32(dev, this_attr->address, &val);
+! 	if (ret)
+! 		return ret;
+! 
+! 	return sprintf(buf, "%d\n", val);
+  }
+  
+  static ssize_t ade7854_read_32bit(struct device *dev,
+***************
+*** 147,153 ****
+  	ret = strict_strtol(buf, 10, &val);
+  	if (ret)
+  		goto error_ret;
+! 	ret = st->write_reg_24(dev, this_attr->address, val);
+  
+  error_ret:
+  	return ret ? ret : len;
+--- 199,205 ----
+  	ret = strict_strtol(buf, 10, &val);
+  	if (ret)
+  		goto error_ret;
+! 	ret = st->write_reg_32(dev, this_attr->address, val);
+  
+  error_ret:
+  	return ret ? ret : len;
+***************
+*** 179,190 ****
+  	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+  	struct ade7854_state *st = iio_dev_get_devdata(indio_dev);
+  
+! 	int ret;
+  	u16 val;
+  
+  	st->read_reg_16(dev, ADE7854_CONFIG, &val);
+  	val |= 1 << 7; /* Software Chip Reset */
+  	ret = st->write_reg_16(dev, ADE7854_CONFIG, val);
+  
+  	return ret;
+  }
+--- 231,248 ----
+  	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+  	struct ade7854_state *st = iio_dev_get_devdata(indio_dev);
+  
+! 	int ret,val32;
+  	u16 val;
+  
++ 	st->write_reg_8(dev, 0xebff, 0);
++ 	st->write_reg_8(dev, 0xebff, 0);
++ 	st->write_reg_8(dev, 0xebff, 0);
++ 
+  	st->read_reg_16(dev, ADE7854_CONFIG, &val);
+  	val |= 1 << 7; /* Software Chip Reset */
+  	ret = st->write_reg_16(dev, ADE7854_CONFIG, val);
++ 	val=1;
++ 	ret = st->write_reg_16(dev, ADE7854_RUN, val);
+  
+  	return ret;
+  }
+***************
+*** 282,304 ****
+  		ade7854_write_24bit,
+  		ADE7854_CVAROS);
+  static IIO_DEV_ATTR_VPEAK(S_IWUSR | S_IRUGO,
+! 		ade7854_read_32bit,
+  		ade7854_write_32bit,
+  		ADE7854_VPEAK);
+  static IIO_DEV_ATTR_IPEAK(S_IWUSR | S_IRUGO,
+! 		ade7854_read_32bit,
+  		ade7854_write_32bit,
+  		ADE7854_VPEAK);
+  static IIO_DEV_ATTR_APHCAL(S_IWUSR | S_IRUGO,
+! 		ade7854_read_16bit,
+  		ade7854_write_16bit,
+  		ADE7854_APHCAL);
+  static IIO_DEV_ATTR_BPHCAL(S_IWUSR | S_IRUGO,
+! 		ade7854_read_16bit,
+  		ade7854_write_16bit,
+  		ADE7854_BPHCAL);
+  static IIO_DEV_ATTR_CPHCAL(S_IWUSR | S_IRUGO,
+! 		ade7854_read_16bit,
+  		ade7854_write_16bit,
+  		ADE7854_CPHCAL);
+  static IIO_DEV_ATTR_CF1DEN(S_IWUSR | S_IRUGO,
+--- 340,362 ----
+  		ade7854_write_24bit,
+  		ADE7854_CVAROS);
+  static IIO_DEV_ATTR_VPEAK(S_IWUSR | S_IRUGO,
+! 		ade7854_read_32bitu,
+  		ade7854_write_32bit,
+  		ADE7854_VPEAK);
+  static IIO_DEV_ATTR_IPEAK(S_IWUSR | S_IRUGO,
+! 		ade7854_read_32bitu,
+  		ade7854_write_32bit,
+  		ADE7854_VPEAK);
+  static IIO_DEV_ATTR_APHCAL(S_IWUSR | S_IRUGO,
+! 		ade7854_read_16bits,
+  		ade7854_write_16bit,
+  		ADE7854_APHCAL);
+  static IIO_DEV_ATTR_BPHCAL(S_IWUSR | S_IRUGO,
+! 		ade7854_read_16bits,
+  		ade7854_write_16bit,
+  		ADE7854_BPHCAL);
+  static IIO_DEV_ATTR_CPHCAL(S_IWUSR | S_IRUGO,
+! 		ade7854_read_16bits,
+  		ade7854_write_16bit,
+  		ADE7854_CPHCAL);
+  static IIO_DEV_ATTR_CF1DEN(S_IWUSR | S_IRUGO,
+***************
+*** 329,335 ****
+  		ade7854_read_8bit,
+  		ade7854_write_8bit,
+  		ADE7854_PEAKCYC);
+! static IIO_DEV_ATTR_CHKSUM(ade7854_read_24bit,
+  		ADE7854_CHECKSUM);
+  static IIO_DEV_ATTR_ANGLE0(ade7854_read_24bit,
+  		ADE7854_ANGLE0);
+--- 387,393 ----
+  		ade7854_read_8bit,
+  		ade7854_write_8bit,
+  		ADE7854_PEAKCYC);
+! static IIO_DEV_ATTR_CHKSUM(ade7854_read_32bitu,
+  		ADE7854_CHECKSUM);
+  static IIO_DEV_ATTR_ANGLE0(ade7854_read_24bit,
+  		ADE7854_ANGLE0);
+***************
+*** 338,368 ****
+  static IIO_DEV_ATTR_ANGLE2(ade7854_read_24bit,
+  		ADE7854_ANGLE2);
+  static IIO_DEV_ATTR_AIRMS(S_IRUGO,
+! 		ade7854_read_24bit,
+  		NULL,
+  		ADE7854_AIRMS);
+  static IIO_DEV_ATTR_BIRMS(S_IRUGO,
+! 		ade7854_read_24bit,
+  		NULL,
+  		ADE7854_BIRMS);
+  static IIO_DEV_ATTR_CIRMS(S_IRUGO,
+! 		ade7854_read_24bit,
+  		NULL,
+  		ADE7854_CIRMS);
+  static IIO_DEV_ATTR_NIRMS(S_IRUGO,
+! 		ade7854_read_24bit,
+  		NULL,
+  		ADE7854_NIRMS);
+  static IIO_DEV_ATTR_AVRMS(S_IRUGO,
+! 		ade7854_read_24bit,
+  		NULL,
+  		ADE7854_AVRMS);
+  static IIO_DEV_ATTR_BVRMS(S_IRUGO,
+! 		ade7854_read_24bit,
+  		NULL,
+  		ADE7854_BVRMS);
+  static IIO_DEV_ATTR_CVRMS(S_IRUGO,
+! 		ade7854_read_24bit,
+  		NULL,
+  		ADE7854_CVRMS);
+  static IIO_DEV_ATTR_AIRMSOS(S_IRUGO,
+--- 396,426 ----
+  static IIO_DEV_ATTR_ANGLE2(ade7854_read_24bit,
+  		ADE7854_ANGLE2);
+  static IIO_DEV_ATTR_AIRMS(S_IRUGO,
+! 		ade7854_read_24bitu,
+  		NULL,
+  		ADE7854_AIRMS);
+  static IIO_DEV_ATTR_BIRMS(S_IRUGO,
+! 		ade7854_read_24bitu,
+  		NULL,
+  		ADE7854_BIRMS);
+  static IIO_DEV_ATTR_CIRMS(S_IRUGO,
+! 		ade7854_read_24bitu,
+  		NULL,
+  		ADE7854_CIRMS);
+  static IIO_DEV_ATTR_NIRMS(S_IRUGO,
+! 		ade7854_read_24bitu,
+  		NULL,
+  		ADE7854_NIRMS);
+  static IIO_DEV_ATTR_AVRMS(S_IRUGO,
+! 		ade7854_read_24bitu,
+  		NULL,
+  		ADE7854_AVRMS);
+  static IIO_DEV_ATTR_BVRMS(S_IRUGO,
+! 		ade7854_read_24bitu,
+  		NULL,
+  		ADE7854_BVRMS);
+  static IIO_DEV_ATTR_CVRMS(S_IRUGO,
+! 		ade7854_read_24bitu,
+  		NULL,
+  		ADE7854_CVRMS);
+  static IIO_DEV_ATTR_AIRMSOS(S_IRUGO,

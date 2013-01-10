@@ -1,0 +1,244 @@
+*** linux-2.6.38.8.orig/drivers/staging/iio/meter/ade7854-spi.c	2011-06-03 03:35:11.000000000 +0200
+--- linux-2.6.38.8/drivers/staging/iio/meter/ade7854-spi.c	2013-01-10 13:26:31.203456226 +0100
+***************
+*** 152,158 ****
+  		{
+  			.tx_buf = st->tx,
+  			.bits_per_word = 8,
+! 			.len = 4,
+  		},
+  	};
+  
+--- 152,163 ----
+  		{
+  			.tx_buf = st->tx,
+  			.bits_per_word = 8,
+! 			.len = 3,
+! 		},
+! 		{
+! 			.rx_buf = st->rx,
+! 			.bits_per_word = 8,
+! 			.len = 1,
+  		},
+  	};
+  
+***************
+*** 161,177 ****
+  	st->tx[0] = ADE7854_READ_REG;
+  	st->tx[1] = (reg_address >> 8) & 0xFF;
+  	st->tx[2] = reg_address & 0xFF;
+- 	st->tx[3] = 0;
+  
+  	spi_message_init(&msg);
+! 	spi_message_add_tail(xfers, &msg);
+  	ret = spi_sync(st->spi, &msg);
+  	if (ret) {
+  		dev_err(&st->spi->dev, "problem when reading 8 bit register 0x%02X",
+  				reg_address);
+  		goto error_ret;
+  	}
+! 	*val = st->rx[3];
+  
+  error_ret:
+  	mutex_unlock(&st->buf_lock);
+--- 166,182 ----
+  	st->tx[0] = ADE7854_READ_REG;
+  	st->tx[1] = (reg_address >> 8) & 0xFF;
+  	st->tx[2] = reg_address & 0xFF;
+  
+  	spi_message_init(&msg);
+! 	spi_message_add_tail(&xfers[0], &msg);
+! 	spi_message_add_tail(&xfers[1], &msg);
+  	ret = spi_sync(st->spi, &msg);
+  	if (ret) {
+  		dev_err(&st->spi->dev, "problem when reading 8 bit register 0x%02X",
+  				reg_address);
+  		goto error_ret;
+  	}
+! 	*val = st->rx[0];
+  
+  error_ret:
+  	mutex_unlock(&st->buf_lock);
+***************
+*** 190,196 ****
+  		{
+  			.tx_buf = st->tx,
+  			.bits_per_word = 8,
+! 			.len = 5,
+  		},
+  	};
+  
+--- 195,206 ----
+  		{
+  			.tx_buf = st->tx,
+  			.bits_per_word = 8,
+! 			.len = 3,
+! 		},
+! 		{
+! 			.rx_buf = st->rx,
+! 			.bits_per_word = 8,
+! 			.len = 2,
+  		},
+  	};
+  
+***************
+*** 198,215 ****
+  	st->tx[0] = ADE7854_READ_REG;
+  	st->tx[1] = (reg_address >> 8) & 0xFF;
+  	st->tx[2] = reg_address & 0xFF;
+- 	st->tx[3] = 0;
+- 	st->tx[4] = 0;
+  
+  	spi_message_init(&msg);
+! 	spi_message_add_tail(xfers, &msg);
+  	ret = spi_sync(st->spi, &msg);
+  	if (ret) {
+  		dev_err(&st->spi->dev, "problem when reading 16 bit register 0x%02X",
+  				reg_address);
+  		goto error_ret;
+  	}
+! 	*val = (st->rx[3] << 8) | st->rx[4];
+  
+  error_ret:
+  	mutex_unlock(&st->buf_lock);
+--- 208,224 ----
+  	st->tx[0] = ADE7854_READ_REG;
+  	st->tx[1] = (reg_address >> 8) & 0xFF;
+  	st->tx[2] = reg_address & 0xFF;
+  
+  	spi_message_init(&msg);
+! 	spi_message_add_tail(&xfers[0], &msg);
+! 	spi_message_add_tail(&xfers[1], &msg);
+  	ret = spi_sync(st->spi, &msg);
+  	if (ret) {
+  		dev_err(&st->spi->dev, "problem when reading 16 bit register 0x%02X",
+  				reg_address);
+  		goto error_ret;
+  	}
+! 	*val = (st->rx[0] << 8) | st->rx[1];
+  
+  error_ret:
+  	mutex_unlock(&st->buf_lock);
+***************
+*** 228,234 ****
+  		{
+  			.tx_buf = st->tx,
+  			.bits_per_word = 8,
+! 			.len = 6,
+  		},
+  	};
+  
+--- 237,248 ----
+  		{
+  			.tx_buf = st->tx,
+  			.bits_per_word = 8,
+! 			.len = 3,
+! 		},
+! 		{
+! 			.rx_buf = st->rx,
+! 			.bits_per_word = 8,
+! 			.len = 3,
+  		},
+  	};
+  
+***************
+*** 237,255 ****
+  	st->tx[0] = ADE7854_READ_REG;
+  	st->tx[1] = (reg_address >> 8) & 0xFF;
+  	st->tx[2] = reg_address & 0xFF;
+- 	st->tx[3] = 0;
+- 	st->tx[4] = 0;
+- 	st->tx[5] = 0;
+  
+  	spi_message_init(&msg);
+! 	spi_message_add_tail(xfers, &msg);
+  	ret = spi_sync(st->spi, &msg);
+  	if (ret) {
+  		dev_err(&st->spi->dev, "problem when reading 24 bit register 0x%02X",
+  				reg_address);
+  		goto error_ret;
+  	}
+! 	*val = (st->rx[3] << 16) | (st->rx[4] << 8) | st->rx[5];
+  
+  error_ret:
+  	mutex_unlock(&st->buf_lock);
+--- 251,267 ----
+  	st->tx[0] = ADE7854_READ_REG;
+  	st->tx[1] = (reg_address >> 8) & 0xFF;
+  	st->tx[2] = reg_address & 0xFF;
+  
+  	spi_message_init(&msg);
+! 	spi_message_add_tail(&xfers[0], &msg);
+! 	spi_message_add_tail(&xfers[1], &msg);
+  	ret = spi_sync(st->spi, &msg);
+  	if (ret) {
+  		dev_err(&st->spi->dev, "problem when reading 24 bit register 0x%02X",
+  				reg_address);
+  		goto error_ret;
+  	}
+! 	*val = (st->rx[0] << 16) | (st->rx[1] << 8) | st->rx[2];
+  
+  error_ret:
+  	mutex_unlock(&st->buf_lock);
+***************
+*** 268,274 ****
+  		{
+  			.tx_buf = st->tx,
+  			.bits_per_word = 8,
+! 			.len = 7,
+  		},
+  	};
+  
+--- 280,291 ----
+  		{
+  			.tx_buf = st->tx,
+  			.bits_per_word = 8,
+! 			.len = 3,
+! 		},
+! 		{
+! 			.rx_buf = st->rx,
+! 			.bits_per_word = 8,
+! 			.len = 4,
+  		},
+  	};
+  
+***************
+*** 277,296 ****
+  	st->tx[0] = ADE7854_READ_REG;
+  	st->tx[1] = (reg_address >> 8) & 0xFF;
+  	st->tx[2] = reg_address & 0xFF;
+- 	st->tx[3] = 0;
+- 	st->tx[4] = 0;
+- 	st->tx[5] = 0;
+- 	st->tx[6] = 0;
+  
+  	spi_message_init(&msg);
+! 	spi_message_add_tail(xfers, &msg);
+  	ret = spi_sync(st->spi, &msg);
+  	if (ret) {
+  		dev_err(&st->spi->dev, "problem when reading 32 bit register 0x%02X",
+  				reg_address);
+  		goto error_ret;
+  	}
+! 	*val = (st->rx[3] << 24) | (st->rx[4] << 16) | (st->rx[5] << 8) | st->rx[6];
+  
+  error_ret:
+  	mutex_unlock(&st->buf_lock);
+--- 294,310 ----
+  	st->tx[0] = ADE7854_READ_REG;
+  	st->tx[1] = (reg_address >> 8) & 0xFF;
+  	st->tx[2] = reg_address & 0xFF;
+  
+  	spi_message_init(&msg);
+! 	spi_message_add_tail(&xfers[0], &msg);
+! 	spi_message_add_tail(&xfers[1], &msg);
+  	ret = spi_sync(st->spi, &msg);
+  	if (ret) {
+  		dev_err(&st->spi->dev, "problem when reading 32 bit register 0x%02X",
+  				reg_address);
+  		goto error_ret;
+  	}
+! 	*val = (st->rx[0] << 24) | (st->rx[1] << 16) | (st->rx[2] << 8) | st->rx[3];
+  
+  error_ret:
+  	mutex_unlock(&st->buf_lock);
