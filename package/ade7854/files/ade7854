@@ -1,0 +1,138 @@
+#! /usr/bin/lua
+require "nixio"
+
+--[[
+local scale_u=280/4191910;
+local scale_i=35.65/4191910;
+local scale_u=1/15922.773322
+]]--
+local scale_u=280/4191910;
+local scale_i=1/118565.12
+local scale_f=256000
+local scale_p=1/203
+local dir="/sys/devices/platform/atmel_spi.1/spi1.0/device0/";
+
+function oscilloscope(trigger,channel,idx)
+	local ret="[";
+	local names={"volt_a","volt_b","volt_c","current_n","current_a","current_b","current_c"}
+	local scale;
+	if (channel == 0)
+	then
+		return "[],\n"
+	end
+	if (channel < 4)
+	then
+		scale=scale_u
+	else
+		scale=scale_i
+	end	
+	local t=nil
+	local f=io.open(dir..names[channel],"r");
+	a={}
+	if (trigger ~= 0)
+	then
+		local t=io.open(dir..names[trigger],"r");
+		local neg=false
+		for i=0,500
+		do
+			t:seek("set")
+			local val=t:read("*line")+0
+			if (val < 0) then
+				neg=true
+			end
+			if (val >= 0 and neg) then
+				break
+			end
+		end
+	end
+	local starts,startusec=nixio.gettimeofday()
+	for i=0,500
+	do
+		f:seek("set")
+		a[i]=f:read("*line")
+	end
+	local ends,endusec=nixio.gettimeofday()
+	for i=0,500
+	do
+		ret = ret .. a[i]*scale .. ","
+	end
+	ret = ret .. ((ends-starts)*1000000+endusec-startusec)
+	f:close();
+	if (t)
+	then
+		t:close();
+	end
+	return ret .. "],\n"
+end
+
+
+function collectd_value(label,interval,name,scale)
+	local f=io.open(dir..name,"r")
+	local val=f:read("*line")*scale
+	print("PUTVAL \""..label.."\" interval="..interval.." N:"..val)
+	f:close()
+	return val
+end
+
+function collectd_ivalue(label,interval,name,scale,offset)
+	local f=io.open(dir..name,"r")
+	local val=scale/(f:read("*line")+offset);
+	print("PUTVAL \""..label.."\" interval="..interval.." N:"..val)
+	f:close()
+	return val
+end
+
+function collectd_values(hostname,interval)
+	local label=hostname.."/exec-voltage/"
+	local val
+	collectd_value(label.."voltage-L1",interval,"avrms",scale_u)
+	collectd_value(label.."voltage-L2",interval,"bvrms",scale_u)
+	collectd_value(label.."voltage-L3",interval,"cvrms",scale_u)
+	collectd_value(label.."current-L1",interval,"airms",scale_i)
+	collectd_value(label.."current-L2",interval,"birms",scale_i)
+	collectd_value(label.."current-L3",interval,"cirms",scale_i)
+	collectd_value(label.."current-N",interval,"nirms",scale_i)
+	val=collectd_value(label.."gauge-L1",interval,"watt_a",scale_p)
+	val=val+collectd_value(label.."gauge-L2",interval,"watt_b",scale_p)
+	val=val+collectd_value(label.."gauge-L3",interval,"watt_c",scale_p)
+	print("PUTVAL \""..label.."gauge-Lsum\" interval="..interval.." N:"..val)
+	collectd_value(label.."gauge-L1a",interval,"va_a",scale_p)
+	collectd_value(label.."gauge-L2a",interval,"va_b",scale_p)
+	collectd_value(label.."gauge-L3a",interval,"va_c",scale_p)
+	collectd_value(label.."gauge-L1r",interval,"var_a",scale_p)
+	collectd_value(label.."gauge-L2r",interval,"var_b",scale_p)
+	collectd_value(label.."gauge-L3r",interval,"var_c",scale_p)
+	collectd_ivalue(label.."frequency-net",interval,"vperiod",scale_f,1)
+end
+
+function collectd()
+	local hostname=os.getenv("COLLECTD_HOSTNAME")
+	if hostname == nil
+	then
+		hostname="localhost"
+	end
+	local interval=os.getenv("COLLECTD_INTERVAL")
+	if interval == nil or interval == 0
+	then
+		interval=5
+	end
+	while true
+	do
+		nixio.poll(nil,interval*1000)
+		collectd_values(hostname,interval)
+		io.flush()
+	end
+end
+
+if (arg[1] == "collectd")
+then
+	collectd()
+end
+
+if (arg[1] == "oscilloscope")
+then
+	result=oscilloscope(arg[2]+0,arg[2]+0,1)
+	result=result .. oscilloscope(arg[2]+0,arg[3]+0,2)
+	result=result .. oscilloscope(arg[2]+0,arg[4]+0,3)
+	io.write(result)
+end
