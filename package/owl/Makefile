@@ -44,8 +44,9 @@ define Build/Compile
 		CFLAGS="$(TARGET_CFLAGS)" 
 endef
 
-define Package/owl/install
-	$(INSTALL_DIR) $(1)/usr/sbin
+define KernelPackage/owl/install
+	$(INSTALL_DIR) $(1)/lib/wifi
+	$(INSTALL_DATA) ./files/owl.sh $(1)/lib/wifi/owl.sh
 endef
 
 $(eval $(call KernelPackage,owl))
