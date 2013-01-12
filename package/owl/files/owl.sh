@@ -130,3 +130,33 @@ scan_owl() {
 	
 	config_set "$device" vifs "${ap:+$ap }${adhoc:+$adhoc }${sta:+$sta }${monitor:+$monitor }${mesh:+$mesh}"
 }
+
+detect_owl() {
+	devidx=0
+	config_load wireless
+	while :; do
+		config_get type "radio$devidx" type
+		[ -n "$type" ] || break
+		devidx=$(($devidx + 1))
+	done
+	cd /sys/class/net
+	for dev in $(ls -d owl* 2>&-); do
+		cat <<EOF
+config wifi-device  radio$devidx
+	option type	owl
+	option macaddr  $(cat /sys/class/net/${dev}/address)
+	# REMOVE THIS LINE TO ENABLE WIFI:
+	option disabled 1
+	
+config wifi-iface
+	option device 	radio$devidx
+	option network	wlan
+	option mode	sta
+	option ssid	OpenWrt
+	option encryption none
+
+EOF
+		devidx=$(($devidx + 1))
+	done
+	
+}
