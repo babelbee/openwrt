@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # OpenWrt version: Barrier Breaker (r35052)
-# Thu Jan 10 00:20:35 2013
+# Sat Jan 12 17:36:08 2013
 #
 CONFIG_HAVE_DOT_CONFIG=y
 # CONFIG_TARGET_ppc40x is not set
@@ -529,6 +529,7 @@ CONFIG_FEATURE_drawing-backend_DirectFB=y
 #
 # Base system
 #
+CONFIG_PACKAGE_ade7854=y
 CONFIG_PACKAGE_base-files=y
 # CONFIG_PACKAGE_block-mount is not set
 CONFIG_EXTROOT_SETTLETIME=20
