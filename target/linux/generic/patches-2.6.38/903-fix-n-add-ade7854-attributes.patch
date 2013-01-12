@@ -1,0 +1,198 @@
+diff --exclude 'modules.*' --exclude '*.cmd' --exclude '*.o' --exclude '*.ko' --exclude '*.mod.c' -rc linux-2.6.38.8-902/drivers/staging/iio/meter/ade7854.c linux-2.6.38.8-new/drivers/staging/iio/meter/ade7854.c
+*** linux-2.6.38.8-902/drivers/staging/iio/meter/ade7854.c	2013-01-12 17:21:07.870458285 +0100
+--- linux-2.6.38.8-new/drivers/staging/iio/meter/ade7854.c	2013-01-12 13:52:32.766553529 +0100
+***************
+*** 238,243 ****
+--- 238,245 ----
+  	st->write_reg_8(dev, 0xebff, 0);
+  	st->write_reg_8(dev, 0xebff, 0);
+  
++ 	st->read_reg_32(dev, ADE7854_CHECKSUM, &val32);
++ 	printk("chksum 0x%x\n",val32);
+  	st->read_reg_16(dev, ADE7854_CONFIG, &val);
+  	val |= 1 << 7; /* Software Chip Reset */
+  	ret = st->write_reg_16(dev, ADE7854_CONFIG, val);
+***************
+*** 258,264 ****
+  	case '1':
+  	case 'y':
+  	case 'Y':
+! 		return ade7854_reset(dev);
+  	}
+  	return -1;
+  }
+--- 260,267 ----
+  	case '1':
+  	case 'y':
+  	case 'Y':
+! 		ade7854_reset(dev);
+! 		return 1;
+  	}
+  	return -1;
+  }
+***************
+*** 389,399 ****
+  		ADE7854_PEAKCYC);
+  static IIO_DEV_ATTR_CHKSUM(ade7854_read_32bitu,
+  		ADE7854_CHECKSUM);
+! static IIO_DEV_ATTR_ANGLE0(ade7854_read_24bit,
+  		ADE7854_ANGLE0);
+! static IIO_DEV_ATTR_ANGLE1(ade7854_read_24bit,
+  		ADE7854_ANGLE1);
+! static IIO_DEV_ATTR_ANGLE2(ade7854_read_24bit,
+  		ADE7854_ANGLE2);
+  static IIO_DEV_ATTR_AIRMS(S_IRUGO,
+  		ade7854_read_24bitu,
+--- 392,402 ----
+  		ADE7854_PEAKCYC);
+  static IIO_DEV_ATTR_CHKSUM(ade7854_read_32bitu,
+  		ADE7854_CHECKSUM);
+! static IIO_DEV_ATTR_ANGLE0(ade7854_read_16bit,
+  		ADE7854_ANGLE0);
+! static IIO_DEV_ATTR_ANGLE1(ade7854_read_16bit,
+  		ADE7854_ANGLE1);
+! static IIO_DEV_ATTR_ANGLE2(ade7854_read_16bit,
+  		ADE7854_ANGLE2);
+  static IIO_DEV_ATTR_AIRMS(S_IRUGO,
+  		ade7854_read_24bitu,
+***************
+*** 459,464 ****
+--- 462,487 ----
+  		ADE7854_IBWV);
+  static IIO_DEV_ATTR_CURRENT_C(ade7854_read_24bit,
+  		ADE7854_ICWV);
++ static IIO_DEV_ATTR_CURRENT_N(ade7854_read_24bit,
++ 		ADE7854_INWV);
++ static IIO_DEV_ATTR_WATT_A(ade7854_read_24bit,
++ 		ADE7854_AWATT);
++ static IIO_DEV_ATTR_WATT_B(ade7854_read_24bit,
++ 		ADE7854_BWATT);
++ static IIO_DEV_ATTR_WATT_C(ade7854_read_24bit,
++ 		ADE7854_CWATT);
++ static IIO_DEV_ATTR_VA_A(ade7854_read_24bit,
++ 		ADE7854_AVA);
++ static IIO_DEV_ATTR_VA_B(ade7854_read_24bit,
++ 		ADE7854_BVA);
++ static IIO_DEV_ATTR_VA_C(ade7854_read_24bit,
++ 		ADE7854_CVA);
++ static IIO_DEV_ATTR_VAR_A(ade7854_read_24bit,
++ 		ADE7854_AVAR);
++ static IIO_DEV_ATTR_VAR_B(ade7854_read_24bit,
++ 		ADE7854_BVAR);
++ static IIO_DEV_ATTR_VAR_C(ade7854_read_24bit,
++ 		ADE7854_CVAR);
+  static IIO_DEV_ATTR_AWATTHR(ade7854_read_32bit,
+  		ADE7854_AWATTHR);
+  static IIO_DEV_ATTR_BWATTHR(ade7854_read_32bit,
+***************
+*** 483,488 ****
+--- 506,520 ----
+  		ADE7854_BVAHR);
+  static IIO_DEV_ATTR_CVAHR(ade7854_read_32bit,
+  		ADE7854_CVAHR);
++ static IIO_DEV_ATTR_VPERIOD(S_IRUGO,
++                 ade7854_read_16bit,
++                 NULL,
++                 ADE7854_PERIOD);
++ static IIO_DEV_ATTR_PGA_GAIN(S_IWUSR | S_IRUGO,
++                 ade7854_read_8bit,
++                 ade7854_write_8bit,
++                 ADE7854_GAIN);
++ 
+  
+  static int ade7854_set_irq(struct device *dev, bool enable)
+  {
+***************
+*** 613,618 ****
+--- 645,662 ----
+  	&iio_dev_attr_current_a.dev_attr.attr,
+  	&iio_dev_attr_current_b.dev_attr.attr,
+  	&iio_dev_attr_current_c.dev_attr.attr,
++ 	&iio_dev_attr_current_n.dev_attr.attr,
++ 	&iio_dev_attr_watt_a.dev_attr.attr,
++ 	&iio_dev_attr_watt_b.dev_attr.attr,
++ 	&iio_dev_attr_watt_c.dev_attr.attr,
++ 	&iio_dev_attr_va_a.dev_attr.attr,
++ 	&iio_dev_attr_va_b.dev_attr.attr,
++ 	&iio_dev_attr_va_c.dev_attr.attr,
++ 	&iio_dev_attr_var_a.dev_attr.attr,
++ 	&iio_dev_attr_var_b.dev_attr.attr,
++ 	&iio_dev_attr_var_c.dev_attr.attr,
++ 	&iio_dev_attr_vperiod.dev_attr.attr,
++ 	&iio_dev_attr_pga_gain.dev_attr.attr,
+  	NULL,
+  };
+  
+diff --exclude 'modules.*' --exclude '*.cmd' --exclude '*.o' --exclude '*.ko' --exclude '*.mod.c' -rc linux-2.6.38.8-902/drivers/staging/iio/meter/ade7854.h linux-2.6.38.8-new/drivers/staging/iio/meter/ade7854.h
+*** linux-2.6.38.8-902/drivers/staging/iio/meter/ade7854.h	2011-06-03 03:35:11.000000000 +0200
+--- linux-2.6.38.8-new/drivers/staging/iio/meter/ade7854.h	2013-01-12 13:51:22.510090440 +0100
+***************
+*** 92,103 ****
+--- 92,107 ----
+  #define ADE7854_IAWV      0xE50C
+  #define ADE7854_IBWV      0xE50D
+  #define ADE7854_ICWV      0xE50E
++ #define ADE7854_INWV      0xE50F
+  #define ADE7854_VAWV      0xE510
+  #define ADE7854_VBWV      0xE511
+  #define ADE7854_VCWV      0xE512
+  #define ADE7854_AWATT     0xE513
+  #define ADE7854_BWATT     0xE514
+  #define ADE7854_CWATT     0xE515
++ #define ADE7854_AVAR      0xE516
++ #define ADE7854_BVAR      0xE517
++ #define ADE7854_CVAR      0xE518
+  #define ADE7854_AVA       0xE519
+  #define ADE7854_BVA       0xE51A
+  #define ADE7854_CVA       0xE51B
+diff --exclude 'modules.*' --exclude '*.cmd' --exclude '*.o' --exclude '*.ko' --exclude '*.mod.c' -rc linux-2.6.38.8-902/drivers/staging/iio/meter/meter.h linux-2.6.38.8-new/drivers/staging/iio/meter/meter.h
+*** linux-2.6.38.8-902/drivers/staging/iio/meter/meter.h	2011-06-03 03:35:11.000000000 +0200
+--- linux-2.6.38.8-new/drivers/staging/iio/meter/meter.h	2013-01-12 13:52:21.085888317 +0100
+***************
+*** 86,91 ****
+--- 86,94 ----
+  #define IIO_DEV_ATTR_CURRENT_C(_show, _addr)			\
+  	IIO_DEVICE_ATTR(current_c, S_IRUGO, _show, NULL, _addr)
+  
++ #define IIO_DEV_ATTR_CURRENT_N(_show, _addr)			\
++ 	IIO_DEVICE_ATTR(current_n, S_IRUGO, _show, NULL, _addr)
++ 
+  #define IIO_DEV_ATTR_VOLT_A(_show, _addr)			\
+  	IIO_DEVICE_ATTR(volt_a, S_IRUGO, _show, NULL, _addr)
+  
+***************
+*** 95,100 ****
+--- 98,130 ----
+  #define IIO_DEV_ATTR_VOLT_C(_show, _addr)			\
+  	IIO_DEVICE_ATTR(volt_c, S_IRUGO, _show, NULL, _addr)
+  
++ #define IIO_DEV_ATTR_WATT_A(_show, _addr)			\
++ 	IIO_DEVICE_ATTR(watt_a, S_IRUGO, _show, NULL, _addr)
++ 
++ #define IIO_DEV_ATTR_WATT_B(_show, _addr)			\
++ 	IIO_DEVICE_ATTR(watt_b, S_IRUGO, _show, NULL, _addr)
++ 
++ #define IIO_DEV_ATTR_WATT_C(_show, _addr)			\
++ 	IIO_DEVICE_ATTR(watt_c, S_IRUGO, _show, NULL, _addr)
++ 
++ #define IIO_DEV_ATTR_VA_A(_show, _addr)			\
++ 	IIO_DEVICE_ATTR(va_a, S_IRUGO, _show, NULL, _addr)
++ 
++ #define IIO_DEV_ATTR_VA_B(_show, _addr)			\
++ 	IIO_DEVICE_ATTR(va_b, S_IRUGO, _show, NULL, _addr)
++ 
++ #define IIO_DEV_ATTR_VA_C(_show, _addr)			\
++ 	IIO_DEVICE_ATTR(va_c, S_IRUGO, _show, NULL, _addr)
++ 
++ #define IIO_DEV_ATTR_VAR_A(_show, _addr)			\
++ 	IIO_DEVICE_ATTR(var_a, S_IRUGO, _show, NULL, _addr)
++ 
++ #define IIO_DEV_ATTR_VAR_B(_show, _addr)			\
++ 	IIO_DEVICE_ATTR(var_b, S_IRUGO, _show, NULL, _addr)
++ 
++ #define IIO_DEV_ATTR_VAR_C(_show, _addr)			\
++ 	IIO_DEVICE_ATTR(var_c, S_IRUGO, _show, NULL, _addr)
++ 
+  #define IIO_DEV_ATTR_AENERGY(_show, _addr)			\
+  	IIO_DEVICE_ATTR(aenergy, S_IRUGO, _show, NULL, _addr)
+  
