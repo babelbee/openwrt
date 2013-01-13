@@ -1,0 +1,95 @@
+diff --exclude configure --exclude collectd.conf --exclude config.status --exclude config.h --exclude autom4te.cache --exclude 'config.h.in~' --exclude collectd-nagios --exclude 'ipkg*' --exclude libtool --exclude '.*' --exclude '*.o' --exclude '*.lo' --exclude Makefile --exclude '*.la' --exclude config.log --exclude Makefile.in --exclude aclocal.m4 --exclude collectd.conf.5 --exclude lcc_features.h -cr collectd-4.10.8/configure.in collectd-4.10.8-new/configure.in
+*** collectd-4.10.8/configure.in	2013-01-13 10:57:17.367147000 +0100
+--- collectd-4.10.8-new/configure.in	2013-01-13 12:50:25.520766385 +0100
+***************
+*** 4092,4097 ****
+--- 4092,4098 ----
+  plugin_nfs="no"
+  plugin_fscache="no"
+  plugin_perl="no"
++ plugin_power="no"
+  plugin_processes="no"
+  plugin_protocols="no"
+  plugin_serial="no"
+***************
+*** 4428,4433 ****
+--- 4429,4435 ----
+  AC_PLUGIN([pinba],       [$have_protoc_c],     [Pinba statistics])
+  AC_PLUGIN([ping],        [$with_liboping],     [Network latency statistics])
+  AC_PLUGIN([postgresql],  [$with_libpq],        [PostgreSQL database statistics])
++ AC_PLUGIN([power],       [yes],                [Power statistics])
+  AC_PLUGIN([powerdns],    [yes],                [PowerDNS statistics])
+  AC_PLUGIN([processes],   [$plugin_processes],  [Process statistics])
+  AC_PLUGIN([protocols],   [$plugin_protocols],  [Protocol (IP, TCP, ...) statistics])
+***************
+*** 4746,4751 ****
+--- 4748,4754 ----
+      pinba . . . . . . . . $enable_pinba
+      ping  . . . . . . . . $enable_ping
+      postgresql  . . . . . $enable_postgresql
++     power . . . . . . . . $enable_power
+      powerdns  . . . . . . $enable_powerdns
+      processes . . . . . . $enable_processes
+      protocols . . . . . . $enable_protocols
+diff --exclude configure --exclude collectd.conf --exclude config.status --exclude config.h --exclude autom4te.cache --exclude 'config.h.in~' --exclude collectd-nagios --exclude 'ipkg*' --exclude libtool --exclude '.*' --exclude '*.o' --exclude '*.lo' --exclude Makefile --exclude '*.la' --exclude config.log --exclude Makefile.in --exclude aclocal.m4 --exclude collectd.conf.5 --exclude lcc_features.h -cr collectd-4.10.8/src/collectd.conf.in collectd-4.10.8-new/src/collectd.conf.in
+*** collectd-4.10.8/src/collectd.conf.in	2013-01-13 10:57:17.391149000 +0100
+--- collectd-4.10.8-new/src/collectd.conf.in	2013-01-13 12:50:25.548767979 +0100
+***************
+*** 113,118 ****
+--- 113,119 ----
+  #@BUILD_PLUGIN_PINBA_TRUE@LoadPlugin pinba
+  #@BUILD_PLUGIN_PING_TRUE@LoadPlugin ping
+  #@BUILD_PLUGIN_POSTGRESQL_TRUE@LoadPlugin postgresql
++ #@BUILD_PLUGIN_POWER_TRUE@LoadPlugin power
+  #@BUILD_PLUGIN_POWERDNS_TRUE@LoadPlugin powerdns
+  #@BUILD_PLUGIN_PROCESSES_TRUE@LoadPlugin processes
+  #@BUILD_PLUGIN_PROTOCOLS_TRUE@LoadPlugin protocols
+***************
+*** 714,719 ****
+--- 715,723 ----
+  #	</Database>
+  #</Plugin>
+  
++ #<Plugin power>
++ #</Plugin>
++ 
+  #<Plugin powerdns>
+  #  <Server "server_name">
+  #    Collect "latency"
+diff --exclude configure --exclude collectd.conf --exclude config.status --exclude config.h --exclude autom4te.cache --exclude 'config.h.in~' --exclude collectd-nagios --exclude 'ipkg*' --exclude libtool --exclude '.*' --exclude '*.o' --exclude '*.lo' --exclude Makefile --exclude '*.la' --exclude config.log --exclude Makefile.in --exclude aclocal.m4 --exclude collectd.conf.5 --exclude lcc_features.h -cr collectd-4.10.8/src/config.h.in collectd-4.10.8-new/src/config.h.in
+*** collectd-4.10.8/src/config.h.in	2013-01-13 11:03:57.000000000 +0100
+--- collectd-4.10.8-new/src/config.h.in	2013-01-13 12:50:46.000000000 +0100
+***************
+*** 760,765 ****
+--- 760,768 ----
+  /* Define to 1 if the postgresql plugin is enabled. */
+  #undef HAVE_PLUGIN_POSTGRESQL
+  
++ /* Define to 1 if the power plugin is enabled. */
++ #undef HAVE_PLUGIN_POWER
++ 
+  /* Define to 1 if the powerdns plugin is enabled. */
+  #undef HAVE_PLUGIN_POWERDNS
+  
+diff --exclude configure --exclude collectd.conf --exclude config.status --exclude config.h --exclude autom4te.cache --exclude 'config.h.in~' --exclude collectd-nagios --exclude 'ipkg*' --exclude libtool --exclude '.*' --exclude '*.o' --exclude '*.lo' --exclude Makefile --exclude '*.la' --exclude config.log --exclude Makefile.in --exclude aclocal.m4 --exclude collectd.conf.5 --exclude lcc_features.h -cr collectd-4.10.8/src/Makefile.am collectd-4.10.8-new/src/Makefile.am
+*** collectd-4.10.8/src/Makefile.am	2013-01-13 10:57:17.443151000 +0100
+--- collectd-4.10.8-new/src/Makefile.am	2013-01-13 13:47:00.660063444 +0100
+***************
+*** 853,858 ****
+--- 853,868 ----
+  collectd_DEPENDENCIES += postgresql.la
+  endif
+  
++ if BUILD_PLUGIN_POWER
++ pkglib_LTLIBRARIES += power.la
++ power_la_SOURCES = power.c \
++ 		  utils_cmd_putnotif.c utils_cmd_putnotif.h \
++ 		  utils_cmd_putval.c utils_cmd_putval.h
++ power_la_LDFLAGS = -module -avoid-version
++ collectd_LDADD += "-dlopen" power.la
++ collectd_DEPENDENCIES += power.la
++ endif
++ 
+  if BUILD_PLUGIN_POWERDNS
+  pkglib_LTLIBRARIES += powerdns.la
+  powerdns_la_SOURCES = powerdns.c

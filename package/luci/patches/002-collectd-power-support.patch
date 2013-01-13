@@ -1,0 +1,84 @@
+diff --exclude '.*' --exclude 'ipkg-*' --exclude dist -rc luci-trunk+svn9610-001/applications/luci-statistics/luasrc/controller/luci_statistics/luci_statistics.lua luci-trunk+svn9610-new/applications/luci-statistics/luasrc/controller/luci_statistics/luci_statistics.lua
+*** luci-trunk+svn9610-001/applications/luci-statistics/luasrc/controller/luci_statistics/luci_statistics.lua	2012-12-25 03:31:28.000000000 +0100
+--- luci-trunk+svn9610-new/applications/luci-statistics/luasrc/controller/luci_statistics/luci_statistics.lua	2013-01-13 14:26:38.269151956 +0100
+***************
+*** 52,57 ****
+--- 52,58 ----
+  		nut			= _("UPS"),
+  		olsrd		= _("OLSRd"),
+  		ping		= _("Ping"),
++ 		power		= _("Power"),
+  		processes	= _("Processes"),
+  		rrdtool		= _("RRDTool"),
+  		tcpconns	= _("TCP Connections"),
+***************
+*** 61,67 ****
+  	-- our collectd menu
+  	local collectd_menu = {
+  		output  = { "csv", "network", "rrdtool", "unixsock" },
+! 		system  = { "cpu", "df", "disk", "email", "exec", "irq", "load", "memory", "nut", "processes" },
+  		network = { "conntrack", "dns", "interface", "iptables", "netlink", "olsrd", "ping", "tcpconns", "iwinfo" }
+  	}
+  
+--- 62,68 ----
+  	-- our collectd menu
+  	local collectd_menu = {
+  		output  = { "csv", "network", "rrdtool", "unixsock" },
+! 		system  = { "cpu", "df", "disk", "email", "exec", "irq", "load", "memory", "nut", "power", "processes" },
+  		network = { "conntrack", "dns", "interface", "iptables", "netlink", "olsrd", "ping", "tcpconns", "iwinfo" }
+  	}
+  
+Nur in luci-trunk+svn9610-new/applications/luci-statistics/luasrc/model/cbi/luci_statistics: power.lua.
+Nur in luci-trunk+svn9610-new/applications/luci-statistics/luasrc/statistics/rrdtool/definitions: power.lua.
+diff --exclude '.*' --exclude 'ipkg-*' --exclude dist -rc luci-trunk+svn9610-001/applications/luci-statistics/root/etc/config/luci_statistics luci-trunk+svn9610-new/applications/luci-statistics/root/etc/config/luci_statistics
+*** luci-trunk+svn9610-001/applications/luci-statistics/root/etc/config/luci_statistics	2012-12-11 14:27:37.000000000 +0100
+--- luci-trunk+svn9610-new/applications/luci-statistics/root/etc/config/luci_statistics	2013-01-13 16:21:50.977129150 +0100
+***************
+*** 135,137 ****
+--- 135,141 ----
+  config 'statistics' 'collectd_nut'
+  	option 'enable' '0'
+  	option 'UPS' 'myupsname'
++ 
++ config statistics 'collectd_power'
++ 	option enable '1'
++ 	option cmdline '/usr/bin/ade7854 collectd'
+diff --exclude '.*' --exclude 'ipkg-*' --exclude dist -rc luci-trunk+svn9610-001/applications/luci-statistics/root/usr/bin/stat-genconfig luci-trunk+svn9610-new/applications/luci-statistics/root/usr/bin/stat-genconfig
+*** luci-trunk+svn9610-001/applications/luci-statistics/root/usr/bin/stat-genconfig	2012-12-11 14:27:37.000000000 +0100
+--- luci-trunk+svn9610-new/applications/luci-statistics/root/usr/bin/stat-genconfig	2013-01-13 14:26:38.293153323 +0100
+***************
+*** 117,122 ****
+--- 117,138 ----
+  	return str
+  end
+  
++ function config_power( c )
++ 	local str = ""
++ 
++ 	if c.cmdline then
++ 		cmd   = c.cmdline:gsub("^%s+", ""):gsub("%s+$", "")
++ 		user  = c.cmduser  or "nobody"
++ 		group = c.cmdgroup
++ 
++ 		str = "\tEXEC" .. ' "' ..
++ 			user .. ( group and ":" .. group or "" ) .. '" "' ..
++ 			cmd:gsub('%s+', '" "') .. '"\n'
++ 	end
++ 
++ 	return str
++ end
++ 
+  function config_iptables( c )
+  	local str = ""
+  
+***************
+*** 374,379 ****
+--- 390,397 ----
+  		{ },
+  		{ "Hosts" }
+  	},
++ 	
++ 	power	= config_power,
+  
+  	processes = {
+  		{ },

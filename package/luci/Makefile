@@ -621,6 +621,14 @@ ifeq ($(USELOCAL),1)
 		--exclude='boa-0*' --exclude='*.o' --exclude='*.so' \
 		--exclude=dist | \
 			tar x -C $(PKG_BUILD_DIR)/
+	$(CP) ./files/definitions_power.lua  $(PKG_BUILD_DIR)/applications/luci-statistics/luasrc/statistics/rrdtool/definitions/power.lua
+	$(CP) ./files/statistics_power.lua $(PKG_BUILD_DIR)/applications/luci-statistics/luasrc/model/cbi/luci_statistics/power.lua
+  endef
+else
+  define Build/Prepare
+	$(call Build/Prepare/Default)
+	$(CP) ./files/definitions_power.lua  $(PKG_BUILD_DIR)/applications/luci-statistics/luasrc/statistics/rrdtool/definitions/power.lua
+	$(CP) ./files/statistics_power.lua $(PKG_BUILD_DIR)/applications/luci-statistics/luasrc/model/cbi/luci_statistics/power.lua
   endef
 endif
 

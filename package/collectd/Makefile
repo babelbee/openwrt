@@ -97,6 +97,7 @@ COLLECTD_PLUGINS_SELECTED:= \
 	openvpn \
 	ping \
 	postgresql \
+	power \
 	powerdns \
 	processes \
 	protocols \
@@ -294,6 +295,7 @@ $(eval $(call BuildPlugin,onewire,onewire sensor input,onewire,+PACKAGE_collectd
 $(eval $(call BuildPlugin,openvpn,OpenVPN traffic/compression input,openvpn,))
 $(eval $(call BuildPlugin,ping,ping status input,ping,+PACKAGE_collectd-mod-ping:liboping))
 $(eval $(call BuildPlugin,postgresql,PostgreSQL status input,postgresql,+PACKAGE_collectd-mod-postgresql:libpq))
+$(eval $(call BuildPlugin,power,Power measurement plugin,power,))
 $(eval $(call BuildPlugin,powerdns,PowerDNS server status input,powerdns,))
 $(eval $(call BuildPlugin,processes,process status input,processes,))
 $(eval $(call BuildPlugin,protocols,network protocols input,protocols,))

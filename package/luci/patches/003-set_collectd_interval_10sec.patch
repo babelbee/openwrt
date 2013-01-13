@@ -1,0 +1,20 @@
+diff --exclude '.*' --exclude 'ipkg-*' --exclude dist -rc luci-trunk+svn9610-002/applications/luci-statistics/root/etc/config/luci_statistics luci-trunk+svn9610-new/applications/luci-statistics/root/etc/config/luci_statistics
+*** luci-trunk+svn9610-002/applications/luci-statistics/root/etc/config/luci_statistics	2013-01-13 16:26:58.256847000 +0100
+--- luci-trunk+svn9610-new/applications/luci-statistics/root/etc/config/luci_statistics	2013-01-13 16:34:25.433823683 +0100
+***************
+*** 9,15 ****
+  	option 'PIDFile' '/var/run/collectd.pid'
+  	option 'PluginDir' '/usr/lib/collectd'
+  	option 'TypesDB' '/usr/share/collectd/types.db'
+! 	option 'Interval' '30'
+  	option 'ReadThreads' '2'
+  
+  config 'statistics' 'collectd_ping'
+--- 9,15 ----
+  	option 'PIDFile' '/var/run/collectd.pid'
+  	option 'PluginDir' '/usr/lib/collectd'
+  	option 'TypesDB' '/usr/share/collectd/types.db'
+! 	option 'Interval' '10'
+  	option 'ReadThreads' '2'
+  
+  config 'statistics' 'collectd_ping'

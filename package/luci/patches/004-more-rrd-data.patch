@@ -1,0 +1,24 @@
+diff --exclude '.*' --exclude 'ipkg-*' --exclude dist -rc luci-trunk+svn9610-003/applications/luci-statistics/root/etc/config/luci_statistics luci-trunk+svn9610-new/applications/luci-statistics/root/etc/config/luci_statistics
+*** luci-trunk+svn9610-003/applications/luci-statistics/root/etc/config/luci_statistics	2013-01-13 16:34:25.433823000 +0100
+--- luci-trunk+svn9610-new/applications/luci-statistics/root/etc/config/luci_statistics	2013-01-13 16:38:25.777247782 +0100
+***************
+*** 114,122 ****
+  config 'statistics' 'collectd_rrdtool'
+  	option 'enable' '1'
+  	option 'DataDir' '/tmp/rrd'
+! 	option 'RRARows' '100'
+! 	option 'RRASingle' '1'
+! 	option 'RRATimespans' '1hour 1day 1week 1month 1year'
+  
+  config 'statistics' 'collectd_memory'
+  	option 'enable' '1'
+--- 114,122 ----
+  config 'statistics' 'collectd_rrdtool'
+  	option 'enable' '1'
+  	option 'DataDir' '/tmp/rrd'
+! 	option 'RRARows' '200'
+! 	option 'RRASingle' '0'
+! 	option 'RRATimespans' '1hour 6hour 1day 1week 1month 1year'
+  
+  config 'statistics' 'collectd_memory'
+  	option 'enable' '1'

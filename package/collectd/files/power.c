@@ -1,5 +1,5 @@
 /**
- * collectd - src/exec.c
+ * collectd - src/power.c
  * Copyright (C) 2007-2010  Florian octo Forster
  * Copyright (C) 2007-2009  Sebastian Harl
  * Copyright (C) 2008       Peter Holik
@@ -53,7 +53,7 @@
  * all functions used to handle notifications MUST NOT write to this structure.
  * The `pid' and `status' fields are thus unused if the `PL_NOTIF_ACTION' flag
  * is set.
- * The `PL_RUNNING' flag is set in `exec_read' and unset in `exec_read_one'.
+ * The `PL_RUNNING' flag is set in `power_read' and unset in `power_read_one'.
  */
 struct program_list_s;
 typedef struct program_list_s program_list_t;
@@ -99,7 +99,7 @@ static void sigchld_handler (int __attribute__((unused)) signal) /* {{{ */
   } /* while (waitpid) */
 } /* void sigchld_handler }}} */
 
-static int exec_config_exec (oconfig_item_t *ci) /* {{{ */
+static int power_config_exec (oconfig_item_t *ci) /* {{{ */
 {
   program_list_t *pl;
   char buffer[128];
@@ -107,20 +107,20 @@ static int exec_config_exec (oconfig_item_t *ci) /* {{{ */
 
   if (ci->children_num != 0)
   {
-    WARNING ("exec plugin: The config option `%s' may not be a block.",
+    WARNING ("power plugin: The config option `%s' may not be a block.",
         ci->key);
     return (-1);
   }
   if (ci->values_num < 2)
   {
-    WARNING ("exec plugin: The config option `%s' needs at least two "
+    WARNING ("power plugin: The config option `%s' needs at least two "
         "arguments.", ci->key);
     return (-1);
   }
   if ((ci->values[0].type != OCONFIG_TYPE_STRING)
       || (ci->values[1].type != OCONFIG_TYPE_STRING))
   {
-    WARNING ("exec plugin: The first two arguments to the `%s' option must "
+    WARNING ("power plugin: The first two arguments to the `%s' option must "
         "be string arguments.", ci->key);
     return (-1);
   }
@@ -128,7 +128,7 @@ static int exec_config_exec (oconfig_item_t *ci) /* {{{ */
   pl = (program_list_t *) malloc (sizeof (program_list_t));
   if (pl == NULL)
   {
-    ERROR ("exec plugin: malloc failed.");
+    ERROR ("power plugin: malloc failed.");
     return (-1);
   }
   memset (pl, '\0', sizeof (program_list_t));
@@ -141,7 +141,7 @@ static int exec_config_exec (oconfig_item_t *ci) /* {{{ */
   pl->user = strdup (ci->values[0].value.string);
   if (pl->user == NULL)
   {
-    ERROR ("exec plugin: strdup failed.");
+    ERROR ("power plugin: strdup failed.");
     sfree (pl);
     return (-1);
   }
@@ -156,7 +156,7 @@ static int exec_config_exec (oconfig_item_t *ci) /* {{{ */
   pl->exec = strdup (ci->values[1].value.string);
   if (pl->exec == NULL)
   {
-    ERROR ("exec plugin: strdup failed.");
+    ERROR ("power plugin: strdup failed.");
     sfree (pl->user);
     sfree (pl);
     return (-1);
@@ -165,7 +165,7 @@ static int exec_config_exec (oconfig_item_t *ci) /* {{{ */
   pl->argv = (char **) malloc (ci->values_num * sizeof (char *));
   if (pl->argv == NULL)
   {
-    ERROR ("exec plugin: malloc failed.");
+    ERROR ("power plugin: malloc failed.");
     sfree (pl->exec);
     sfree (pl->user);
     sfree (pl);
@@ -183,7 +183,7 @@ static int exec_config_exec (oconfig_item_t *ci) /* {{{ */
   pl->argv[0] = strdup (buffer);
   if (pl->argv[0] == NULL)
   {
-    ERROR ("exec plugin: malloc failed.");
+    ERROR ("power plugin: malloc failed.");
     sfree (pl->argv);
     sfree (pl->exec);
     sfree (pl->user);
@@ -217,7 +217,7 @@ static int exec_config_exec (oconfig_item_t *ci) /* {{{ */
 
     if (pl->argv[i] == NULL)
     {
-      ERROR ("exec plugin: strdup failed.");
+      ERROR ("power plugin: strdup failed.");
       break;
     }
   } /* for (i) */
@@ -237,16 +237,16 @@ static int exec_config_exec (oconfig_item_t *ci) /* {{{ */
 
   for (i = 0; pl->argv[i] != NULL; i++)
   {
-    DEBUG ("exec plugin: argv[%i] = %s", i, pl->argv[i]);
+    DEBUG ("power plugin: argv[%i] = %s", i, pl->argv[i]);
   }
 
   pl->next = pl_head;
   pl_head = pl;
 
   return (0);
-} /* int exec_config_exec }}} */
+} /* int power_config_exec }}} */
 
-static int exec_config (oconfig_item_t *ci) /* {{{ */
+static int power_config (oconfig_item_t *ci) /* {{{ */
 {
   int i;
 
@@ -255,15 +255,15 @@ static int exec_config (oconfig_item_t *ci) /* {{{ */
     oconfig_item_t *child = ci->children + i;
     if ((strcasecmp ("Exec", child->key) == 0)
         || (strcasecmp ("NotificationExec", child->key) == 0))
-      exec_config_exec (child);
+      power_config_exec (child);
     else
     {
-      WARNING ("exec plugin: Unknown config option `%s'.", child->key);
+      WARNING ("power plugin: Unknown config option `%s'.", child->key);
     }
   } /* for (i) */
 
   return (0);
-} /* int exec_config }}} */
+} /* int power_config }}} */
 
 static void set_environment (void) /* {{{ */
 {
@@ -301,13 +301,13 @@ static void exec_child (program_list_t *pl) /* {{{ */
   status = getpwnam_r (pl->user, &sp, nambuf, sizeof (nambuf), &sp_ptr);
   if (status != 0)
   {
-    ERROR ("exec plugin: Failed to get user information for user ``%s'': %s",
+    ERROR ("power plugin: Failed to get user information for user ``%s'': %s",
         pl->user, sstrerror (errno, errbuf, sizeof (errbuf)));
     exit (-1);
   }
   if (sp_ptr == NULL)
   {
-    ERROR ("exec plugin: No such user: `%s'", pl->user);
+    ERROR ("power plugin: No such user: `%s'", pl->user);
     exit (-1);
   }
 
@@ -315,7 +315,7 @@ static void exec_child (program_list_t *pl) /* {{{ */
   gid = sp.pw_gid;
   if (uid == 0)
   {
-    ERROR ("exec plugin: Cowardly refusing to exec program as root.");
+    ERROR ("power plugin: Cowardly refusing to power program as root.");
     exit (-1);
   }
 
@@ -331,14 +331,14 @@ static void exec_child (program_list_t *pl) /* {{{ */
       status = getgrnam_r (pl->group, &gr, nambuf, sizeof (nambuf), &gr_ptr);
       if (0 != status)
       {
-        ERROR ("exec plugin: Failed to get group information "
+        ERROR ("power plugin: Failed to get group information "
             "for group ``%s'': %s", pl->group,
             sstrerror (errno, errbuf, sizeof (errbuf)));
         exit (-1);
       }
       if (NULL == gr_ptr)
       {
-        ERROR ("exec plugin: No such group: `%s'", pl->group);
+        ERROR ("power plugin: No such group: `%s'", pl->group);
         exit (-1);
       }
 
@@ -372,7 +372,7 @@ static void exec_child (program_list_t *pl) /* {{{ */
   status = setgid (gid);
   if (status != 0)
   {
-    ERROR ("exec plugin: setgid (%i) failed: %s",
+    ERROR ("power plugin: setgid (%i) failed: %s",
         gid, sstrerror (errno, errbuf, sizeof (errbuf)));
     exit (-1);
   }
@@ -382,7 +382,7 @@ static void exec_child (program_list_t *pl) /* {{{ */
     status = setegid (egid);
     if (status != 0)
     {
-      ERROR ("exec plugin: setegid (%i) failed: %s",
+      ERROR ("power plugin: setegid (%i) failed: %s",
           egid, sstrerror (errno, errbuf, sizeof (errbuf)));
       exit (-1);
     }
@@ -391,14 +391,14 @@ static void exec_child (program_list_t *pl) /* {{{ */
   status = setuid (uid);
   if (status != 0)
   {
-    ERROR ("exec plugin: setuid (%i) failed: %s",
+    ERROR ("power plugin: setuid (%i) failed: %s",
         uid, sstrerror (errno, errbuf, sizeof (errbuf)));
     exit (-1);
   }
 
   status = execvp (pl->exec, pl->argv);
 
-  ERROR ("exec plugin: Failed to execute ``%s'': %s",
+  ERROR ("power plugin: Failed to execute ``%s'': %s",
       pl->exec, sstrerror (errno, errbuf, sizeof (errbuf)));
   exit (-1);
 } /* void exec_child }}} */
@@ -433,7 +433,7 @@ static int fork_child (program_list_t *pl, int *fd_in, int *fd_out, int *fd_err)
   status = pipe (fd_pipe_in);
   if (status != 0)
   {
-    ERROR ("exec plugin: pipe failed: %s",
+    ERROR ("power plugin: pipe failed: %s",
         sstrerror (errno, errbuf, sizeof (errbuf)));
     return (-1);
   }
@@ -441,7 +441,7 @@ static int fork_child (program_list_t *pl, int *fd_in, int *fd_out, int *fd_err)
   status = pipe (fd_pipe_out);
   if (status != 0)
   {
-    ERROR ("exec plugin: pipe failed: %s",
+    ERROR ("power plugin: pipe failed: %s",
         sstrerror (errno, errbuf, sizeof (errbuf)));
     return (-1);
   }
@@ -449,7 +449,7 @@ static int fork_child (program_list_t *pl, int *fd_in, int *fd_out, int *fd_err)
   status = pipe (fd_pipe_err);
   if (status != 0)
   {
-    ERROR ("exec plugin: pipe failed: %s",
+    ERROR ("power plugin: pipe failed: %s",
         sstrerror (errno, errbuf, sizeof (errbuf)));
     return (-1);
   }
@@ -457,7 +457,7 @@ static int fork_child (program_list_t *pl, int *fd_in, int *fd_out, int *fd_err)
   pid = fork ();
   if (pid < 0)
   {
-    ERROR ("exec plugin: fork failed: %s",
+    ERROR ("power plugin: fork failed: %s",
         sstrerror (errno, errbuf, sizeof (errbuf)));
     return (-1);
   }
@@ -540,13 +540,13 @@ static int parse_line (char *buffer) /* {{{ */
     /* For backwards compatibility */
     char tmp[1220];
     /* Let's annoy the user a bit.. */
-    INFO ("exec plugin: Prepending `PUTVAL' to this line: %s", buffer);
+    INFO ("power plugin: Prepending `PUTVAL' to this line: %s", buffer);
     ssnprintf (tmp, sizeof (tmp), "PUTVAL %s", buffer);
     return (handle_putval (stdout, tmp));
   }
 } /* int parse_line }}} */
 
-static void *exec_read_one (void *arg) /* {{{ */
+static void *power_read_one (void *arg) /* {{{ */
 {
   program_list_t *pl = (program_list_t *) arg;
   int fd, fd_err, highest_fd;
@@ -644,7 +644,7 @@ static void *exec_read_one (void *arg) /* {{{ */
       else if (len == 0)
       {
         /* We've reached EOF */
-        NOTICE ("exec plugin: Program `%s' has closed STDERR.", pl->exec);
+        NOTICE ("power plugin: Program `%s' has closed STDERR.", pl->exec);
 
         /* Remove file descriptor form select() set. */
         FD_CLR (fd_err, &fdset);
@@ -667,7 +667,7 @@ static void *exec_read_one (void *arg) /* {{{ */
         *pnl = '\0';
         if (*(pnl-1) == '\r' ) *(pnl-1) = '\0';
 
-        ERROR ("exec plugin: exec_read_one: error = %s", pbuffer_err);
+        ERROR ("power plugin: power_read_one: error = %s", pbuffer_err);
 
         pbuffer_err = ++pnl;
       }
@@ -685,11 +685,11 @@ static void *exec_read_one (void *arg) /* {{{ */
     copy = fdset;
   }
 
-  DEBUG ("exec plugin: exec_read_one: Waiting for `%s' to exit.", pl->exec);
+  DEBUG ("power plugin: power_read_one: Waiting for `%s' to exit.", pl->exec);
   if (waitpid (pl->pid, &status, 0) > 0)
     pl->status = status;
 
-  DEBUG ("exec plugin: Child %i exited with status %i.",
+  DEBUG ("power plugin: Child %i exited with status %i.",
       (int) pl->pid, pl->status);
 
   pl->pid = 0;
@@ -704,9 +704,9 @@ static void *exec_read_one (void *arg) /* {{{ */
 
   pthread_exit ((void *) 0);
   return (NULL);
-} /* void *exec_read_one }}} */
+} /* void *power_read_one }}} */
 
-static void *exec_notification_one (void *arg) /* {{{ */
+static void *power_notification_one (void *arg) /* {{{ */
 {
   program_list_t *pl = ((program_list_and_notification_t *) arg)->pl;
   notification_t *n = &((program_list_and_notification_t *) arg)->n;
@@ -727,7 +727,7 @@ static void *exec_notification_one (void *arg) /* {{{ */
   if (fh == NULL)
   {
     char errbuf[1024];
-    ERROR ("exec plugin: fdopen (%i) failed: %s", fd,
+    ERROR ("power plugin: fdopen (%i) failed: %s", fd,
         sstrerror (errno, errbuf, sizeof (errbuf)));
     kill (pl->pid, SIGTERM);
     pl->pid = 0;
@@ -781,7 +781,7 @@ static void *exec_notification_one (void *arg) /* {{{ */
 
   waitpid (pid, &status, 0);
 
-  DEBUG ("exec plugin: Child %i exited with status %i.",
+  DEBUG ("power plugin: Child %i exited with status %i.",
       pid, status);
 
   if (n->meta != NULL)
@@ -790,9 +790,9 @@ static void *exec_notification_one (void *arg) /* {{{ */
   sfree (arg);
   pthread_exit ((void *) 0);
   return (NULL);
-} /* void *exec_notification_one }}} */
+} /* void *power_notification_one }}} */
 
-static int exec_init (void) /* {{{ */
+static int power_init (void) /* {{{ */
 {
   struct sigaction sa;
 
@@ -801,9 +801,9 @@ static int exec_init (void) /* {{{ */
   sigaction (SIGCHLD, &sa, NULL);
 
   return (0);
-} /* int exec_init }}} */
+} /* int power_init }}} */
 
-static int exec_read (void) /* {{{ */
+static int power_read (void) /* {{{ */
 {
   program_list_t *pl;
 
@@ -828,14 +828,14 @@ static int exec_read (void) /* {{{ */
 
     pthread_attr_init (&attr);
     pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_DETACHED);
-    pthread_create (&t, &attr, exec_read_one, (void *) pl);
+    pthread_create (&t, &attr, power_read_one, (void *) pl);
     pthread_attr_destroy (&attr);
   } /* for (pl) */
 
   return (0);
-} /* int exec_read }}} */
+} /* int power_read }}} */
 
-static int exec_notification (const notification_t *n, /* {{{ */
+static int power_notification (const notification_t *n, /* {{{ */
     user_data_t __attribute__((unused)) *user_data)
 {
   program_list_t *pl;
@@ -858,7 +858,7 @@ static int exec_notification (const notification_t *n, /* {{{ */
         (program_list_and_notification_t));
     if (pln == NULL)
     {
-      ERROR ("exec plugin: malloc failed.");
+      ERROR ("power plugin: malloc failed.");
       continue;
     }
 
@@ -872,14 +872,14 @@ static int exec_notification (const notification_t *n, /* {{{ */
 
     pthread_attr_init (&attr);
     pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_DETACHED);
-    pthread_create (&t, &attr, exec_notification_one, (void *) pln);
+    pthread_create (&t, &attr, power_notification_one, (void *) pln);
     pthread_attr_destroy (&attr);
   } /* for (pl) */
 
   return (0);
-} /* }}} int exec_notification */
+} /* }}} int power_notification */
 
-static int exec_shutdown (void) /* {{{ */
+static int power_shutdown (void) /* {{{ */
 {
   program_list_t *pl;
   program_list_t *next;
@@ -892,7 +892,7 @@ static int exec_shutdown (void) /* {{{ */
     if (pl->pid > 0)
     {
       kill (pl->pid, SIGTERM);
-      INFO ("exec plugin: Sent SIGTERM to %hu", (unsigned short int) pl->pid);
+      INFO ("power plugin: Sent SIGTERM to %hu", (unsigned short int) pl->pid);
     }
 
     sfree (pl->user);
@@ -903,16 +903,16 @@ static int exec_shutdown (void) /* {{{ */
   pl_head = NULL;
 
   return (0);
-} /* int exec_shutdown }}} */
+} /* int power_shutdown }}} */
 
 void module_register (void)
 {
-  plugin_register_complex_config ("exec", exec_config);
-  plugin_register_init ("exec", exec_init);
-  plugin_register_read ("exec", exec_read);
-  plugin_register_notification ("exec", exec_notification,
+  plugin_register_complex_config ("power", power_config);
+  plugin_register_init ("power", power_init);
+  plugin_register_read ("power", power_read);
+  plugin_register_notification ("power", power_notification,
       /* user_data = */ NULL);
-  plugin_register_shutdown ("exec", exec_shutdown);
+  plugin_register_shutdown ("power", power_shutdown);
 } /* void module_register */
 
 /*

@@ -83,7 +83,7 @@ function collectd_ivalue(label,interval,name,scale,offset)
 end
 
 function collectd_values(hostname,interval)
-	local label=hostname.."/exec-voltage/"
+	local label=hostname.."/power/"
 	local val
 	collectd_value(label.."voltage-L1",interval,"avrms",scale_u)
 	collectd_value(label.."voltage-L2",interval,"bvrms",scale_u)
