@@ -22,6 +22,7 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 include $(INCLUDE_DIR)/package.mk
 
 define KernelPackage/owl
+  DEPENDS+= +@DRIVER_WEXT_SUPPORT
   SUBMENU:=Network Devices
   TITLE:=owl linux driver
   URL:=http://linux.hd-wireless.se
