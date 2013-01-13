@@ -623,12 +623,16 @@ ifeq ($(USELOCAL),1)
 			tar x -C $(PKG_BUILD_DIR)/
 	$(CP) ./files/definitions_power.lua  $(PKG_BUILD_DIR)/applications/luci-statistics/luasrc/statistics/rrdtool/definitions/power.lua
 	$(CP) ./files/statistics_power.lua $(PKG_BUILD_DIR)/applications/luci-statistics/luasrc/model/cbi/luci_statistics/power.lua
+	$(CP) ./files/oscilloscope.svg $(PKG_BUILD_DIR)/modules/admin-full/htdocs/luci-static/resources/oscilloscope.svg
+	$(CP) ./files/oscilloscope.htm $(PKG_BUILD_DIR)/modules/admin-full/luasrc/view/admin_status/oscilloscope.htm
   endef
 else
   define Build/Prepare
 	$(call Build/Prepare/Default)
 	$(CP) ./files/definitions_power.lua  $(PKG_BUILD_DIR)/applications/luci-statistics/luasrc/statistics/rrdtool/definitions/power.lua
 	$(CP) ./files/statistics_power.lua $(PKG_BUILD_DIR)/applications/luci-statistics/luasrc/model/cbi/luci_statistics/power.lua
+	$(CP) ./files/oscilloscope.svg $(PKG_BUILD_DIR)/modules/admin-full/htdocs/luci-static/resources/oscilloscope.svg
+	$(CP) ./files/oscilloscope.htm $(PKG_BUILD_DIR)/modules/admin-full/luasrc/view/admin_status/oscilloscope.htm
   endef
 endif
 

@@ -1,0 +1,164 @@
+<%#
+LuCI - Lua Configuration Interface
+Copyright 2010 Jo-Philipp Wich <xm@subsignal.org>
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+-%>
+
+<%+header%>
+
+<script type="text/javascript" src="<%=resource%>/cbi.js"></script>
+<script type="text/javascript">//<![CDATA[
+	var bwxhr=new XHR();
+
+	var G;
+
+	var width  = 400;
+	var height = 400;
+	var src = [];
+
+	function value(id) {
+		var list=document.getElementsByName(id);
+		for (var i = 0 ; i < list.length ; i++) {
+			if (list[i].checked)
+				return list[i].value;
+		}
+	}
+	 
+	function update() {
+		XHR._q=null;
+		XHR.halt();
+		
+		/* render datasets, start update interval */
+		src[0]=value("src1");	
+		src[1]=value("src2");	
+		src[2]=value("src3");	
+		var url='<%=build_url("admin/status/realtime/oscilloscope_status")%>';
+		url+="/"+src[0]+"/"+src[1]+"/"+src[2];
+		XHR.poll(3, url, null,
+			function(x, fdata)
+			{
+				var voltage=value('voltage');
+				var current=value('current');
+				var pt=["", "", ""];
+				for (var j = 0 ; j < 3 ; j++) {
+					var xscale=fdata[j][fdata[j].length-1];
+					var yscale=1/(src[j] < 4 ? voltage : current);
+					xscale/=fdata[j].length-1;
+					xscale*=width/1000000/value('timebase')/8;
+					for (var i = 0; i < fdata[j].length-1; i++)
+					{
+						var x = i * xscale;
+						var y = height - Math.floor(fdata[j][i]*yscale*height/8+height/2);
+						pt[j] += ' ' + x + ',' + y;
+					}
+				}
+				G.getElementById('value0').setAttribute('points',pt[0]);
+				G.getElementById('value1').setAttribute('points',pt[1]);
+				G.getElementById('value2').setAttribute('points',pt[2]);
+			}
+		);
+	}
+
+	/* wait for SVG */
+	window.setTimeout(
+		function() {
+			var svg = document.getElementById('bwsvg');
+
+			try {
+				G = svg.getSVGDocument
+					? svg.getSVGDocument() : svg.contentDocument;
+			}
+			catch(e) {
+				G = document.embeds['bwsvg'].getSVGDocument();
+			}
+
+			if (!G)
+			{
+				window.setTimeout(arguments.callee, 200);
+			}
+			else
+			{
+				/* find sizes */
+				width       = svg.offsetWidth  - 2;
+				height      = svg.offsetHeight - 2;
+				update();
+			}
+		}, 200
+	);
+//]]></script>
+
+<h2><a id="content" name="content"><%:Oscilloscope%></a></h2>
+<table width="100%">
+<tr width="100%"><td rowspan="6"><embed id="bwsvg" style="width:400px; height:400px; border:1px solid #000000; background-color:#FFFFFF" src="<%=resource%>/oscilloscope.svg" /></td>
+<td>
+Channel1/Trigger<br />
+<input type="radio" name="src1" value="0" onclick="update()" />Disabled
+<input type="radio" name="src1" value="1" checked="checked" onclick="update()" />U1
+<input type="radio" name="src1" value="2" onclick="update()" />U2
+<input type="radio" name="src1" value="3" onclick="update()" />U3
+<input type="radio" name="src1" value="4" onclick="update()" />I0
+<input type="radio" name="src1" value="5" onclick="update()" />I1
+<input type="radio" name="src1" value="6" onclick="update()" />I2
+<input type="radio" name="src1" value="7" onclick="update()" />I3
+</td></tr>
+<tr><td bgcolor="#00ff00">
+Channel2<br />
+<input type="radio" name="src2" value="0" checked="checked" onclick="update()" />Disabled
+<input type="radio" name="src2" value="1" onclick="update()" />U1
+<input type="radio" name="src2" value="2" onclick="update()" />U2
+<input type="radio" name="src2" value="3" onclick="update()" />U3
+<input type="radio" name="src2" value="4" onclick="update()" />I0
+<input type="radio" name="src2" value="5" onclick="update()" />I1
+<input type="radio" name="src2" value="6" onclick="update()" />I2
+<input type="radio" name="src2" value="7" onclick="update()" />I3
+</td></tr>
+<tr><td bgcolor="#0000ff">
+Channel3<br />
+<input type="radio" name="src3" value="0" checked="checked" onclick="update()" />Disabled
+<input type="radio" name="src3" value="1" onclick="update()" />U1
+<input type="radio" name="src3" value="2" onclick="update()" />U2
+<input type="radio" name="src3" value="3" onclick="update()" />U3
+<input type="radio" name="src3" value="4" onclick="update()" />I0
+<input type="radio" name="src3" value="5" onclick="update()" />I1
+<input type="radio" name="src3" value="6" onclick="update()" />I2
+<input type="radio" name="src3" value="7" onclick="update()" />I3
+</td></tr>
+<tr><td>
+Timebase<br />
+<input type="radio" name="timebase" value="0.0005" />0.5ms/div
+<input type="radio" name="timebase" value="0.001" />1ms/div
+<input type="radio" name="timebase" value="0.002" />2ms/div
+<input type="radio" name="timebase" value="0.005" checked="checked" />5ms/div
+<input type="radio" name="timebase" value="0.01" />10ms/div
+<input type="radio" name="timebase" value="0.02" />20ms/div
+</td></tr>
+<tr><td>
+Voltage<br />
+<input type="radio" name="voltage" value="10" />10V/div
+<input type="radio" name="voltage" value="20" />20V/div
+<input type="radio" name="voltage" value="50" />50V/div
+<input type="radio" name="voltage" value="100" checked="checked"/>100V/div
+<input type="radio" name="voltage" value="200" />200V/div
+</td></tr>
+<tr><td>
+Current<br />
+<input type="radio" name="current" value="0.01" />0.01A/div
+<input type="radio" name="current" value="0.02" />0.02A/div
+<input type="radio" name="current" value="0.05" />0.05A/div
+<input type="radio" name="current" value="0.1" />0.1A/div
+<input type="radio" name="current" value="0.2" />0.2A/div
+<br />
+<input type="radio" name="current" value="0.5" />0.5A/div
+<input type="radio" name="current" value="1" checked="checked" />1A/div
+<input type="radio" name="current" value="2"/>2A/div
+<input type="radio" name="current" value="5"/>5A/div
+<input type="radio" name="current" value="10"/>10A/div
+</td></tr>
+</table>
+<%+footer%>

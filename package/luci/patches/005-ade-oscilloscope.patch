@@ -1,0 +1,43 @@
+diff --exclude '.*' --exclude 'ipkg-*' --exclude dist -rc luci-trunk+svn9610-004/modules/admin-full/luasrc/controller/admin/status.lua luci-trunk+svn9610-new/modules/admin-full/luasrc/controller/admin/status.lua
+*** luci-trunk+svn9610-004/modules/admin-full/luasrc/controller/admin/status.lua	2012-11-21 20:29:47.000000000 +0100
+--- luci-trunk+svn9610-new/modules/admin-full/luasrc/controller/admin/status.lua	2013-01-13 17:07:30.973270243 +0100
+***************
+*** 37,42 ****
+--- 37,45 ----
+  
+  	entry({"admin", "status", "realtime", "connections"}, template("admin_status/connections"), _("Connections"), 4).leaf = true
+  	entry({"admin", "status", "realtime", "connections_status"}, call("action_connections")).leaf = true
++ 	
++ 	entry({"admin", "status", "realtime", "oscilloscope"}, template("admin_status/oscilloscope"), _("Oscilloscope"), 6).leaf = true
++ 	entry({"admin", "status", "realtime", "oscilloscope_status"}, call("action_oscilloscope")).leaf = true
+  
+  	entry({"admin", "status", "nameinfo"}, call("action_nameinfo")).leaf = true
+  end
+***************
+*** 125,130 ****
+--- 128,152 ----
+  	end
+  end
+  
++ function action_oscilloscope(src1,src2,src3)
++ 	luci.http.prepare_content("application/json")
++ 	src1=src1+0
++ 	src2=src2+0
++ 	src3=src3+0
++ 	local bwc = io.popen("ade7854 oscilloscope " .. src1 .. " " .. src2 .. " " .. src3 .. " 2>/dev/null")
++ 	if bwc then
++ 		luci.http.write("[")
++ 		
++ 		while true do
++ 			local ln = bwc:read("*l")
++ 			if not ln then break end
++ 			luci.http.write(ln)
++ 		end
++ 		luci.http.write("]")
++ 		bwc:close()
++ 	end
++ end
++ 
+  function action_connections()
+  	local sys = require "luci.sys"
+  
