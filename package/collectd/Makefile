@@ -136,6 +136,11 @@ $(call Package/collectd/Default)
   MENU:=1
 endef
 
+define Build/Prepare
+	$(call Build/Prepare/Default)
+	$(CP) ./files/power.c $(PKG_BUILD_DIR)/src
+endef
+
 define Package/collectd/description
  collectd is a small daemon which collects system information periodically
  and provides mechanismns to store the values in a variety of ways.
