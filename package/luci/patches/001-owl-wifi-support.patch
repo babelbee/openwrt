@@ -1,0 +1,23 @@
+Nur in luci-trunk+svn9610-new: .built_check.
+Nur in luci-trunk+svn9610-new: .dep_files.
+diff --exclude 'ipkg-*' --exclude dist -rc luci-trunk+svn9610/modules/admin-full/luasrc/model/cbi/admin_network/wifi.lua luci-trunk+svn9610-new/modules/admin-full/luasrc/model/cbi/admin_network/wifi.lua
+*** luci-trunk+svn9610/modules/admin-full/luasrc/model/cbi/admin_network/wifi.lua	2012-10-31 16:58:15.000000000 +0100
+--- luci-trunk+svn9610-new/modules/admin-full/luasrc/model/cbi/admin_network/wifi.lua	2013-01-12 22:05:12.412346345 +0100
+***************
+*** 720,726 ****
+  encr:value("wep-open",   translate("WEP Open System"), {mode="ap"}, {mode="sta"}, {mode="ap-wds"}, {mode="sta-wds"}, {mode="adhoc"}, {mode="ahdemo"}, {mode="wds"})
+  encr:value("wep-shared", translate("WEP Shared Key"),  {mode="ap"}, {mode="sta"}, {mode="ap-wds"}, {mode="sta-wds"}, {mode="adhoc"}, {mode="ahdemo"}, {mode="wds"})
+  
+! if hwtype == "atheros" or hwtype == "mac80211" or hwtype == "prism2" then
+  	local supplicant = fs.access("/usr/sbin/wpa_supplicant")
+  	local hostapd = fs.access("/usr/sbin/hostapd")
+  
+--- 720,726 ----
+  encr:value("wep-open",   translate("WEP Open System"), {mode="ap"}, {mode="sta"}, {mode="ap-wds"}, {mode="sta-wds"}, {mode="adhoc"}, {mode="ahdemo"}, {mode="wds"})
+  encr:value("wep-shared", translate("WEP Shared Key"),  {mode="ap"}, {mode="sta"}, {mode="ap-wds"}, {mode="sta-wds"}, {mode="adhoc"}, {mode="ahdemo"}, {mode="wds"})
+  
+! if hwtype == "atheros" or hwtype == "mac80211" or hwtype == "prism2" or hwtype == "owl" then
+  	local supplicant = fs.access("/usr/sbin/wpa_supplicant")
+  	local hostapd = fs.access("/usr/sbin/hostapd")
+  
+Nur in luci-trunk+svn9610-new: .prepared_43d93fd29f60df7b394e2d99bcf5d5f0_check.
