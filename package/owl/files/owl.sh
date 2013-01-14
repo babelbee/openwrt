@@ -131,6 +131,15 @@ scan_owl() {
 	config_set "$device" vifs "${ap:+$ap }${adhoc:+$adhoc }${sta:+$sta }${monitor:+$monitor }${mesh:+$mesh}"
 }
 
+check_owl_device() {
+	config_get phy "$1" phy
+	[ -z "$phy" ] && {
+		find_owl_phy "$1" >/dev/null || return 0
+		config_get phy "$1" phy
+	}
+	[ "$phy" = "$dev" ] && found=1	
+}
+
 detect_owl() {
 	devidx=0
 	config_load wireless
@@ -141,6 +150,9 @@ detect_owl() {
 	done
 	cd /sys/class/net
 	for dev in $(ls -d owl* 2>&-); do
+		found=0
+		config_foreach check_owl_device wifi-device
+		[ "$found" -gt 0 ] && continue
 		cat <<EOF
 config wifi-device  radio$devidx
 	option type	owl
