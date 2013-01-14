@@ -1,0 +1,16 @@
+*** iptables-1.4.10.orig/extensions/libxt_layer7.c	2013-01-13 21:23:14.224429000 +0100
+--- iptables-1.4.10/extensions/libxt_layer7.c	2013-01-14 09:18:27.175959735 +0100
+***************
+*** 1,3 ****
+--- 1,4 ----
++ #if 0
+  /* 
+     Shared library add-on to iptables for layer 7 matching support. 
+    
+***************
+*** 366,368 ****
+--- 367,370 ----
+  {
+  	xtables_register_match(&layer7);
+  }
++ #endif
