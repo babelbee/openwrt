@@ -320,6 +320,7 @@ static struct platform_device powerbee_gpio_device = {
  */
 static struct i2c_board_info __initdata ek_i2c_devices[] = {
 	{ I2C_BOARD_INFO("s35390a", 0x30) },	// Seiko S35390A RTC
+	{ I2C_BOARD_INFO("ds2482", 0x18) },
 };
 
 static void __init ek_board_init(void)
@@ -334,7 +335,6 @@ static void __init ek_board_init(void)
 			   | ATMEL_UART_DTR | ATMEL_UART_DSR | ATMEL_UART_DCD
 			   | ATMEL_UART_RI);
 
-#define ATMEL_UART_RS485 0
 	/* USART1 on ttyS2, internal RS485. (Rx, Tx, RTS) */
 	at91_register_uart(AT91SAM9260_ID_US1, 2, ATMEL_UART_RTS | ATMEL_UART_RS485);
 
