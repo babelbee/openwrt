@@ -1,0 +1,37 @@
+Dateien linux-2.6.38.8-tmp/arch/arm/boot/compressed/piggy.gzip und linux-2.6.38.8-new/arch/arm/boot/compressed/piggy.gzip sind verschieden.
+Dateien linux-2.6.38.8-tmp/arch/arm/boot/compressed/vmlinux und linux-2.6.38.8-new/arch/arm/boot/compressed/vmlinux sind verschieden.
+Dateien linux-2.6.38.8-tmp/arch/arm/boot/Image und linux-2.6.38.8-new/arch/arm/boot/Image sind verschieden.
+Dateien linux-2.6.38.8-tmp/arch/arm/boot/uImage und linux-2.6.38.8-new/arch/arm/boot/uImage sind verschieden.
+Dateien linux-2.6.38.8-tmp/arch/arm/boot/zImage und linux-2.6.38.8-new/arch/arm/boot/zImage sind verschieden.
+Dateien linux-2.6.38.8-tmp/arch/arm/lib/lib.a und linux-2.6.38.8-new/arch/arm/lib/lib.a sind verschieden.
+diff --exclude 'modules.*' --exclude '*.cmd' --exclude '*.o' --exclude '*.ko' --exclude '*.mod.c' --exclude asm-offsets.s --exclude vmlinux.lds -rc linux-2.6.38.8-tmp/arch/arm/mach-at91/at91sam9260_devices.c linux-2.6.38.8-new/arch/arm/mach-at91/at91sam9260_devices.c
+*** linux-2.6.38.8-tmp/arch/arm/mach-at91/at91sam9260_devices.c	2013-01-13 21:07:09.917718000 +0100
+--- linux-2.6.38.8-new/arch/arm/mach-at91/at91sam9260_devices.c	2013-02-05 14:20:55.372991953 +0100
+***************
+*** 1179,1184 ****
+--- 1179,1190 ----
+  		default:
+  			return;
+  	}
++ 
++ 	if (pins & ATMEL_UART_RS485) {
++ 		struct atmel_uart_data *data = pdev->dev.platform_data;
++ 		data->rs485.flags |= SER_RS485_ENABLED;
++ 	}
++ 
+  	pdev->id = portnr;		/* update to mapped ID */
+  
+  	if (portnr < ATMEL_MAX_UART)
+diff --exclude 'modules.*' --exclude '*.cmd' --exclude '*.o' --exclude '*.ko' --exclude '*.mod.c' --exclude asm-offsets.s --exclude vmlinux.lds -rc linux-2.6.38.8-tmp/arch/arm/mach-at91/include/mach/board.h linux-2.6.38.8-new/arch/arm/mach-at91/include/mach/board.h
+*** linux-2.6.38.8-tmp/arch/arm/mach-at91/include/mach/board.h	2013-01-13 21:07:10.109729000 +0100
+--- linux-2.6.38.8-new/arch/arm/mach-at91/include/mach/board.h	2013-02-05 13:07:08.021395697 +0100
+***************
+*** 137,142 ****
+--- 137,143 ----
+  #define ATMEL_UART_DTR	0x08
+  #define ATMEL_UART_DCD	0x10
+  #define ATMEL_UART_RI	0x20
++ #define ATMEL_UART_RS485	0x40
+  
+  extern void __init at91_register_uart(unsigned id, unsigned portnr, unsigned pins);
+  extern void __init at91_set_serial_console(unsigned portnr);
