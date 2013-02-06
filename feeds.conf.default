@@ -1,6 +1,6 @@
-src-svn packages svn://svn.openwrt.org/openwrt/packages
-src-svn xwrt http://x-wrt.googlecode.com/svn/trunk/package
-src-svn luci http://svn.luci.subsignal.org/luci/trunk/contrib/package
+src-svn packages svn://svn.openwrt.org/openwrt/packages;35343
+src-svn xwrt http://x-wrt.googlecode.com/svn/trunk/package;4987
+src-svn luci http://svn.luci.subsignal.org/luci/trunk/contrib/package;9665
 #src-svn phone svn://svn.openwrt.org/openwrt/feeds/phone
 #src-svn efl svn://svn.openwrt.org/openwrt/feeds/efl
 #src-svn xorg svn://svn.openwrt.org/openwrt/feeds/xorg
