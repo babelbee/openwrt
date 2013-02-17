@@ -5,8 +5,8 @@ Required disk space: Approximately 5.5 GB
 
 - Clone this git tree
 - Change into the directory where this README is
-- ./script/feeds update
-- ./script/feeds install -a
+- ./scripts/feeds update
+- ./scripts/feeds install -a
 - cp powerbee_config .config
 - make oldconfig
 - make
