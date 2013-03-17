@@ -1,0 +1,14 @@
+diff -cr sam-ba_cdc_cdc_linux.orig/applets/legacy/at91lib/utility/trace.c sam-ba_cdc_cdc_linux/applets/legacy/at91lib/utility/trace.c
+*** sam-ba_cdc_cdc_linux.orig/applets/legacy/at91lib/utility/trace.c	2012-06-27 14:19:18.000000000 +0200
+--- sam-ba_cdc_cdc_linux/applets/legacy/at91lib/utility/trace.c	2013-03-17 17:11:27.408681664 +0100
+***************
+*** 47,52 ****
+--- 47,54 ----
+  #include <stdio.h>
+  #include <stdarg.h>
+  
++ #undef fputc
++ 
+  //------------------------------------------------------------------------------
+  /// \exclude
+  /// Implementation of fputc using the DBGU as the standard output. Required
