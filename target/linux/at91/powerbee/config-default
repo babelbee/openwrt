@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux/arm 2.6.38.8 Kernel Configuration
-# Tue Feb  5 10:44:19 2013
+# Sun Mar 17 16:52:59 2013
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -1185,16 +1185,17 @@ CONFIG_W1_CON=y
 # CONFIG_W1_MASTER_DS2490 is not set
 CONFIG_W1_MASTER_DS2482=m
 # CONFIG_W1_MASTER_DS1WM is not set
-# CONFIG_W1_MASTER_GPIO is not set
+CONFIG_W1_MASTER_GPIO=m
 
 #
 # 1-wire Slaves
 #
 CONFIG_W1_SLAVE_THERM=m
-# CONFIG_W1_SLAVE_SMEM is not set
+CONFIG_W1_SLAVE_SMEM=m
 # CONFIG_W1_SLAVE_DS2423 is not set
-# CONFIG_W1_SLAVE_DS2431 is not set
-# CONFIG_W1_SLAVE_DS2433 is not set
+CONFIG_W1_SLAVE_DS2431=m
+CONFIG_W1_SLAVE_DS2433=m
+# CONFIG_W1_SLAVE_DS2433_CRC is not set
 # CONFIG_W1_SLAVE_DS2760 is not set
 # CONFIG_W1_SLAVE_BQ27000 is not set
 # CONFIG_POWER_SUPPLY is not set
