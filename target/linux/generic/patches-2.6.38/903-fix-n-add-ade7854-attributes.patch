@@ -1,6 +1,6 @@
 diff --exclude 'modules.*' --exclude '*.cmd' --exclude '*.o' --exclude '*.ko' --exclude '*.mod.c' -rc linux-2.6.38.8-902/drivers/staging/iio/meter/ade7854.c linux-2.6.38.8-new/drivers/staging/iio/meter/ade7854.c
 *** linux-2.6.38.8-902/drivers/staging/iio/meter/ade7854.c	2013-01-12 17:21:07.870458285 +0100
---- linux-2.6.38.8-new/drivers/staging/iio/meter/ade7854.c	2013-01-12 13:52:32.766553529 +0100
+--- linux-2.6.38.8-new/drivers/staging/iio/meter/ade7854.c	2013-03-17 14:14:11.761659747 +0100
 ***************
 *** 238,243 ****
 --- 238,245 ----
@@ -13,23 +13,37 @@ diff --exclude 'modules.*' --exclude '*.cmd' --exclude '*.o' --exclude '*.ko' --
   	val |= 1 << 7; /* Software Chip Reset */
   	ret = st->write_reg_16(dev, ADE7854_CONFIG, val);
 ***************
-*** 258,264 ****
+*** 253,266 ****
+  		const char *buf, size_t len)
+  {
+  	if (len < 1)
+! 		return -1;
+  	switch (buf[0]) {
   	case '1':
   	case 'y':
   	case 'Y':
 ! 		return ade7854_reset(dev);
   	}
-  	return -1;
+! 	return -1;
   }
---- 260,267 ----
+  
+  static IIO_DEV_ATTR_AIGAIN(S_IWUSR | S_IRUGO,
+--- 255,269 ----
+  		const char *buf, size_t len)
+  {
+  	if (len < 1)
+! 		return -EINVAL;
+  	switch (buf[0]) {
   	case '1':
   	case 'y':
   	case 'Y':
 ! 		ade7854_reset(dev);
-! 		return 1;
+! 		return len;
   	}
-  	return -1;
+! 	return -EINVAL;
   }
+  
+  static IIO_DEV_ATTR_AIGAIN(S_IWUSR | S_IRUGO,
 ***************
 *** 389,399 ****
   		ADE7854_PEAKCYC);
@@ -86,7 +100,7 @@ diff --exclude 'modules.*' --exclude '*.cmd' --exclude '*.o' --exclude '*.ko' --
   static IIO_DEV_ATTR_BWATTHR(ade7854_read_32bit,
 ***************
 *** 483,488 ****
---- 506,520 ----
+--- 506,738 ----
   		ADE7854_BVAHR);
   static IIO_DEV_ATTR_CVAHR(ade7854_read_32bit,
   		ADE7854_CVAHR);
@@ -94,17 +108,235 @@ diff --exclude 'modules.*' --exclude '*.cmd' --exclude '*.o' --exclude '*.ko' --
 +                 ade7854_read_16bit,
 +                 NULL,
 +                 ADE7854_PERIOD);
++ static IIO_DEV_ATTR_RUN(S_IWUSR | S_IRUGO,
++                 ade7854_read_16bit,
++                 ade7854_write_16bit,
++                 ADE7854_RUN);
++ static IIO_DEV_ATTR_CONFIG(S_IWUSR | S_IRUGO,
++                 ade7854_read_16bit,
++                 ade7854_write_16bit,
++                 ADE7854_CONFIG);
++ static IIO_DEV_ATTR_CONFIG2(S_IWUSR | S_IRUGO,
++                 ade7854_read_16bit,
++                 ade7854_write_16bit,
++                 ADE7854_CONFIG2);
 + static IIO_DEV_ATTR_PGA_GAIN(S_IWUSR | S_IRUGO,
 +                 ade7854_read_8bit,
 +                 ade7854_write_8bit,
 +                 ADE7854_GAIN);
++ 
++ 
++ 
++ 
++ static IIO_DEV_ATTR_NIRMSOS(S_IWUSR | S_IRUGO,
++ 	ade7854_read_24bit,
++ 	ade7854_write_24bit,
++ 	ADE7854_NIRMSOS);
++ static IIO_DEV_ATTR_AWGAIN(S_IWUSR | S_IRUGO,
++ 	ade7854_read_24bit,
++ 	ade7854_write_24bit,
++ 	ADE7854_AWGAIN);
++ static IIO_DEV_ATTR_BWGAIN(S_IWUSR | S_IRUGO,
++ 	ade7854_read_24bit,
++ 	ade7854_write_24bit,
++ 	ADE7854_BWGAIN);
++ static IIO_DEV_ATTR_CWGAIN(S_IWUSR | S_IRUGO,
++ 	ade7854_read_24bit,
++ 	ade7854_write_24bit,
++ 	ADE7854_CWGAIN);
++ static IIO_DEV_ATTR_AFWGAIN(S_IWUSR | S_IRUGO,
++ 	ade7854_read_24bit,
++ 	ade7854_write_24bit,
++ 	ADE7854_AFWGAIN);
++ static IIO_DEV_ATTR_AFWATTOS(S_IWUSR | S_IRUGO,
++ 	ade7854_read_24bit,
++ 	ade7854_write_24bit,
++ 	ADE7854_AFWATTOS);
++ static IIO_DEV_ATTR_BFWGAIN(S_IWUSR | S_IRUGO,
++ 	ade7854_read_24bit,
++ 	ade7854_write_24bit,
++ 	ADE7854_BFWGAIN);
++ static IIO_DEV_ATTR_BFWATTOS(S_IWUSR | S_IRUGO,
++ 	ade7854_read_24bit,
++ 	ade7854_write_24bit,
++ 	ADE7854_BFWATTOS);
++ static IIO_DEV_ATTR_CFWGAIN(S_IWUSR | S_IRUGO,
++ 	ade7854_read_24bit,
++ 	ade7854_write_24bit,
++ 	ADE7854_CFWGAIN);
++ static IIO_DEV_ATTR_CFWATTOS(S_IWUSR | S_IRUGO,
++ 	ade7854_read_24bit,
++ 	ade7854_write_24bit,
++ 	ADE7854_CFWATTOS);
++ static IIO_DEV_ATTR_AFVARGAIN(S_IWUSR | S_IRUGO,
++ 	ade7854_read_24bit,
++ 	ade7854_write_24bit,
++ 	ADE7854_AFVARGAIN);
++ static IIO_DEV_ATTR_AFVAROS(S_IWUSR | S_IRUGO,
++ 	ade7854_read_24bit,
++ 	ade7854_write_24bit,
++ 	ADE7854_AFVAROS);
++ static IIO_DEV_ATTR_BFVARGAIN(S_IWUSR | S_IRUGO,
++ 	ade7854_read_24bit,
++ 	ade7854_write_24bit,
++ 	ADE7854_BFVARGAIN);
++ static IIO_DEV_ATTR_BFVAROS(S_IWUSR | S_IRUGO,
++ 	ade7854_read_24bit,
++ 	ade7854_write_24bit,
++ 	ADE7854_BFVAROS);
++ static IIO_DEV_ATTR_CFVARGAIN(S_IWUSR | S_IRUGO,
++ 	ade7854_read_24bit,
++ 	ade7854_write_24bit,
++ 	ADE7854_CFVARGAIN);
++ static IIO_DEV_ATTR_CFVAROS(S_IWUSR | S_IRUGO,
++ 	ade7854_read_24bit,
++ 	ade7854_write_24bit,
++ 	ADE7854_CFVAROS);
++ static IIO_DEV_ATTR_VATHR1(S_IWUSR | S_IRUGO,
++ 	ade7854_read_24bitu,
++ 	ade7854_write_24bit,
++ 	ADE7854_VATHR1);
++ static IIO_DEV_ATTR_VATHR0(S_IWUSR | S_IRUGO,
++ 	ade7854_read_24bitu,
++ 	ade7854_write_24bit,
++ 	ADE7854_VATHR0);
++ static IIO_DEV_ATTR_WTHR1(S_IWUSR | S_IRUGO,
++ 	ade7854_read_24bitu,
++ 	ade7854_write_24bit,
++ 	ADE7854_WTHR1);
++ static IIO_DEV_ATTR_WTHR0(S_IWUSR | S_IRUGO,
++ 	ade7854_read_24bitu,
++ 	ade7854_write_24bit,
++ 	ADE7854_WTHR0);
++ static IIO_DEV_ATTR_VARTHR1(S_IWUSR | S_IRUGO,
++ 	ade7854_read_24bitu,
++ 	ade7854_write_24bit,
++ 	ADE7854_VARTHR1);
++ static IIO_DEV_ATTR_VARTHR0(S_IWUSR | S_IRUGO,
++ 	ade7854_read_24bitu,
++ 	ade7854_write_24bit,
++ 	ADE7854_VARTHR0);
++ static IIO_DEV_ATTR_VANOLOAD(S_IWUSR | S_IRUGO,
++ 	ade7854_read_24bit,
++ 	ade7854_write_24bit,
++ 	ADE7854_VANOLOAD);
++ static IIO_DEV_ATTR_APNOLOAD(S_IWUSR | S_IRUGO,
++ 	ade7854_read_24bit,
++ 	ade7854_write_24bit,
++ 	ADE7854_APNOLOAD);
++ static IIO_DEV_ATTR_VARNOLOAD(S_IWUSR | S_IRUGO,
++ 	ade7854_read_24bit,
++ 	ade7854_write_24bit,
++ 	ADE7854_VARNOLOAD);
++ static IIO_DEV_ATTR_VLEVEL(S_IWUSR | S_IRUGO,
++ 	ade7854_read_24bit,
++ 	ade7854_write_24bit,
++ 	ADE7854_VLEVEL);
++ static IIO_DEV_ATTR_DICOEFF(S_IWUSR | S_IRUGO,
++ 	ade7854_read_24bit,
++ 	ade7854_write_24bit,
++ 	ADE7854_DICOEFF);
++ static IIO_DEV_ATTR_HPFDIS(S_IWUSR | S_IRUGO,
++ 	ade7854_read_24bitu,
++ 	ade7854_write_24bit,
++ 	ADE7854_HPFDIS);
++ static IIO_DEV_ATTR_ISUMLVL(S_IWUSR | S_IRUGO,
++ 	ade7854_read_24bit,
++ 	ade7854_write_24bit,
++ 	ADE7854_ISUMLVL);
++ static IIO_DEV_ATTR_ISUM(ade7854_read_32bitu,
++ 	ADE7854_ISUM);
++ static IIO_DEV_ATTR_AFVARHR(ade7854_read_32bit,
++ 	ADE7854_AFVARHR);
++ static IIO_DEV_ATTR_BFVARHR(ade7854_read_32bit,
++ 	ADE7854_BFVARHR);
++ static IIO_DEV_ATTR_CFVARHR(ade7854_read_32bit,
++ 	ADE7854_CFVARHR);
++ static IIO_DEV_ATTR_STATUS0(S_IWUSR | S_IRUGO,
++ 	ade7854_read_32bitu,
++ 	ade7854_write_32bit,
++ 	ADE7854_STATUS0);
++ static IIO_DEV_ATTR_STATUS1(S_IWUSR | S_IRUGO,
++ 	ade7854_read_32bitu,
++ 	ade7854_write_32bit,
++ 	ADE7854_STATUS1);
++ static IIO_DEV_ATTR_AIMAV(ade7854_read_32bitu,
++ 	ADE7854_AIMAV);
++ static IIO_DEV_ATTR_BIMAV(ade7854_read_32bitu,
++ 	ADE7854_BIMAV);
++ static IIO_DEV_ATTR_CIMAV(ade7854_read_32bitu,
++ 	ADE7854_CIMAV);
++ static IIO_DEV_ATTR_OILVL(S_IWUSR | S_IRUGO,
++ 	ade7854_read_24bitu,
++ 	ade7854_write_24bit,
++ 	ADE7854_OILVL);
++ static IIO_DEV_ATTR_OVLVL(S_IWUSR | S_IRUGO,
++ 	ade7854_read_24bitu,
++ 	ade7854_write_24bit,
++ 	ADE7854_OVLVL);
++ static IIO_DEV_ATTR_SAGLVL(S_IWUSR | S_IRUGO,
++ 	ade7854_read_24bitu,
++ 	ade7854_write_24bit,
++ 	ADE7854_SAGLVL);
++ static IIO_DEV_ATTR_MASK0(S_IWUSR | S_IRUGO,
++ 	ade7854_read_32bitu,
++ 	ade7854_write_32bit,
++ 	ADE7854_MASK0);
++ static IIO_DEV_ATTR_MASK1(S_IWUSR | S_IRUGO,
++ 	ade7854_read_32bitu,
++ 	ade7854_write_32bit,
++ 	ADE7854_MASK1);
++ static IIO_DEV_ATTR_VNOM(S_IWUSR | S_IRUGO,
++ 	ade7854_read_24bitu,
++ 	ade7854_write_24bit,
++ 	ADE7854_VNOM);
++ static IIO_DEV_ATTR_PHSTATUS(ade7854_read_16bit,
++ 	ADE7854_PHSTATUS);
++ static IIO_DEV_ATTR_PHNOLOAD(ade7854_read_16bit,
++ 	ADE7854_PHNOLOAD);
++ static IIO_DEV_ATTR_ZXTOUT(S_IWUSR | S_IRUGO,
++ 	ade7854_read_16bit,
++ 	ade7854_write_16bit,
++ 	ADE7854_ZXTOUT);
++ static IIO_DEV_ATTR_COMPMODE(S_IWUSR | S_IRUGO,
++ 	ade7854_read_16bit,
++ 	ade7854_write_16bit,
++ 	ADE7854_COMPMODE);
++ static IIO_DEV_ATTR_CFMODE(S_IWUSR | S_IRUGO,
++ 	ade7854_read_16bit,
++ 	ade7854_write_16bit,
++ 	ADE7854_CFMODE);
++ static IIO_DEV_ATTR_PHSIGN(ade7854_read_16bit,
++ 	ADE7854_PHSIGN);
++ static IIO_DEV_ATTR_MMODE(S_IWUSR | S_IRUGO,
++ 	ade7854_read_8bit,
++ 	ade7854_write_8bit,
++ 	ADE7854_MMODE);
++ static IIO_DEV_ATTR_ACCMODE(S_IWUSR | S_IRUGO,
++ 	ade7854_read_8bit,
++ 	ade7854_write_8bit,
++ 	ADE7854_ACCMODE);
++ static IIO_DEV_ATTR_LCYCMODE(S_IWUSR | S_IRUGO,
++ 	ade7854_read_8bit,
++ 	ade7854_write_8bit,
++ 	ADE7854_LCYCMODE);
++ static IIO_DEV_ATTR_HSDC_CFG(S_IWUSR | S_IRUGO,
++ 	ade7854_read_8bit,
++ 	ade7854_write_8bit,
++ 	ADE7854_HSDC_CFG);
++ static IIO_DEV_ATTR_VERSION(ade7854_read_8bit,
++ 	ADE7854_VERSION);
++ static IIO_DEV_ATTR_LPOILVL(S_IWUSR | S_IRUGO,
++ 	ade7854_read_8bit,
++ 	ade7854_write_8bit,
++ 	ADE7854_LPOILVL);
 + 
   
   static int ade7854_set_irq(struct device *dev, bool enable)
   {
 ***************
 *** 613,618 ****
---- 645,662 ----
+--- 863,941 ----
   	&iio_dev_attr_current_a.dev_attr.attr,
   	&iio_dev_attr_current_b.dev_attr.attr,
   	&iio_dev_attr_current_c.dev_attr.attr,
@@ -119,16 +351,89 @@ diff --exclude 'modules.*' --exclude '*.cmd' --exclude '*.o' --exclude '*.ko' --
 + 	&iio_dev_attr_var_b.dev_attr.attr,
 + 	&iio_dev_attr_var_c.dev_attr.attr,
 + 	&iio_dev_attr_vperiod.dev_attr.attr,
++ 	&iio_dev_attr_run.dev_attr.attr,
++ 	&iio_dev_attr_config.dev_attr.attr,
++ 	&iio_dev_attr_config2.dev_attr.attr,
 + 	&iio_dev_attr_pga_gain.dev_attr.attr,
++ 
++ 
++ 	&iio_dev_attr_nirmsos.dev_attr.attr,
++ 	&iio_dev_attr_awgain.dev_attr.attr,
++ 	&iio_dev_attr_bwgain.dev_attr.attr,
++ 	&iio_dev_attr_cwgain.dev_attr.attr,
++ 	&iio_dev_attr_afwgain.dev_attr.attr,
++ 	&iio_dev_attr_afwattos.dev_attr.attr,
++ 	&iio_dev_attr_bfwgain.dev_attr.attr,
++ 	&iio_dev_attr_bfwattos.dev_attr.attr,
++ 	&iio_dev_attr_cfwgain.dev_attr.attr,
++ 	&iio_dev_attr_cfwattos.dev_attr.attr,
++ 	&iio_dev_attr_afvargain.dev_attr.attr,
++ 	&iio_dev_attr_afvaros.dev_attr.attr,
++ 	&iio_dev_attr_bfvargain.dev_attr.attr,
++ 	&iio_dev_attr_bfvaros.dev_attr.attr,
++ 	&iio_dev_attr_cfvargain.dev_attr.attr,
++ 	&iio_dev_attr_cfvaros.dev_attr.attr,
++ 	&iio_dev_attr_vathr1.dev_attr.attr,
++ 	&iio_dev_attr_vathr0.dev_attr.attr,
++ 	&iio_dev_attr_wthr1.dev_attr.attr,
++ 	&iio_dev_attr_wthr0.dev_attr.attr,
++ 	&iio_dev_attr_varthr1.dev_attr.attr,
++ 	&iio_dev_attr_varthr0.dev_attr.attr,
++ 	&iio_dev_attr_vanoload.dev_attr.attr,
++ 	&iio_dev_attr_apnoload.dev_attr.attr,
++ 	&iio_dev_attr_varnoload.dev_attr.attr,
++ 	&iio_dev_attr_vlevel.dev_attr.attr,
++ 	&iio_dev_attr_dicoeff.dev_attr.attr,
++ 	&iio_dev_attr_hpfdis.dev_attr.attr,
++ 	&iio_dev_attr_isumlvl.dev_attr.attr,
++ 	&iio_dev_attr_isum.dev_attr.attr,
++ 	&iio_dev_attr_afvarhr.dev_attr.attr,
++ 	&iio_dev_attr_bfvarhr.dev_attr.attr,
++ 	&iio_dev_attr_cfvarhr.dev_attr.attr,
++ 	&iio_dev_attr_status0.dev_attr.attr,
++ 	&iio_dev_attr_status1.dev_attr.attr,
++ 	&iio_dev_attr_aimav.dev_attr.attr,
++ 	&iio_dev_attr_bimav.dev_attr.attr,
++ 	&iio_dev_attr_cimav.dev_attr.attr,
++ 	&iio_dev_attr_oilvl.dev_attr.attr,
++ 	&iio_dev_attr_ovlvl.dev_attr.attr,
++ 	&iio_dev_attr_saglvl.dev_attr.attr,
++ 	&iio_dev_attr_mask0.dev_attr.attr,
++ 	&iio_dev_attr_mask1.dev_attr.attr,
++ 	&iio_dev_attr_vnom.dev_attr.attr,
++ 	&iio_dev_attr_phstatus.dev_attr.attr,
++ 	&iio_dev_attr_phnoload.dev_attr.attr,
++ 	&iio_dev_attr_zxtout.dev_attr.attr,
++ 	&iio_dev_attr_compmode.dev_attr.attr,
++ 	&iio_dev_attr_cfmode.dev_attr.attr,
++ 	&iio_dev_attr_phsign.dev_attr.attr,
++ 	&iio_dev_attr_mmode.dev_attr.attr,
++ 	&iio_dev_attr_accmode.dev_attr.attr,
++ 	&iio_dev_attr_lcycmode.dev_attr.attr,
++ 	&iio_dev_attr_hsdc_cfg.dev_attr.attr,
++ 	&iio_dev_attr_version.dev_attr.attr,
++ 	&iio_dev_attr_lpoilvl.dev_attr.attr,
   	NULL,
   };
   
 diff --exclude 'modules.*' --exclude '*.cmd' --exclude '*.o' --exclude '*.ko' --exclude '*.mod.c' -rc linux-2.6.38.8-902/drivers/staging/iio/meter/ade7854.h linux-2.6.38.8-new/drivers/staging/iio/meter/ade7854.h
 *** linux-2.6.38.8-902/drivers/staging/iio/meter/ade7854.h	2011-06-03 03:35:11.000000000 +0200
---- linux-2.6.38.8-new/drivers/staging/iio/meter/ade7854.h	2013-01-12 13:51:22.510090440 +0100
+--- linux-2.6.38.8-new/drivers/staging/iio/meter/ade7854.h	2013-03-13 18:07:41.337503069 +0100
+***************
+*** 84,89 ****
+--- 84,92 ----
+  #define ADE7854_VPEAK     0xE501
+  #define ADE7854_STATUS0   0xE502
+  #define ADE7854_STATUS1   0xE503
++ #define ADE7854_AIMAV     0xE504
++ #define ADE7854_BIMAV     0xE505
++ #define ADE7854_CIMAV     0xE506
+  #define ADE7854_OILVL     0xE507
+  #define ADE7854_OVLVL     0xE508
+  #define ADE7854_SAGLVL    0xE509
 ***************
 *** 92,103 ****
---- 92,107 ----
+--- 95,110 ----
   #define ADE7854_IAWV      0xE50C
   #define ADE7854_IBWV      0xE50D
   #define ADE7854_ICWV      0xE50E
@@ -145,9 +450,33 @@ diff --exclude 'modules.*' --exclude '*.cmd' --exclude '*.o' --exclude '*.ko' --
   #define ADE7854_AVA       0xE519
   #define ADE7854_BVA       0xE51A
   #define ADE7854_CVA       0xE51B
+***************
+*** 129,136 ****
+  #define ADE7854_SAGCYC    0xE704
+  #define ADE7854_CFCYC     0xE705
+  #define ADE7854_HSDC_CFG  0xE706
+  #define ADE7854_CONFIG2   0xEC01
+- 
+  #define ADE7854_READ_REG   0x1
+  #define ADE7854_WRITE_REG  0x0
+  
+--- 136,144 ----
+  #define ADE7854_SAGCYC    0xE704
+  #define ADE7854_CFCYC     0xE705
+  #define ADE7854_HSDC_CFG  0xE706
++ #define ADE7854_VERSION	  0xE707
++ #define ADE7854_LPOILVL   0xEC00
+  #define ADE7854_CONFIG2   0xEC01
+  #define ADE7854_READ_REG   0x1
+  #define ADE7854_WRITE_REG  0x0
+  
+Nur in linux-2.6.38.8-new/drivers/staging/iio/meter: h.txt.
+Nur in linux-2.6.38.8-new/drivers/staging/iio/meter: m1.txt.
+Nur in linux-2.6.38.8-new/drivers/staging/iio/meter: m2toc.
+Nur in linux-2.6.38.8-new/drivers/staging/iio/meter: m2.txt.
 diff --exclude 'modules.*' --exclude '*.cmd' --exclude '*.o' --exclude '*.ko' --exclude '*.mod.c' -rc linux-2.6.38.8-902/drivers/staging/iio/meter/meter.h linux-2.6.38.8-new/drivers/staging/iio/meter/meter.h
 *** linux-2.6.38.8-902/drivers/staging/iio/meter/meter.h	2011-06-03 03:35:11.000000000 +0200
---- linux-2.6.38.8-new/drivers/staging/iio/meter/meter.h	2013-01-12 13:52:21.085888317 +0100
+--- linux-2.6.38.8-new/drivers/staging/iio/meter/meter.h	2013-03-13 18:54:46.199348557 +0100
 ***************
 *** 86,91 ****
 --- 86,94 ----
@@ -196,3 +525,141 @@ diff --exclude 'modules.*' --exclude '*.cmd' --exclude '*.o' --exclude '*.ko' --
   #define IIO_DEV_ATTR_AENERGY(_show, _addr)			\
   	IIO_DEVICE_ATTR(aenergy, S_IRUGO, _show, NULL, _addr)
   
+***************
+*** 344,349 ****
+--- 374,388 ----
+  #define IIO_DEV_ATTR_VPERIOD(_mode, _show, _store, _addr)			\
+  	IIO_DEVICE_ATTR(vperiod, _mode, _show, _store, _addr)
+  
++ #define IIO_DEV_ATTR_RUN(_mode, _show, _store, _addr)			\
++ 	IIO_DEVICE_ATTR(run, _mode, _show, _store, _addr)
++ 
++ #define IIO_DEV_ATTR_CONFIG(_mode, _show, _store, _addr)			\
++ 	IIO_DEVICE_ATTR(config, _mode, _show, _store, _addr)
++ 
++ #define IIO_DEV_ATTR_CONFIG2(_mode, _show, _store, _addr)			\
++ 	IIO_DEVICE_ATTR(config2, _mode, _show, _store, _addr)
++ 
+  #define IIO_DEV_ATTR_CH_OFF(_num, _mode, _show, _store, _addr)			\
+    IIO_DEVICE_ATTR(choff_##_num, _mode, _show, _store, _addr)
+  
+***************
+*** 394,396 ****
+--- 433,549 ----
+  #define IIO_EVENT_ATTR_VPKLVL_EXC(_evlist, _show, _store, _mask) \
+  	IIO_EVENT_ATTR_SH(vpklvl_exc, _evlist, _show, _store, _mask)
+  
++ 
++ #define IIO_DEV_ATTR_NIRMSOS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(nirmsos, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_AWGAIN(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(awgain, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_BWGAIN(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(bwgain, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_CWGAIN(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(cwgain, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_AFWGAIN(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(afwgain, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_AFWATTOS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(afwattos, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_BFWGAIN(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(bfwgain, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_BFWATTOS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(bfwattos, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_CFWGAIN(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(cfwgain, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_CFWATTOS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(cfwattos, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_AFVARGAIN(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(afvargain, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_AFVAROS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(afvaros, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_BFVARGAIN(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(bfvargain, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_BFVAROS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(bfvaros, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_CFVARGAIN(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(cfvargain, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_CFVAROS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(cfvaros, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_VATHR1(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(vathr1, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_VATHR0(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(vathr0, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_WTHR1(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(wthr1, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_WTHR0(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(wthr0, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_VARTHR1(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(varthr1, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_VARTHR0(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(varthr0, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_VANOLOAD(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(vanoload, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_APNOLOAD(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(apnoload, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_VARNOLOAD(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(varnoload, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_VLEVEL(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(vlevel, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_DICOEFF(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(dicoeff, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_HPFDIS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(hpfdis, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_ISUMLVL(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(isumlvl, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_ISUM(_show, _addr) \
++ 	IIO_DEVICE_ATTR(isum, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_AFVARHR(_show, _addr) \
++ 	IIO_DEVICE_ATTR(afvarhr, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_BFVARHR(_show, _addr) \
++ 	IIO_DEVICE_ATTR(bfvarhr, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_CFVARHR(_show, _addr) \
++ 	IIO_DEVICE_ATTR(cfvarhr, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_STATUS0(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(status0, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_STATUS1(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(status1, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_AIMAV(_show, _addr) \
++ 	IIO_DEVICE_ATTR(aimav, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_BIMAV(_show, _addr) \
++ 	IIO_DEVICE_ATTR(bimav, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_CIMAV(_show, _addr) \
++ 	IIO_DEVICE_ATTR(cimav, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_OILVL(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(oilvl, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_OVLVL(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(ovlvl, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_SAGLVL(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(saglvl, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_MASK0(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(mask0, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_MASK1(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(mask1, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_VNOM(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(vnom, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_PHSTATUS(_show, _addr) \
++ 	IIO_DEVICE_ATTR(phstatus, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_PHNOLOAD(_show, _addr) \
++ 	IIO_DEVICE_ATTR(phnoload, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_ZXTOUT(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(zxtout, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_COMPMODE(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(compmode, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_CFMODE(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(cfmode, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_PHSIGN(_show, _addr) \
++ 	IIO_DEVICE_ATTR(phsign, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_MMODE(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(mmode, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_ACCMODE(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(accmode, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_LCYCMODE(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(lcycmode, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_HSDC_CFG(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(hsdc_cfg, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_VERSION(_show, _addr) \
++ 	IIO_DEVICE_ATTR(version, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_LPOILVL(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(lpoilvl, _mode, _show, _store, _addr)
++ 
