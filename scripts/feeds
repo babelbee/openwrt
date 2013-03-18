@@ -107,6 +107,7 @@ my %update_method = (
 		'init'		=> "svn checkout '%s' '%s'",
 		'init_branch'   => "svn checkout -r '%s' '%s' '%s'",
 		'update'	=> "svn update",
+		'update_branch'	=> "svn update -r '%s'",
 		'controldir'	=> ".svn",
 		'revision'	=> "svn info | grep 'Revision' | cut -d ' ' -f 2 | tr -d '\n'"},
 	'src-cpy' => {
@@ -165,7 +166,11 @@ sub update_feed_via($$$$) {
 			system(sprintf($m->{'init'}, $src, $safepath)) == 0 or return 1;
 		}
 	} else {
-		system("cd '$safepath'; $m->{'update'}") == 0 or return 1;
+		if ($m->{'update_branch'} and $branch) {
+			system("cd '$safepath'; " . sprintf($m->{'update_branch'}, $branch)) == 0 or return 1;
+		} else {
+			system("cd '$safepath'; $m->{'update'}") == 0 or return 1;
+		}
 	}
 	
 	return 0;
