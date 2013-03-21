@@ -38,7 +38,11 @@ endef
 
 define Package/ade7854/install
 	$(INSTALL_DIR) $(1)/usr/bin
+	$(INSTALL_DIR) $(1)/etc
+	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/ade7854 $(1)/usr/bin/ade7854
+	$(INSTALL_BIN) ./files/ade7854.conf $(1)/etc/ade7854.conf
+	$(INSTALL_BIN) ./files/ade7854.init $(1)/etc/init.d/ade7854
 endef
 
 $(eval $(call BuildPackage,ade7854))

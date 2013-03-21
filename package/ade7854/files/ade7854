@@ -1,21 +1,47 @@
 #! /usr/bin/lua
 require "nixio"
 
---[[
-local scale_u=280/4191910;
-local scale_i=35.65/4191910;
-local scale_u=1/15922.773322
-]]--
-local scale_u=280/4191910;
-local scale_i=1/118565.12
+local uifull=5928256
+local pfull=33516139
+local scale_u
+local scale_i
+local scale_p
 local scale_f=256000
-local scale_p=1/203
-local dir="/sys/devices/platform/atmel_spi.1/spi1.0/device0/";
+local dir
+local ifactor
+local ufactor
+
+
+function read_config(init)
+	local f=io.open("/etc/ade7854.conf")
+	local line
+	for line in f:lines() do
+		if line and line:sub( 1, 1 ) ~= "#" then
+			local key = line:match( "(.*)=" )
+			local value = line:match( "=(.*)" )
+			if (key == "device") then
+				dir=value.."/"
+			elseif (key == "ufactor") then
+				ufactor=value
+			elseif (key == "ifactor") then
+				ifactor=value
+			elseif (init) then
+				if (key == "avgain" or key == "bvgain" or key == "cvgain") then
+					value=math.floor((value-1)*2^23+0.5)
+				end
+				local kf=io.open(dir..key,"w")
+				kf:write(value)
+				kf:close()
+			end
+		end
+	end
+	f:close()
+end
 
 function oscilloscope(trigger,channel,idx)
-	local ret="[";
+	local ret="["
 	local names={"volt_a","volt_b","volt_c","current_n","current_a","current_b","current_c"}
-	local scale;
+	local scale
 	if (channel == 0)
 	then
 		return "[],\n"
@@ -27,11 +53,11 @@ function oscilloscope(trigger,channel,idx)
 		scale=scale_i
 	end	
 	local t=nil
-	local f=io.open(dir..names[channel],"r");
+	local f=io.open(dir..names[channel],"r")
 	a={}
 	if (trigger ~= 0)
 	then
-		local t=io.open(dir..names[trigger],"r");
+		local t=io.open(dir..names[trigger],"r")
 		local neg=false
 		for i=0,500
 		do
@@ -57,10 +83,10 @@ function oscilloscope(trigger,channel,idx)
 		ret = ret .. a[i]*scale .. ","
 	end
 	ret = ret .. ((ends-starts)*1000000+endusec-startusec)
-	f:close();
+	f:close()
 	if (t)
 	then
-		t:close();
+		t:close()
 	end
 	return ret .. "],\n"
 end
@@ -76,7 +102,7 @@ end
 
 function collectd_ivalue(label,interval,name,scale,offset)
 	local f=io.open(dir..name,"r")
-	local val=scale/(f:read("*line")+offset);
+	local val=scale/(f:read("*line")+offset)
 	print("PUTVAL \""..label.."\" interval="..interval.." N:"..val)
 	f:close()
 	return val
@@ -124,15 +150,22 @@ function collectd()
 	end
 end
 
-if (arg[1] == "collectd")
+if (arg[1] == "init")
 then
-	collectd()
-end
+	read_config(true)
+else
+	read_config(false)
 
-if (arg[1] == "oscilloscope")
-then
-	result=oscilloscope(arg[2]+0,arg[2]+0,1)
-	result=result .. oscilloscope(arg[2]+0,arg[3]+0,2)
-	result=result .. oscilloscope(arg[2]+0,arg[4]+0,3)
-	io.write(result)
+	scale_u=ufactor/uifull/2
+	scale_i=ifactor/uifull/2
+	scale_p=(ufactor*ifactor)/pfull*2
+	
+	if (arg[1] == "collectd") then
+		collectd()
+	elseif (arg[1] == "oscilloscope") then
+		result=oscilloscope(arg[2]+0,arg[2]+0,1)
+		result=result .. oscilloscope(arg[2]+0,arg[3]+0,2)
+		result=result .. oscilloscope(arg[2]+0,arg[4]+0,3)
+		io.write(result)
+	end
 end
