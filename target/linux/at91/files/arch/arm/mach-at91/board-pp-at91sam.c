@@ -434,6 +434,9 @@ static void __init ek_board_init(void)
         gpio_direction_input(AT91_PIN_PC10);
         gpio_export(AT91_PIN_PC10, 0);
 	gpio_export_link(&powerbee_gpio_device.dev, "button2", AT91_PIN_PC10);
+
+	gpio_request(AT91_PIN_PA29, NULL);
+	gpio_direction_output(AT91_PIN_PA29, 1);
 }
 
 // FIXME: Register our own mach type
