@@ -1,0 +1,16 @@
+diff -cr luci-trunk+svn9610.orig/modules/admin-full/luasrc/controller/admin/system.lua luci-trunk+svn9610/modules/admin-full/luasrc/controller/admin/system.lua
+*** luci-trunk+svn9610.orig/modules/admin-full/luasrc/controller/admin/system.lua	2012-12-20 16:01:04.000000000 +0100
+--- luci-trunk+svn9610/modules/admin-full/luasrc/controller/admin/system.lua	2013-03-21 22:36:06.137816800 +0100
+***************
+*** 40,45 ****
+--- 40,49 ----
+  		entry({"admin", "system", "leds"}, cbi("admin_system/leds"), _("<abbr title=\"Light Emitting Diode\">LED</abbr> Configuration"), 60)
+  	end
+  
++ 	if nixio.fs.access("/sys/devices/platform/powerbee-gpio") then
++ 		entry({"admin", "system", "relays"}, cbi("admin_system/relays"), _("Relay Configuration"), 65)
++ 	end
++ 
+  	entry({"admin", "system", "flashops"}, call("action_flashops"), _("Backup / Flash Firmware"), 70)
+  	entry({"admin", "system", "flashops", "backupfiles"}, form("admin_system/backupfiles"))
+  

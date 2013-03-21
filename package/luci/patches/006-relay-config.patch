@@ -1,0 +1,12 @@
+diff -cr luci-trunk+svn9610.orig/libs/core/root/etc/config/ucitrack luci-trunk+svn9610/libs/core/root/etc/config/ucitrack
+*** luci-trunk+svn9610.orig/libs/core/root/etc/config/ucitrack	2011-02-20 19:35:28.000000000 +0100
+--- luci-trunk+svn9610/libs/core/root/etc/config/ucitrack	2013-03-21 22:08:34.662057722 +0100
+***************
+*** 48,50 ****
+--- 48,53 ----
+  
+  config tinyproxy
+  	option init tinyproxy
++ 
++ config relays
++ 	option init relay

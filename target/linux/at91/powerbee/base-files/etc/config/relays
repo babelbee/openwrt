@@ -1,0 +1,16 @@
+
+config relay
+	option name 'L1'
+	option new 'off'
+	option boot 'last'
+
+config relay
+	option name 'L2'
+	option new 'off'
+	option boot 'last'
+
+config relay
+	option name 'L3'
+	option new 'off'
+	option boot 'last'
+

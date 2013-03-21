@@ -633,6 +633,7 @@ else
 	$(CP) ./files/statistics_power.lua $(PKG_BUILD_DIR)/applications/luci-statistics/luasrc/model/cbi/luci_statistics/power.lua
 	$(CP) ./files/oscilloscope.svg $(PKG_BUILD_DIR)/modules/admin-full/htdocs/luci-static/resources/oscilloscope.svg
 	$(CP) ./files/oscilloscope.htm $(PKG_BUILD_DIR)/modules/admin-full/luasrc/view/admin_status/oscilloscope.htm
+	$(CP) ./files/relays.lua $(PKG_BUILD_DIR)/modules/admin-full/luasrc/model/cbi/admin_system/relays.lua
   endef
 endif
 

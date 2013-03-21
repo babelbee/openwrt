@@ -1,0 +1,40 @@
+#!/bin/sh /etc/rc.common
+# (C) 2008 openwrt.org
+
+START=96
+
+dir=/sys/devices/platform/powerbee-gpio
+
+init_latch() {
+	echo 1 >$dir/latch/value
+}
+
+load_relay() {
+	local name
+	config_get name $2 name
+	config_get state $2 $1
+	if [ "$state" = "last" ]
+	then
+		config_get state $2 new
+	fi
+	if [ "$state" = "on" ]
+	then
+		state=1
+	else
+		state=0
+	fi
+	echo $state >$dir/$name/value
+	  
+}
+
+start() {
+	init_latch
+	config_load relays
+	config_foreach "load_relay boot" relay
+}                            
+
+reload() {
+	init_latch
+	config_load relays
+	config_foreach "load_relay new" relay
+}
