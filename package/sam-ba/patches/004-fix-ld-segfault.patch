@@ -1,0 +1,557 @@
+diff -cr sam-ba_cdc_cdc_linux/applets/legacy/at91lib/utility/stdio.c sam-ba_cdc_cdc_linux.new/applets/legacy/at91lib/utility/stdio.c
+*** sam-ba_cdc_cdc_linux/applets/legacy/at91lib/utility/stdio.c	2013-03-23 23:05:56.051317168 +0100
+--- sam-ba_cdc_cdc_linux.new/applets/legacy/at91lib/utility/stdio.c	2013-03-23 17:11:35.129867796 +0100
+***************
+*** 66,71 ****
+--- 66,76 ----
+  struct _reent *_impure_ptr = &r;
+  #endif
+  
++ int
++ raise(int sig)
++ {
++ 	return 0;
++ }
+  //------------------------------------------------------------------------------
+  //         Local Functions
+  //------------------------------------------------------------------------------
+Nur in sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/bin: applet-lowlevelinit-at91sam3u4.bin.
+Nur in sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/bin: applet-lowlevelinit-at91sam3u4.map.
+Nur in sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/bin: applet-lowlevelinit-at91sam9g20.bin.
+Nur in sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/bin: applet-lowlevelinit-at91sam9g20.elf.
+diff -cr sam-ba_cdc_cdc_linux/applets/legacy/sam-ba_applets/lowlevelinit/bin/applet-lowlevelinit-at91sam9g20.map sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/bin/applet-lowlevelinit-at91sam9g20.map
+*** sam-ba_cdc_cdc_linux/applets/legacy/sam-ba_applets/lowlevelinit/bin/applet-lowlevelinit-at91sam9g20.map	2013-03-23 23:05:57.876317121 +0100
+--- sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/bin/applet-lowlevelinit-at91sam9g20.map	2013-03-23 17:12:35.665866216 +0100
+***************
+*** 0 ****
+--- 1,462 ----
++ Archive member included because of file (symbol)
++ 
++ /home/martin/powerbee/openwrt/staging_dir/toolchain-arm_v5te_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/lib64/gcc/arm-openwrt-linux-uclibcgnueabi/4.6.4/libgcc.a(_thumb1_case_uqi.o)
++                               obj/sdram_pio.o (__gnu_thumb1_case_uqi)
++ /home/martin/powerbee/openwrt/staging_dir/toolchain-arm_v5te_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/lib64/gcc/arm-openwrt-linux-uclibcgnueabi/4.6.4/libgcc.a(_udivsi3.o)
++                               obj/sdram_main.o (__aeabi_uidiv)
++ /home/martin/powerbee/openwrt/staging_dir/toolchain-arm_v5te_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/lib64/gcc/arm-openwrt-linux-uclibcgnueabi/4.6.4/libgcc.a(_dvmd_lnx.o)
++                               /home/martin/powerbee/openwrt/staging_dir/toolchain-arm_v5te_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/lib64/gcc/arm-openwrt-linux-uclibcgnueabi/4.6.4/libgcc.a(_udivsi3.o) (__aeabi_idiv0)
++ 
++ Allocating common symbols
++ Common symbol       size              file
++ 
++ usbdiv              0x4               obj/sdram_main.o
++ prescaler           0x4               obj/sdram_main.o
++ mck                 0x4               obj/sdram_main.o
++ plldiv2             0x4               obj/sdram_main.o
++ mul                 0x4               obj/sdram_main.o
++ mdiv                0x4               obj/sdram_main.o
++ pllout              0x4               obj/sdram_main.o
++ div                 0x4               obj/sdram_main.o
++ 
++ Discarded input sections
++ 
++  .data          0x0000000000000000        0x0 obj/sdram_applet_cstartup.o
++  .bss           0x0000000000000000        0x0 obj/sdram_applet_cstartup.o
++  .text          0x0000000000000000        0x0 obj/sdram_main.o
++  .data          0x0000000000000000        0x0 obj/sdram_main.o
++  .bss           0x0000000000000000        0x0 obj/sdram_main.o
++  .text          0x0000000000000000        0x0 obj/sdram_board_memories.o
++  .data          0x0000000000000000        0x0 obj/sdram_board_memories.o
++  .bss           0x0000000000000000        0x0 obj/sdram_board_memories.o
++  .text.BOARD_RemapRom
++                 0x0000000000000000        0xc obj/sdram_board_memories.o
++  .text.BOARD_ConfigureSdram
++                 0x0000000000000000      0x104 obj/sdram_board_memories.o
++  .text.BOARD_ConfigureSdram48MHz
++                 0x0000000000000000      0x108 obj/sdram_board_memories.o
++  .text.BOARD_ConfigureNandFlash
++                 0x0000000000000000       0x4c obj/sdram_board_memories.o
++  .text.BOARD_ConfigureNandFlash48MHz
++                 0x0000000000000000       0x50 obj/sdram_board_memories.o
++  .text.BOARD_ConfigureNorFlash
++                 0x0000000000000000       0x48 obj/sdram_board_memories.o
++  .text.BOARD_ConfigureNorFlash48MHz
++                 0x0000000000000000       0x48 obj/sdram_board_memories.o
++  .rodata        0x0000000000000000       0x18 obj/sdram_board_memories.o
++  .text          0x0000000000000000        0x0 obj/sdram_board_lowlevel.o
++  .data          0x0000000000000000        0x0 obj/sdram_board_lowlevel.o
++  .bss           0x0000000000000000        0x0 obj/sdram_board_lowlevel.o
++  .text          0x0000000000000000        0x0 obj/sdram_dbgu.o
++  .data          0x0000000000000000        0x0 obj/sdram_dbgu.o
++  .bss           0x0000000000000000        0x0 obj/sdram_dbgu.o
++  .text.DBGU_IsRxReady
++                 0x0000000000000000       0x10 obj/sdram_dbgu.o
++  .text.DBGU_GetChar
++                 0x0000000000000000       0x1c obj/sdram_dbgu.o
++  .text          0x0000000000000000        0x0 obj/sdram_pio.o
++  .data          0x0000000000000000        0x0 obj/sdram_pio.o
++  .bss           0x0000000000000000        0x0 obj/sdram_pio.o
++  .text.PIO_Configure
++                 0x0000000000000000       0xc0 obj/sdram_pio.o
++  .text.PIO_Set  0x0000000000000000        0x6 obj/sdram_pio.o
++  .text.PIO_Clear
++                 0x0000000000000000        0x6 obj/sdram_pio.o
++  .text.PIO_Get  0x0000000000000000       0x1e obj/sdram_pio.o
++  .text.PIO_GetOutputDataStatus
++                 0x0000000000000000        0xe obj/sdram_pio.o
++  .debug_info    0x0000000000000000      0x786 obj/sdram_pio.o
++  .debug_abbrev  0x0000000000000000      0x184 obj/sdram_pio.o
++  .debug_loc     0x0000000000000000      0x23a obj/sdram_pio.o
++  .debug_aranges
++                 0x0000000000000000       0x40 obj/sdram_pio.o
++  .debug_ranges  0x0000000000000000       0x30 obj/sdram_pio.o
++  .debug_line    0x0000000000000000      0x14d obj/sdram_pio.o
++  .debug_str     0x0000000000000000      0x3c0 obj/sdram_pio.o
++  .comment       0x0000000000000000       0x3b obj/sdram_pio.o
++  .note.GNU-stack
++                 0x0000000000000000        0x0 obj/sdram_pio.o
++  .ARM.attributes
++                 0x0000000000000000       0x2d obj/sdram_pio.o
++  .debug_frame   0x0000000000000000       0x78 obj/sdram_pio.o
++  .text          0x0000000000000000        0x0 obj/sdram_pmc.o
++  .data          0x0000000000000000        0x0 obj/sdram_pmc.o
++  .bss           0x0000000000000000        0x0 obj/sdram_pmc.o
++  .text.PMC_DisableProcessorClock
++                 0x0000000000000000       0x14 obj/sdram_pmc.o
++  .text.PMC_EnablePeripheral
++                 0x0000000000000000       0x58 obj/sdram_pmc.o
++  .text.PMC_DisablePeripheral
++                 0x0000000000000000       0x58 obj/sdram_pmc.o
++  .text.PMC_EnableAllPeripherals
++                 0x0000000000000000       0x34 obj/sdram_pmc.o
++  .text.PMC_DisableAllPeripherals
++                 0x0000000000000000       0x34 obj/sdram_pmc.o
++  .text.PMC_IsAllPeriphEnabled
++                 0x0000000000000000       0x18 obj/sdram_pmc.o
++  .text.PMC_IsPeriphEnabled
++                 0x0000000000000000       0x14 obj/sdram_pmc.o
++  .rodata.str1.1
++                 0x0000000000000000      0x118 obj/sdram_pmc.o
++  .text          0x0000000000000000        0x0 obj/sdram_stdio.o
++  .data          0x0000000000000000        0x0 obj/sdram_stdio.o
++  .bss           0x0000000000000000        0x0 obj/sdram_stdio.o
++  .text.PutChar  0x0000000000000000        0x6 obj/sdram_stdio.o
++  .text.PutString
++                 0x0000000000000000       0x14 obj/sdram_stdio.o
++  .text.PutUnsignedInt
++                 0x0000000000000000       0x58 obj/sdram_stdio.o
++  .text.PutSignedInt
++                 0x0000000000000000       0x78 obj/sdram_stdio.o
++  .text.PutHexa  0x0000000000000000       0x54 obj/sdram_stdio.o
++  .text.vsnprintf
++                 0x0000000000000000      0x11c obj/sdram_stdio.o
++  .text.snprintf
++                 0x0000000000000000       0x1c obj/sdram_stdio.o
++  .text.vsprintf
++                 0x0000000000000000       0x14 obj/sdram_stdio.o
++  .text.vfprintf
++                 0x0000000000000000       0x4c obj/sdram_stdio.o
++  .text.vprintf  0x0000000000000000       0x1c obj/sdram_stdio.o
++  .text.fprintf  0x0000000000000000       0x1c obj/sdram_stdio.o
++  .text.printf   0x0000000000000000       0x1c obj/sdram_stdio.o
++  .text.sprintf  0x0000000000000000       0x1c obj/sdram_stdio.o
++  .text.puts     0x0000000000000000       0x14 obj/sdram_stdio.o
++  .rodata.str1.1
++                 0x0000000000000000       0x24 obj/sdram_stdio.o
++  .text          0x0000000000000000        0x0 obj/sdram_trace.o
++  .data          0x0000000000000000        0x4 obj/sdram_trace.o
++  .bss           0x0000000000000000        0x0 obj/sdram_trace.o
++  .text.PrintChar
++                 0x0000000000000000       0x28 obj/sdram_trace.o
++  .text.fputc    0x0000000000000000       0x34 obj/sdram_trace.o
++  .text.fputs    0x0000000000000000       0x28 obj/sdram_trace.o
++  .text.putchar  0x0000000000000000       0x14 obj/sdram_trace.o
++  .text.TRACE_DumpFrame
++                 0x0000000000000000       0x2c obj/sdram_trace.o
++  .text.TRACE_DumpMemory
++                 0x0000000000000000       0xf0 obj/sdram_trace.o
++  .text.TRACE_GetInteger
++                 0x0000000000000000       0x7c obj/sdram_trace.o
++  .text.TRACE_GetIntegerMinMax
++                 0x0000000000000000       0x4c obj/sdram_trace.o
++  .text.TRACE_GetHexa32
++                 0x0000000000000000       0x80 obj/sdram_trace.o
++  .rodata.str1.1
++                 0x0000000000000000       0xcc obj/sdram_trace.o
++  .debug_info    0x0000000000000000      0x71b obj/sdram_trace.o
++  .debug_abbrev  0x0000000000000000      0x216 obj/sdram_trace.o
++  .debug_loc     0x0000000000000000      0x4e9 obj/sdram_trace.o
++  .debug_aranges
++                 0x0000000000000000       0x60 obj/sdram_trace.o
++  .debug_ranges  0x0000000000000000       0x50 obj/sdram_trace.o
++  .debug_line    0x0000000000000000      0x466 obj/sdram_trace.o
++  .debug_str     0x0000000000000000      0x43e obj/sdram_trace.o
++  .comment       0x0000000000000000       0x3b obj/sdram_trace.o
++  .note.GNU-stack
++                 0x0000000000000000        0x0 obj/sdram_trace.o
++  .ARM.attributes
++                 0x0000000000000000       0x2d obj/sdram_trace.o
++  .debug_frame   0x0000000000000000      0x11c obj/sdram_trace.o
++  .text          0x0000000000000000       0x14 /home/martin/powerbee/openwrt/staging_dir/toolchain-arm_v5te_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/lib64/gcc/arm-openwrt-linux-uclibcgnueabi/4.6.4/libgcc.a(_thumb1_case_uqi.o)
++  .data          0x0000000000000000        0x0 /home/martin/powerbee/openwrt/staging_dir/toolchain-arm_v5te_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/lib64/gcc/arm-openwrt-linux-uclibcgnueabi/4.6.4/libgcc.a(_thumb1_case_uqi.o)
++  .bss           0x0000000000000000        0x0 /home/martin/powerbee/openwrt/staging_dir/toolchain-arm_v5te_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/lib64/gcc/arm-openwrt-linux-uclibcgnueabi/4.6.4/libgcc.a(_thumb1_case_uqi.o)
++  .note.GNU-stack
++                 0x0000000000000000        0x0 /home/martin/powerbee/openwrt/staging_dir/toolchain-arm_v5te_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/lib64/gcc/arm-openwrt-linux-uclibcgnueabi/4.6.4/libgcc.a(_thumb1_case_uqi.o)
++  .ARM.attributes
++                 0x0000000000000000       0x1f /home/martin/powerbee/openwrt/staging_dir/toolchain-arm_v5te_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/lib64/gcc/arm-openwrt-linux-uclibcgnueabi/4.6.4/libgcc.a(_thumb1_case_uqi.o)
++  .debug_line    0x0000000000000000       0xd5 /home/martin/powerbee/openwrt/staging_dir/toolchain-arm_v5te_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/lib64/gcc/arm-openwrt-linux-uclibcgnueabi/4.6.4/libgcc.a(_thumb1_case_uqi.o)
++  .debug_info    0x0000000000000000      0x166 /home/martin/powerbee/openwrt/staging_dir/toolchain-arm_v5te_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/lib64/gcc/arm-openwrt-linux-uclibcgnueabi/4.6.4/libgcc.a(_thumb1_case_uqi.o)
++  .debug_abbrev  0x0000000000000000       0x14 /home/martin/powerbee/openwrt/staging_dir/toolchain-arm_v5te_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/lib64/gcc/arm-openwrt-linux-uclibcgnueabi/4.6.4/libgcc.a(_thumb1_case_uqi.o)
++  .debug_aranges
++                 0x0000000000000000       0x20 /home/martin/powerbee/openwrt/staging_dir/toolchain-arm_v5te_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/lib64/gcc/arm-openwrt-linux-uclibcgnueabi/4.6.4/libgcc.a(_thumb1_case_uqi.o)
++  .data          0x0000000000000000        0x0 /home/martin/powerbee/openwrt/staging_dir/toolchain-arm_v5te_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/lib64/gcc/arm-openwrt-linux-uclibcgnueabi/4.6.4/libgcc.a(_udivsi3.o)
++  .bss           0x0000000000000000        0x0 /home/martin/powerbee/openwrt/staging_dir/toolchain-arm_v5te_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/lib64/gcc/arm-openwrt-linux-uclibcgnueabi/4.6.4/libgcc.a(_udivsi3.o)
++  .data          0x0000000000000000        0x0 /home/martin/powerbee/openwrt/staging_dir/toolchain-arm_v5te_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/lib64/gcc/arm-openwrt-linux-uclibcgnueabi/4.6.4/libgcc.a(_dvmd_lnx.o)
++  .bss           0x0000000000000000        0x0 /home/martin/powerbee/openwrt/staging_dir/toolchain-arm_v5te_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/lib64/gcc/arm-openwrt-linux-uclibcgnueabi/4.6.4/libgcc.a(_dvmd_lnx.o)
++ 
++ Memory Configuration
++ 
++ Name             Origin             Length             Attributes
++ sram0            0x0000000000200000 0x0000000000004000 w !xr
++ sram1            0x0000000000300000 0x0000000000004000 w !xr
++ sdram            0x0000000020000000 0x0000000004000000 w !xr
++ *default*        0x0000000000000000 0xffffffffffffffff
++ 
++ Linker script and memory map
++ 
++ LOAD obj/sdram_applet_cstartup.o
++ LOAD obj/sdram_main.o
++ LOAD obj/sdram_board_memories.o
++ LOAD obj/sdram_board_lowlevel.o
++ LOAD obj/sdram_dbgu.o
++ LOAD obj/sdram_pio.o
++ LOAD obj/sdram_pmc.o
++ LOAD obj/sdram_stdio.o
++ LOAD obj/sdram_trace.o
++ LOAD /home/martin/powerbee/openwrt/staging_dir/toolchain-arm_v5te_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/lib64/gcc/arm-openwrt-linux-uclibcgnueabi/4.6.4/libgcc.a
++ 
++ .fixed          0x0000000020000000      0x758
++                 0x0000000020000000                . = ALIGN (0x4)
++                 0x0000000020000000                _sfixed = .
++  *(.text*)
++  .text          0x0000000020000000       0xf0 obj/sdram_applet_cstartup.o
++                 0x0000000020000000                entry
++  .text.user_Configrue_pll
++                 0x00000000200000f0      0x180 obj/sdram_main.o
++  .text.user_defined_LowlevelInit.part.0
++                 0x0000000020000270       0x7c obj/sdram_main.o
++  .text.startup.main
++                 0x00000000200002ec       0x90 obj/sdram_main.o
++                 0x00000000200002ec                main
++  .text.BOARD_RemapRam
++                 0x000000002000037c        0xc obj/sdram_board_memories.o
++                 0x000000002000037c                BOARD_RemapRam
++  .text.defaultSpuriousHandler
++                 0x0000000020000388        0x4 obj/sdram_board_lowlevel.o
++                 0x0000000020000388                defaultSpuriousHandler
++  .text.defaultFiqHandler
++                 0x000000002000038c        0x4 obj/sdram_board_lowlevel.o
++                 0x000000002000038c                defaultFiqHandler
++  .text.defaultIrqHandler
++                 0x0000000020000390        0x4 obj/sdram_board_lowlevel.o
++                 0x0000000020000390                defaultIrqHandler
++  .text.LowLevelInit
++                 0x0000000020000394       0xc4 obj/sdram_board_lowlevel.o
++                 0x0000000020000394                LowLevelInit
++  .text.DBGU_Configure
++                 0x0000000020000458       0x38 obj/sdram_dbgu.o
++                 0x0000000020000458                DBGU_Configure
++  .text.DBGU_PutChar
++                 0x0000000020000490       0x24 obj/sdram_dbgu.o
++                 0x0000000020000490                DBGU_PutChar
++  .text._PMC_SetMckPrescaler
++                 0x00000000200004b4       0x20 obj/sdram_pmc.o
++  .text._PMC_SwitchMck2MainClock
++                 0x00000000200004d4       0x20 obj/sdram_pmc.o
++  .text.PMC_SwitchMck2SlowClock
++                 0x00000000200004f4       0x18 obj/sdram_pmc.o
++                 0x00000000200004f4                PMC_SwitchMck2SlowClock
++  .text.PMC_SetMckSelection
++                 0x000000002000050c       0x68 obj/sdram_pmc.o
++                 0x000000002000050c                PMC_SetMckSelection
++  .text.PMC_SetPllClock
++                 0x0000000020000574       0x50 obj/sdram_pmc.o
++                 0x0000000020000574                PMC_SetPllClock
++  .text.PMC_EnableMainOsc
++                 0x00000000200005c4       0x20 obj/sdram_pmc.o
++                 0x00000000200005c4                PMC_EnableMainOsc
++  .text.PMC_BypassMainOsc
++                 0x00000000200005e4       0x34 obj/sdram_pmc.o
++                 0x00000000200005e4                PMC_BypassMainOsc
++  .text.PMC_ConfigureMckWithPlla
++                 0x0000000020000618       0x50 obj/sdram_pmc.o
++                 0x0000000020000618                PMC_ConfigureMckWithPlla
++  .text.raise    0x0000000020000668        0x4 obj/sdram_stdio.o
++                 0x0000000020000668                raise
++  .text          0x000000002000066c       0xc8 /home/martin/powerbee/openwrt/staging_dir/toolchain-arm_v5te_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/lib64/gcc/arm-openwrt-linux-uclibcgnueabi/4.6.4/libgcc.a(_udivsi3.o)
++                 0x000000002000066c                __udivsi3
++                 0x000000002000066c                __aeabi_uidiv
++                 0x0000000020000714                __aeabi_uidivmod
++  .text          0x0000000020000734       0x10 /home/martin/powerbee/openwrt/staging_dir/toolchain-arm_v5te_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/lib64/gcc/arm-openwrt-linux-uclibcgnueabi/4.6.4/libgcc.a(_dvmd_lnx.o)
++                 0x0000000020000734                __aeabi_ldiv0
++                 0x0000000020000734                __aeabi_idiv0
++  *fill*         0x0000000020000744        0x4 00
++  .text.stub     0x0000000020000748        0xc linker stubs
++  *(.rodata*)
++  *(.glue_7)
++  .glue_7        0x0000000000000000        0x0 linker stubs
++  *(.glue_7t)
++  .glue_7t       0x0000000000000000        0x0 linker stubs
++  *(.data)
++  *(.CP15_*)
++                 0x0000000020000754                . = ALIGN (0x4)
++                 0x0000000020000754                _efixed = .
++ 
++ .vfp11_veneer   0x0000000020000758        0x0
++  .vfp11_veneer  0x0000000000000000        0x0 linker stubs
++ 
++ .v4_bx          0x0000000020000758        0x0
++  .v4_bx         0x0000000000000000        0x0 linker stubs
++ 
++ .iplt           0x0000000020000758        0x0
++  .iplt          0x0000000000000000        0x0 obj/sdram_applet_cstartup.o
++ 
++ .igot.plt       0x0000000020000758        0x0
++  .igot.plt      0x0000000000000000        0x0 obj/sdram_applet_cstartup.o
++ 
++ .rel.dyn        0x0000000020000758        0x0
++  .rel.iplt      0x0000000000000000        0x0 obj/sdram_applet_cstartup.o
++ 
++ .prerelocate    0x0000000000000000        0x0 load address 0x0000000020000758
++                 0x0000000000000000                . = ALIGN (0x4)
++                 0x0000000000000000                _sprerelocate = .
++                 0x0000000000000000                . = ALIGN (0x4)
++                 0x0000000000000000                _eprerelocate = .
++ 
++ .postrelocate   0x0000000000200000        0x0 load address 0x0000000020000758
++                 0x0000000000200000                . = ALIGN (0x4)
++                 0x0000000000200000                _spostrelocate = .
++  *(.vectors)
++  *(.ramfunc)
++                 0x0000000000200000                . = ALIGN (0x4)
++                 0x0000000000200000                _epostrelocate = .
++ 
++ .bss            0x0000000020000758       0x20
++                 0x0000000020000758                _szero = .
++  *(.bss)
++                 0x0000000020000758                . = ALIGN (0x4)
++                 0x0000000020000758                _ezero = .
++  COMMON         0x0000000020000758       0x20 obj/sdram_main.o
++                 0x0000000020000758                usbdiv
++                 0x000000002000075c                prescaler
++                 0x0000000020000760                mck
++                 0x0000000020000764                plldiv2
++                 0x0000000020000768                mul
++                 0x000000002000076c                mdiv
++                 0x0000000020000770                pllout
++                 0x0000000020000774                div
++                 0x0000000024000000                _sstack = 0x24000000
++                 0x0000000020000778                end = .
++ OUTPUT(bin/applet-lowlevelinit-at91sam9g20.elf elf32-littlearm)
++ 
++ .ARM.attributes
++                 0x0000000000000000       0x29
++  .ARM.attributes
++                 0x0000000000000000       0x1d obj/sdram_applet_cstartup.o
++  .ARM.attributes
++                 0x000000000000001d       0x2d obj/sdram_main.o
++  .ARM.attributes
++                 0x000000000000004a       0x2d obj/sdram_board_memories.o
++  .ARM.attributes
++                 0x0000000000000077       0x2d obj/sdram_board_lowlevel.o
++  .ARM.attributes
++                 0x00000000000000a4       0x2d obj/sdram_dbgu.o
++  .ARM.attributes
++                 0x00000000000000d1       0x2d obj/sdram_pmc.o
++  .ARM.attributes
++                 0x00000000000000fe       0x2d obj/sdram_stdio.o
++  .ARM.attributes
++                 0x000000000000012b       0x1f /home/martin/powerbee/openwrt/staging_dir/toolchain-arm_v5te_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/lib64/gcc/arm-openwrt-linux-uclibcgnueabi/4.6.4/libgcc.a(_udivsi3.o)
++  .ARM.attributes
++                 0x000000000000014a       0x1f /home/martin/powerbee/openwrt/staging_dir/toolchain-arm_v5te_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/lib64/gcc/arm-openwrt-linux-uclibcgnueabi/4.6.4/libgcc.a(_dvmd_lnx.o)
++ 
++ .comment        0x0000000000000000       0x3a
++  .comment       0x0000000000000000       0x3a obj/sdram_main.o
++                                          0x3b (size before relaxing)
++  .comment       0x0000000000000000       0x3b obj/sdram_board_memories.o
++  .comment       0x0000000000000000       0x3b obj/sdram_board_lowlevel.o
++  .comment       0x0000000000000000       0x3b obj/sdram_dbgu.o
++  .comment       0x0000000000000000       0x3b obj/sdram_pmc.o
++  .comment       0x0000000000000000       0x3b obj/sdram_stdio.o
++ 
++ .note.GNU-stack
++                 0x0000000000000000        0x0
++  .note.GNU-stack
++                 0x0000000000000000        0x0 obj/sdram_main.o
++  .note.GNU-stack
++                 0x0000000000000000        0x0 obj/sdram_board_memories.o
++  .note.GNU-stack
++                 0x0000000000000000        0x0 obj/sdram_board_lowlevel.o
++  .note.GNU-stack
++                 0x0000000000000000        0x0 obj/sdram_dbgu.o
++  .note.GNU-stack
++                 0x0000000000000000        0x0 obj/sdram_pmc.o
++  .note.GNU-stack
++                 0x0000000000000000        0x0 obj/sdram_stdio.o
++  .note.GNU-stack
++                 0x0000000000000000        0x0 /home/martin/powerbee/openwrt/staging_dir/toolchain-arm_v5te_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/lib64/gcc/arm-openwrt-linux-uclibcgnueabi/4.6.4/libgcc.a(_udivsi3.o)
++  .note.GNU-stack
++                 0x0000000000000000        0x0 /home/martin/powerbee/openwrt/staging_dir/toolchain-arm_v5te_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/lib64/gcc/arm-openwrt-linux-uclibcgnueabi/4.6.4/libgcc.a(_dvmd_lnx.o)
++ 
++ .debug_line     0x0000000000000000      0xea7
++  .debug_line    0x0000000000000000       0x6f obj/sdram_applet_cstartup.o
++  .debug_line    0x000000000000006f       0xd4 obj/sdram_main.o
++  .debug_line    0x0000000000000143      0x21e obj/sdram_board_memories.o
++  .debug_line    0x0000000000000361      0x117 obj/sdram_board_lowlevel.o
++  .debug_line    0x0000000000000478       0xf5 obj/sdram_dbgu.o
++  .debug_line    0x000000000000056d      0x28e obj/sdram_pmc.o
++  .debug_line    0x00000000000007fb      0x4e8 obj/sdram_stdio.o
++  .debug_line    0x0000000000000ce3       0xf1 /home/martin/powerbee/openwrt/staging_dir/toolchain-arm_v5te_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/lib64/gcc/arm-openwrt-linux-uclibcgnueabi/4.6.4/libgcc.a(_udivsi3.o)
++  .debug_line    0x0000000000000dd4       0xd3 /home/martin/powerbee/openwrt/staging_dir/toolchain-arm_v5te_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/lib64/gcc/arm-openwrt-linux-uclibcgnueabi/4.6.4/libgcc.a(_dvmd_lnx.o)
++ 
++ .debug_info     0x0000000000000000     0x2961
++  .debug_info    0x0000000000000000       0xcf obj/sdram_applet_cstartup.o
++  .debug_info    0x00000000000000cf      0x3f7 obj/sdram_main.o
++  .debug_info    0x00000000000004c6      0xaa3 obj/sdram_board_memories.o
++  .debug_info    0x0000000000000f69      0x417 obj/sdram_board_lowlevel.o
++  .debug_info    0x0000000000001380      0x297 obj/sdram_dbgu.o
++  .debug_info    0x0000000000001617      0x5c3 obj/sdram_pmc.o
++  .debug_info    0x0000000000001bda      0xabb obj/sdram_stdio.o
++  .debug_info    0x0000000000002695      0x166 /home/martin/powerbee/openwrt/staging_dir/toolchain-arm_v5te_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/lib64/gcc/arm-openwrt-linux-uclibcgnueabi/4.6.4/libgcc.a(_udivsi3.o)
++  .debug_info    0x00000000000027fb      0x166 /home/martin/powerbee/openwrt/staging_dir/toolchain-arm_v5te_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/lib64/gcc/arm-openwrt-linux-uclibcgnueabi/4.6.4/libgcc.a(_dvmd_lnx.o)
++ 
++ .debug_abbrev   0x0000000000000000      0xa15
++  .debug_abbrev  0x0000000000000000       0x14 obj/sdram_applet_cstartup.o
++  .debug_abbrev  0x0000000000000014      0x1a7 obj/sdram_main.o
++  .debug_abbrev  0x00000000000001bb      0x16c obj/sdram_board_memories.o
++  .debug_abbrev  0x0000000000000327      0x11f obj/sdram_board_lowlevel.o
++  .debug_abbrev  0x0000000000000446       0xe0 obj/sdram_dbgu.o
++  .debug_abbrev  0x0000000000000526      0x230 obj/sdram_pmc.o
++  .debug_abbrev  0x0000000000000756      0x297 obj/sdram_stdio.o
++  .debug_abbrev  0x00000000000009ed       0x14 /home/martin/powerbee/openwrt/staging_dir/toolchain-arm_v5te_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/lib64/gcc/arm-openwrt-linux-uclibcgnueabi/4.6.4/libgcc.a(_udivsi3.o)
++  .debug_abbrev  0x0000000000000a01       0x14 /home/martin/powerbee/openwrt/staging_dir/toolchain-arm_v5te_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/lib64/gcc/arm-openwrt-linux-uclibcgnueabi/4.6.4/libgcc.a(_dvmd_lnx.o)
++ 
++ .debug_aranges  0x0000000000000000      0x278
++  .debug_aranges
++                 0x0000000000000000       0x20 obj/sdram_applet_cstartup.o
++  .debug_aranges
++                 0x0000000000000020       0x30 obj/sdram_main.o
++  .debug_aranges
++                 0x0000000000000050       0x58 obj/sdram_board_memories.o
++  .debug_aranges
++                 0x00000000000000a8       0x38 obj/sdram_board_lowlevel.o
++  .debug_aranges
++                 0x00000000000000e0       0x38 obj/sdram_dbgu.o
++  .debug_aranges
++                 0x0000000000000118       0x90 obj/sdram_pmc.o
++  .debug_aranges
++                 0x00000000000001a8       0x90 obj/sdram_stdio.o
++  .debug_aranges
++                 0x0000000000000238       0x20 /home/martin/powerbee/openwrt/staging_dir/toolchain-arm_v5te_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/lib64/gcc/arm-openwrt-linux-uclibcgnueabi/4.6.4/libgcc.a(_udivsi3.o)
++  .debug_aranges
++                 0x0000000000000258       0x20 /home/martin/powerbee/openwrt/staging_dir/toolchain-arm_v5te_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/lib64/gcc/arm-openwrt-linux-uclibcgnueabi/4.6.4/libgcc.a(_dvmd_lnx.o)
++ 
++ .debug_loc      0x0000000000000000     0x1394
++  .debug_loc     0x0000000000000000      0x1fc obj/sdram_main.o
++  .debug_loc     0x00000000000001fc      0x200 obj/sdram_board_memories.o
++  .debug_loc     0x00000000000003fc      0x11f obj/sdram_board_lowlevel.o
++  .debug_loc     0x000000000000051b       0xb1 obj/sdram_dbgu.o
++  .debug_loc     0x00000000000005cc      0x3c8 obj/sdram_pmc.o
++  .debug_loc     0x0000000000000994      0xa00 obj/sdram_stdio.o
++ 
++ .debug_ranges   0x0000000000000000      0x1b8
++  .debug_ranges  0x0000000000000000       0x20 obj/sdram_main.o
++  .debug_ranges  0x0000000000000020       0x48 obj/sdram_board_memories.o
++  .debug_ranges  0x0000000000000068       0x28 obj/sdram_board_lowlevel.o
++  .debug_ranges  0x0000000000000090       0x28 obj/sdram_dbgu.o
++  .debug_ranges  0x00000000000000b8       0x80 obj/sdram_pmc.o
++  .debug_ranges  0x0000000000000138       0x80 obj/sdram_stdio.o
++ 
++ .debug_str      0x0000000000000000     0x10b4
++  .debug_str     0x0000000000000000      0x1fb obj/sdram_main.o
++                                         0x240 (size before relaxing)
++  .debug_str     0x00000000000001fb      0x616 obj/sdram_board_memories.o
++                                         0x702 (size before relaxing)
++  .debug_str     0x0000000000000811      0x1f5 obj/sdram_board_lowlevel.o
++                                         0x32a (size before relaxing)
++  .debug_str     0x0000000000000a06      0x14d obj/sdram_dbgu.o
++                                         0x230 (size before relaxing)
++  .debug_str     0x0000000000000b53      0x26e obj/sdram_pmc.o
++                                         0x43f (size before relaxing)
++  .debug_str     0x0000000000000dc1      0x2f3 obj/sdram_stdio.o
++                                         0x472 (size before relaxing)
++ 
++ .debug_frame    0x0000000000000000      0x548
++  .debug_frame   0x0000000000000000       0x5c obj/sdram_main.o
++  .debug_frame   0x000000000000005c       0xc8 obj/sdram_board_memories.o
++  .debug_frame   0x0000000000000124       0x74 obj/sdram_board_lowlevel.o
++  .debug_frame   0x0000000000000198       0x70 obj/sdram_dbgu.o
++  .debug_frame   0x0000000000000208      0x178 obj/sdram_pmc.o
++  .debug_frame   0x0000000000000380      0x1a8 obj/sdram_stdio.o
++  .debug_frame   0x0000000000000528       0x20 /home/martin/powerbee/openwrt/staging_dir/toolchain-arm_v5te_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/lib64/gcc/arm-openwrt-linux-uclibcgnueabi/4.6.4/libgcc.a(_udivsi3.o)
+diff -cr sam-ba_cdc_cdc_linux/applets/legacy/sam-ba_applets/lowlevelinit/Makefile sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/Makefile
+*** sam-ba_cdc_cdc_linux/applets/legacy/sam-ba_applets/lowlevelinit/Makefile	2012-06-27 14:19:20.000000000 +0200
+--- sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/Makefile	2013-03-23 17:10:32.037869404 +0100
+***************
+*** 100,106 ****
+  CFLAGS += -g $(OPTIMIZATION) -mthumb $(INCLUDES) -D$(CHIP) -DDYN_TRACES
+  
+  ASFLAGS = $(TARGET_OPTS) -Wall -g $(OPTIMIZATION) $(INCLUDES) -D$(CHIP) -D__ASSEMBLY__
+! LDFLAGS = -g $(OPTIMIZATION) $(TARGET_OPTS) -Wl,-Map=$(OUTPUT).map,--gc-sections #-nostartfiles 
+  
+  #-------------------------------------------------------------------------------
+  # Trace level used for compilation
+--- 100,106 ----
+  CFLAGS += -g $(OPTIMIZATION) -mthumb $(INCLUDES) -D$(CHIP) -DDYN_TRACES
+  
+  ASFLAGS = $(TARGET_OPTS) -Wall -g $(OPTIMIZATION) $(INCLUDES) -D$(CHIP) -D__ASSEMBLY__
+! LDFLAGS = -g $(OPTIMIZATION) $(TARGET_OPTS) -Wl,-Map=$(OUTPUT).map,--gc-sections -static -nostartup -nostdlib
+  
+  #-------------------------------------------------------------------------------
+  # Trace level used for compilation
+***************
+*** 184,190 ****
+  ASM_OBJECTS_$(1) = $(addprefix $(OBJ)/$(1)_, $(ASM_OBJECTS))
+  
+  $(1): $$(ASM_OBJECTS_$(1)) $$(C_OBJECTS_$(1)) 
+! 	$(CC) $(LDFLAGS) -T"$(AT91LIB)/boards/$(BOARD)/$(CHIP)/$$@_samba.lds" -o $(OUTPUT).elf $$^
+  	$(OBJCOPY) -O binary $(OUTPUT).elf $(OUTPUT).bin
+  	$(SIZE) $$^ $(OUTPUT).elf
+  	@[ -e $(INSTALLDIR) ] || mkdir $(INSTALLDIR)
+--- 184,190 ----
+  ASM_OBJECTS_$(1) = $(addprefix $(OBJ)/$(1)_, $(ASM_OBJECTS))
+  
+  $(1): $$(ASM_OBJECTS_$(1)) $$(C_OBJECTS_$(1)) 
+! 	$(CC) $(LDFLAGS) -T"$(AT91LIB)/boards/$(BOARD)/$(CHIP)/$$@_samba.lds" -o $(OUTPUT).elf $$^ -lgcc
+  	$(OBJCOPY) -O binary $(OUTPUT).elf $(OUTPUT).bin
+  	$(SIZE) $$^ $(OUTPUT).elf
+  	@[ -e $(INSTALLDIR) ] || mkdir $(INSTALLDIR)
+Nur in sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/obj: flash_applet_cstartup.o.
+Nur in sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/obj: flash_board_lowlevel.o.
+Nur in sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/obj: flash_board_memories.o.
+Nur in sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/obj: flash_dbgu.o.
+Nur in sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/obj: flash_main.o.
+Nur in sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/obj: flash_pio.o.
+Nur in sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/obj: flash_pmc.o.
+Nur in sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/obj: flash_stdio.o.
+Nur in sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/obj: flash_trace.o.
+Binärdateien sam-ba_cdc_cdc_linux/applets/legacy/sam-ba_applets/lowlevelinit/obj/sdram_board_lowlevel.o and sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/obj/sdram_board_lowlevel.o sind verschieden.
+Binärdateien sam-ba_cdc_cdc_linux/applets/legacy/sam-ba_applets/lowlevelinit/obj/sdram_board_memories.o and sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/obj/sdram_board_memories.o sind verschieden.
+Binärdateien sam-ba_cdc_cdc_linux/applets/legacy/sam-ba_applets/lowlevelinit/obj/sdram_dbgu.o and sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/obj/sdram_dbgu.o sind verschieden.
+Binärdateien sam-ba_cdc_cdc_linux/applets/legacy/sam-ba_applets/lowlevelinit/obj/sdram_main.o and sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/obj/sdram_main.o sind verschieden.
+Binärdateien sam-ba_cdc_cdc_linux/applets/legacy/sam-ba_applets/lowlevelinit/obj/sdram_pio.o and sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/obj/sdram_pio.o sind verschieden.
+Binärdateien sam-ba_cdc_cdc_linux/applets/legacy/sam-ba_applets/lowlevelinit/obj/sdram_pmc.o and sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/obj/sdram_pmc.o sind verschieden.
+Binärdateien sam-ba_cdc_cdc_linux/applets/legacy/sam-ba_applets/lowlevelinit/obj/sdram_stdio.o and sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/obj/sdram_stdio.o sind verschieden.
+Binärdateien sam-ba_cdc_cdc_linux/applets/legacy/sam-ba_applets/lowlevelinit/obj/sdram_trace.o and sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/obj/sdram_trace.o sind verschieden.
+Nur in sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/obj: sram_applet_cstartup.o.
+Nur in sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/obj: sram_board_lowlevel.o.
+Nur in sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/obj: sram_board_memories.o.
+Nur in sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/obj: sram_dbgu.o.
+Nur in sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/obj: sram_main.o.
+Nur in sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/obj: sram_pio.o.
+Nur in sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/obj: sram_pmc.o.
+Nur in sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/obj: sram_stdio.o.
+Nur in sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit/obj: sram_trace.o.
+Nur in sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit: sdram_samba.lds.
+Nur in sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit: tst.lds.
+Nur in sam-ba_cdc_cdc_linux.new/applets/legacy/sam-ba_applets/lowlevelinit: vmlinux.lds.
+Binärdateien sam-ba_cdc_cdc_linux/tcl_lib/at91sam3u4-ek/applet-lowlevelinit-at91sam3u4.bin and sam-ba_cdc_cdc_linux.new/tcl_lib/at91sam3u4-ek/applet-lowlevelinit-at91sam3u4.bin sind verschieden.
+Binärdateien sam-ba_cdc_cdc_linux/tcl_lib/at91sam9g20-ek/applet-lowlevelinit-at91sam9g20.bin and sam-ba_cdc_cdc_linux.new/tcl_lib/at91sam9g20-ek/applet-lowlevelinit-at91sam9g20.bin sind verschieden.

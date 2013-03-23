@@ -37,7 +37,8 @@ endef
 
 
 define Package/sam-ba/install
-  false
+	$(INSTALL_DIR) $(STAGING_DIR_HOST)/sam-ba
+	$(CP) $(PKG_BUILD_DIR)/* $(STAGING_DIR_HOST)/sam-ba
 endef
 
 $(eval $(call BuildPackage,sam-ba))
