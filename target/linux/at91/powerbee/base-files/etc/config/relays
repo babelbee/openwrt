@@ -1,15 +1,15 @@
 
-config relay
+config relay 'L1'
 	option name 'L1'
 	option new 'off'
 	option boot 'last'
 
-config relay
+config relay 'L2'
 	option name 'L2'
 	option new 'off'
 	option boot 'last'
 
-config relay
+config relay 'L3'
 	option name 'L3'
 	option new 'off'
 	option boot 'last'
