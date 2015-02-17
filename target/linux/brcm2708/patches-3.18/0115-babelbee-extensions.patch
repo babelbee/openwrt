@@ -1,0 +1,32 @@
+diff -cr linux-3.18.7.orig/arch/arm/mach-bcm2708/bcm2708.c linux-3.18.7/arch/arm/mach-bcm2708/bcm2708.c
+*** linux-3.18.7.orig/arch/arm/mach-bcm2708/bcm2708.c	2015-02-17 18:25:49.343211904 +0100
+--- linux-3.18.7/arch/arm/mach-bcm2708/bcm2708.c	2015-02-17 18:44:02.119550320 +0100
+***************
+*** 943,948 ****
+--- 943,950 ----
+  	    spi_register_board_info(bcm2708_spi_devices,
+  				    ARRAY_SIZE(bcm2708_spi_devices));
+  #endif
++ extern void babelbee_init(void);
++ 	babelbee_init();
+  }
+  
+  static void timer_set_mode(enum clock_event_mode mode,
+diff -cr linux-3.18.7.orig/arch/arm/mach-bcm2708/Makefile linux-3.18.7/arch/arm/mach-bcm2708/Makefile
+*** linux-3.18.7.orig/arch/arm/mach-bcm2708/Makefile	2015-02-17 18:25:48.693220030 +0100
+--- linux-3.18.7/arch/arm/mach-bcm2708/Makefile	2015-02-17 18:42:23.809779361 +0100
+***************
+*** 2,7 ****
+  # Makefile for the linux kernel.
+  #
+  
+! obj-$(CONFIG_MACH_BCM2708) 	+= bcm2708.o armctrl.o vcio.o power.o dma.o
+  obj-$(CONFIG_BCM2708_GPIO)	+= bcm2708_gpio.o
+  obj-$(CONFIG_BCM2708_VCMEM)	+= vc_mem.o
+--- 2,7 ----
+  # Makefile for the linux kernel.
+  #
+  
+! obj-$(CONFIG_MACH_BCM2708) 	+= bcm2708.o armctrl.o vcio.o power.o dma.o bcm2708_babelbee.o
+  obj-$(CONFIG_BCM2708_GPIO)	+= bcm2708_gpio.o
+  obj-$(CONFIG_BCM2708_VCMEM)	+= vc_mem.o

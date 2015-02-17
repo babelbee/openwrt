@@ -1,0 +1,104 @@
+#include <linux/i2c.h>
+#include <linux/platform_device.h>
+#include <linux/i2c/pcf857x.h>
+#include <linux/gpio.h>
+#include <linux/can/platform/mcp251x.h>
+#include <linux/spi/spi_gpio.h>
+#include <mach/gpio.h>
+
+extern int bcm_register_device(struct platform_device *pdev);
+
+
+static struct i2c_board_info __initdata babelbee_i2c_devices1[] = {
+	{
+		I2C_BOARD_INFO("pcf8563", 0x51)
+	},
+};
+
+static struct pcf857x_platform_data pcf_data = {
+	.gpio_base      = BCM2708_NR_GPIOS,
+};
+
+static struct i2c_board_info __initdata babelbee_i2c_devices2[] = {
+	{
+		I2C_BOARD_INFO("ds2482", 0x18)
+	},
+	{
+		I2C_BOARD_INFO("pcf8574", 0x20),
+		.platform_data = &pcf_data
+	},
+};
+
+static struct mcp251x_platform_data mcp251x_info0 = {
+         .oscillator_frequency = 20000000,
+};
+
+static struct mcp251x_platform_data mcp251x_info1 = {
+         .oscillator_frequency = 20000000,
+};
+
+static struct spi_gpio_platform_data babelbee_spi_gpio_pdata = {
+        .sck            = 42,
+        .mosi           = 41,
+        .miso           = 40,
+        .num_chipselect = 1,
+};
+
+static struct platform_device babelbee_spi_gpio = {
+        .name           = "spi_gpio",
+        .id             = 3,
+        .dev            = {
+                .platform_data  = &babelbee_spi_gpio_pdata,
+        },
+};
+
+static struct spi_board_info babelbee_spi_devices[] = {
+	{	
+		.modalias	= "ade7854",
+		.bus_num	= 3,
+		.chip_select	= 0,
+		.mode		= SPI_MODE_3,
+		.max_speed_hz	= 5000000, /* 5 MHz */
+		.controller_data = 43,
+	},
+	{	
+		.modalias = "mcp2515",
+		.platform_data = &mcp251x_info0,
+		.bus_num	= 0,
+		.chip_select = 0,
+		.irq = gpio_to_irq(19),
+		.max_speed_hz = 2*1000*1000,
+	},
+	{	
+		.modalias = "mcp2515",
+		.platform_data = &mcp251x_info1,
+		.bus_num	= 0,
+		.chip_select = 1,
+		.irq = gpio_to_irq(20),
+		.max_speed_hz = 2*1000*1000,
+	},
+};
+
+static struct platform_device babelbee_gpio_device = {
+	.name = "babelbee-gpio",
+	.id = -1,
+};
+
+void
+babelbee_init(void)
+{
+	bcm_register_device(&babelbee_spi_gpio);
+	bcm_register_device(&babelbee_gpio_device);
+        i2c_register_board_info(0, babelbee_i2c_devices1, ARRAY_SIZE(babelbee_i2c_devices1));
+        i2c_register_board_info(1, babelbee_i2c_devices2, ARRAY_SIZE(babelbee_i2c_devices2));
+	spi_register_board_info(babelbee_spi_devices, ARRAY_SIZE(babelbee_spi_devices));
+	gpio_request(21, "button1");
+	gpio_direction_input(21);
+	gpio_export(21, 0);
+	gpio_export_link(&babelbee_gpio_device.dev, "button1", 21);
+	gpio_request(22, "button2");
+	gpio_direction_input(22);
+	gpio_export(22, 0);
+	gpio_export_link(&babelbee_gpio_device.dev, "button2", 22);
+}
+
