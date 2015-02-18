@@ -968,3 +968,72 @@ define KernelPackage/gpio-beeper/description
 endef
 
 $(eval $(call KernelPackage,gpio-beeper))
+
+define KernelPackage/ade7854
+  SUBMENU:=$(OTHER_MENU)
+  TITLE:=ADE7854 Support
+  KCONFIG:= \
+    CONFIG_STAGING=y \
+    CONFIG_IIO=y \
+    CONFIG_IIO_BUFFER=n \
+    CONFIG_IIO_TRIGGER=n \
+    CONFIG_ADE7854
+  FILES:=$(LINUX_DIR)/drivers/staging/iio/meter/ade7854.ko
+  AUTOLOAD:=$(call AutoLoad,10,ade7854)
+endef
+
+define KernelPackage/ade7854/description
+  Support for ade7854 energy meter
+endef
+
+$(eval $(call KernelPackage,ade7854))
+
+define KernelPackage/ade7854-spi
+  SUBMENU:=$(OTHER_MENU)
+  TITLE:=ADE7854 SPI Support
+  KCONFIG:= \
+    CONFIG_STAGING=y \
+    CONFIG_IIO=y \
+    CONFIG_ADE7854_SPI
+  FILES:=$(LINUX_DIR)/drivers/staging/iio/meter/ade7854-spi.ko
+  AUTOLOAD:=$(call AutoLoad,20,ade7854-spi)
+endef
+
+define KernelPackage/ade7854-spi/description
+  Support for access to ade7854 via spi
+endef
+
+$(eval $(call KernelPackage,ade7854-spi))
+
+define KernelPackage/ade7854-i2c
+  SUBMENU:=$(OTHER_MENU)
+  TITLE:=ADE7854 I2C Support
+  KCONFIG:= \
+    CONFIG_STAGING=y \
+    CONFIG_IIO=y \
+    CONFIG_ADE7854_I2C
+  FILES:=$(LINUX_DIR)/drivers/staging/iio/meter/ade7854-i2c.ko
+  AUTOLOAD:=$(call AutoLoad,20,ade7854-i2c)
+endef
+
+define KernelPackage/ade7854-i2c/description
+  Support for access to ade7854 via i2c
+endef
+
+$(eval $(call KernelPackage,ade7854-i2c))
+
+define KernelPackage/rtc-pcf8563
+  SUBMENU:=$(OTHER_MENU)
+  TITLE:=PCF8563 RTC Support
+  KCONFIG:= \
+    CONFIG_RTC_CLASS=y \
+    CONFIG_RTC_DRV_PCF8563
+  FILES:=$(LINUX_DIR)/drivers/rtc/rtc-pcf8563.ko
+  AUTOLOAD:=$(call AutoLoad,20,rtc-pcf8563)
+endef
+
+define KernelPackage/rtc-pcf8563/description
+  Support for PCF8563 RTC
+endef
+
+$(eval $(call KernelPackage,rtc-pcf8563))
