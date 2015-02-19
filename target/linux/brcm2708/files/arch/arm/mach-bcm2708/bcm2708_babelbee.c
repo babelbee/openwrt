@@ -4,9 +4,29 @@
 #include <linux/gpio.h>
 #include <linux/can/platform/mcp251x.h>
 #include <linux/spi/spi_gpio.h>
+#include <linux/leds.h>
 #include <mach/gpio.h>
 
 extern int bcm_register_device(struct platform_device *pdev);
+
+static struct platform_device babelbee_gpio_device = {
+	.name = "babelbee-gpio",
+	.id = -1,
+};
+
+
+static void
+babelbee_pcf857x_setup(struct i2c_client *client, int gpio, unsigned int ngpio, void *context)
+{
+	for (i = 0 ; i < 8 ; i++) {
+		int gpio=BCM2708_NR_GPIOS+i;
+		char name[16];
+		gpio_direction_output(gpio, 1);
+		gpio_export(gpio, 0);
+		sprintf(name,"rel%d%s",i/2,i&1 ? "on":"off");
+		gpio_export_link(&babelbee_gpio_device.dev, name, gpio);
+	}
+}
 
 
 static struct i2c_board_info __initdata babelbee_i2c_devices1[] = {
@@ -17,6 +37,7 @@ static struct i2c_board_info __initdata babelbee_i2c_devices1[] = {
 
 static struct pcf857x_platform_data pcf_data = {
 	.gpio_base      = BCM2708_NR_GPIOS,
+	.setup=babelbee_pcf857x_setup,
 };
 
 static struct i2c_board_info __initdata babelbee_i2c_devices2[] = {
@@ -30,26 +51,26 @@ static struct i2c_board_info __initdata babelbee_i2c_devices2[] = {
 };
 
 static struct mcp251x_platform_data mcp251x_info0 = {
-         .oscillator_frequency = 20000000,
+	.oscillator_frequency = 20000000,
 };
 
 static struct mcp251x_platform_data mcp251x_info1 = {
-         .oscillator_frequency = 20000000,
+	.oscillator_frequency = 20000000,
 };
 
 static struct spi_gpio_platform_data babelbee_spi_gpio_pdata = {
-        .sck            = 42,
-        .mosi           = 41,
-        .miso           = 40,
-        .num_chipselect = 1,
+	.sck	    = 42,
+	.mosi	   = 41,
+	.miso	   = 40,
+	.num_chipselect = 1,
 };
 
 static struct platform_device babelbee_spi_gpio = {
-        .name           = "spi_gpio",
-        .id             = 3,
-        .dev            = {
-                .platform_data  = &babelbee_spi_gpio_pdata,
-        },
+	.name	   = "spi_gpio",
+	.id	     = 3,
+	.dev	    = {
+		.platform_data  = &babelbee_spi_gpio_pdata,
+	},
 };
 
 static struct spi_board_info babelbee_spi_devices[] = {
@@ -59,7 +80,7 @@ static struct spi_board_info babelbee_spi_devices[] = {
 		.chip_select	= 0,
 		.mode		= SPI_MODE_3,
 		.max_speed_hz	= 5000000, /* 5 MHz */
-		.controller_data = 43,
+		.controller_data = (void *)43,
 	},
 	{	
 		.modalias = "mcp2515",
@@ -79,19 +100,45 @@ static struct spi_board_info babelbee_spi_devices[] = {
 	},
 };
 
-static struct platform_device babelbee_gpio_device = {
-	.name = "babelbee-gpio",
-	.id = -1,
+static struct gpio_led babelbee_leds[] = {
+	[0] = {
+		.name = "blue",
+		.gpio = 23,
+		.active_low = 1,
+	},
+	[1] = {
+		.name = "green",
+		.gpio = 13,
+		.active_low = 1,
+	},
+	[2] = {
+		.name = "red",
+		.gpio = 12,
+		.active_low = 1,
+	},
+};
+
+static struct gpio_led_platform_data babelbee_led_pdata = {
+	.num_leds = ARRAY_SIZE(babelbee_leds),
+	.leds = babelbee_leds,
+};
+
+static struct platform_device babelbee_led_device = {
+	.name = "leds-gpio",
+	.id = 1,
+	.dev = {
+		.platform_data = &babelbee_led_pdata,
+		},
 };
 
 void
-babelbee_init(void)
+babelbee_gpio_init(void)
 {
-	bcm_register_device(&babelbee_spi_gpio);
-	bcm_register_device(&babelbee_gpio_device);
-        i2c_register_board_info(0, babelbee_i2c_devices1, ARRAY_SIZE(babelbee_i2c_devices1));
-        i2c_register_board_info(1, babelbee_i2c_devices2, ARRAY_SIZE(babelbee_i2c_devices2));
-	spi_register_board_info(babelbee_spi_devices, ARRAY_SIZE(babelbee_spi_devices));
+	int i;
+	/* ade reset */
+	gpio_request(44, "ade_reset");
+	gpio_direction_output(44, 1);
+
 	gpio_request(21, "button1");
 	gpio_direction_input(21);
 	gpio_export(21, 0);
@@ -100,5 +147,16 @@ babelbee_init(void)
 	gpio_direction_input(22);
 	gpio_export(22, 0);
 	gpio_export_link(&babelbee_gpio_device.dev, "button2", 22);
+}
+
+void
+babelbee_init(void)
+{
+	bcm_register_device(&babelbee_spi_gpio);
+	bcm_register_device(&babelbee_gpio_device);
+	i2c_register_board_info(0, babelbee_i2c_devices1, ARRAY_SIZE(babelbee_i2c_devices1));
+	i2c_register_board_info(1, babelbee_i2c_devices2, ARRAY_SIZE(babelbee_i2c_devices2));
+	spi_register_board_info(babelbee_spi_devices, ARRAY_SIZE(babelbee_spi_devices));
+	platform_device_register(&babelbee_led_device);
 }
 
