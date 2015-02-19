@@ -17,7 +17,6 @@ define KernelPackage/can
 	CONFIG_CAN_LEDS=y \
 	CONFIG_CAN_AT91=n \
 	CONFIG_CAN_TI_HECC=n \
-	CONFIG_CAN_MCP251X=n \
 	CONFIG_CAN_BFIN=n \
 	CONFIG_CAN_JANZ_ICAN3=n \
 	CONFIG_PCH_CAN=n \
@@ -274,3 +273,16 @@ endef
 
 $(eval $(call KernelPackage,can-c-can-pci))
 
+define KernelPackage/can-mcp251x
+  TITLE:=CAN MCP251X driver
+  KCONFIG:=CONFIG_CAN_MCP251X
+  FILES:=$(LINUX_DIR)/drivers/net/can/spi/mcp251x.ko
+  AUTOLOAD:=$(call AutoProbe,mcp251x)
+  $(call AddDepends/can)
+endef
+
+define KernelPackage/can-mcp251x/description
+ This driver adds support for the mcp251x spi can interface
+endef
+
+$(eval $(call KernelPackage,can-mcp251x))
