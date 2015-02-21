@@ -991,6 +991,7 @@ $(eval $(call KernelPackage,ade7854))
 define KernelPackage/ade7854-spi
   SUBMENU:=$(OTHER_MENU)
   TITLE:=ADE7854 SPI Support
+  DEPENDS:=kmod-ade7854
   KCONFIG:= \
     CONFIG_STAGING=y \
     CONFIG_IIO=y \
