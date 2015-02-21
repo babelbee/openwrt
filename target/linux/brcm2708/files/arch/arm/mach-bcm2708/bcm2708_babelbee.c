@@ -15,17 +15,23 @@ static struct platform_device babelbee_gpio_device = {
 };
 
 
-static void
+static int
 babelbee_pcf857x_setup(struct i2c_client *client, int gpio, unsigned int ngpio, void *context)
 {
+	int i;
+	printk("babelbee_pcf857x_setup(%p,%d,%d,%p)\n",client,gpio,ngpio,context);
 	for (i = 0 ; i < 8 ; i++) {
-		int gpio=BCM2708_NR_GPIOS+i;
-		char name[16];
+		int gpio=BCM2708_NR_GPIOS+7-i;
+		char name[16],*namep;
+		sprintf(name,"rel%d%s",i/2,i&1 ? "off":"on");
+		namep=kstrdup(name, GFP_KERNEL);
+		gpio_request(gpio, namep);
 		gpio_direction_output(gpio, 1);
+		gpio_set_value_cansleep(gpio, 0);
 		gpio_export(gpio, 0);
-		sprintf(name,"rel%d%s",i/2,i&1 ? "on":"off");
-		gpio_export_link(&babelbee_gpio_device.dev, name, gpio);
+		gpio_export_link(&babelbee_gpio_device.dev, namep, gpio);
 	}
+	return 0;
 }
 
 
@@ -37,7 +43,7 @@ static struct i2c_board_info __initdata babelbee_i2c_devices1[] = {
 
 static struct pcf857x_platform_data pcf_data = {
 	.gpio_base      = BCM2708_NR_GPIOS,
-	.setup=babelbee_pcf857x_setup,
+	.setup          = babelbee_pcf857x_setup,
 };
 
 static struct i2c_board_info __initdata babelbee_i2c_devices2[] = {
@@ -134,7 +140,6 @@ static struct platform_device babelbee_led_device = {
 void
 babelbee_gpio_init(void)
 {
-	int i;
 	/* ade reset */
 	gpio_request(44, "ade_reset");
 	gpio_direction_output(44, 1);
