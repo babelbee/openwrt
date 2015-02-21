@@ -1,51 +1,492 @@
-Nur in linux-3.18.7-0117c/: 903-fix-n-add-ade7854-attributes.patch.
-diff -cr linux-3.18.7-0117a/drivers/staging/iio/meter/ade7854.c linux-3.18.7-0117c/drivers/staging/iio/meter/ade7854.c
-*** linux-3.18.7-0117a/drivers/staging/iio/meter/ade7854.c	2015-02-18 15:00:35.636005788 +0100
---- linux-3.18.7-0117c/drivers/staging/iio/meter/ade7854.c	2015-02-18 14:51:21.089938568 +0100
+diff -cr linux-3.18.7-0117a/drivers/staging/iio/meter/ade7758.h linux-3.18.7-0117d/drivers/staging/iio/meter/ade7758.h
+*** linux-3.18.7-0117a/drivers/staging/iio/meter/ade7758.h	2015-02-11 08:01:12.000000000 +0100
+--- linux-3.18.7-0117d/drivers/staging/iio/meter/ade7758.h	2015-02-21 09:35:05.269795727 +0100
 ***************
-*** 179,185 ****
---- 179,188 ----
-  	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+*** 9,88 ****
+  #ifndef _ADE7758_H
+  #define _ADE7758_H
+  
+! #define ADE7758_AWATTHR   0x01
+! #define ADE7758_BWATTHR   0x02
+! #define ADE7758_CWATTHR   0x03
+! #define ADE7758_AVARHR    0x04
+! #define ADE7758_BVARHR    0x05
+! #define ADE7758_CVARHR    0x06
+! #define ADE7758_AVAHR     0x07
+! #define ADE7758_BVAHR     0x08
+! #define ADE7758_CVAHR     0x09
+! #define ADE7758_AIRMS     0x0A
+! #define ADE7758_BIRMS     0x0B
+! #define ADE7758_CIRMS     0x0C
+! #define ADE7758_AVRMS     0x0D
+! #define ADE7758_BVRMS     0x0E
+! #define ADE7758_CVRMS     0x0F
+! #define ADE7758_FREQ      0x10
+! #define ADE7758_TEMP      0x11
+! #define ADE7758_WFORM     0x12
+! #define ADE7758_OPMODE    0x13
+! #define ADE7758_MMODE     0x14
+! #define ADE7758_WAVMODE   0x15
+! #define ADE7758_COMPMODE  0x16
+! #define ADE7758_LCYCMODE  0x17
+! #define ADE7758_MASK      0x18
+! #define ADE7758_STATUS    0x19
+! #define ADE7758_RSTATUS   0x1A
+! #define ADE7758_ZXTOUT    0x1B
+! #define ADE7758_LINECYC   0x1C
+! #define ADE7758_SAGCYC    0x1D
+! #define ADE7758_SAGLVL    0x1E
+! #define ADE7758_VPINTLVL  0x1F
+! #define ADE7758_IPINTLVL  0x20
+! #define ADE7758_VPEAK     0x21
+! #define ADE7758_IPEAK     0x22
+! #define ADE7758_GAIN      0x23
+! #define ADE7758_AVRMSGAIN 0x24
+! #define ADE7758_BVRMSGAIN 0x25
+! #define ADE7758_CVRMSGAIN 0x26
+! #define ADE7758_AIGAIN    0x27
+! #define ADE7758_BIGAIN    0x28
+! #define ADE7758_CIGAIN    0x29
+! #define ADE7758_AWG       0x2A
+! #define ADE7758_BWG       0x2B
+! #define ADE7758_CWG       0x2C
+! #define ADE7758_AVARG     0x2D
+! #define ADE7758_BVARG     0x2E
+! #define ADE7758_CVARG     0x2F
+! #define ADE7758_AVAG      0x30
+! #define ADE7758_BVAG      0x31
+! #define ADE7758_CVAG      0x32
+! #define ADE7758_AVRMSOS   0x33
+! #define ADE7758_BVRMSOS   0x34
+! #define ADE7758_CVRMSOS   0x35
+! #define ADE7758_AIRMSOS   0x36
+! #define ADE7758_BIRMSOS   0x37
+! #define ADE7758_CIRMSOS   0x38
+! #define ADE7758_AWAITOS   0x39
+! #define ADE7758_BWAITOS   0x3A
+! #define ADE7758_CWAITOS   0x3B
+! #define ADE7758_AVAROS    0x3C
+! #define ADE7758_BVAROS    0x3D
+! #define ADE7758_CVAROS    0x3E
+! #define ADE7758_APHCAL    0x3F
+! #define ADE7758_BPHCAL    0x40
+! #define ADE7758_CPHCAL    0x41
+! #define ADE7758_WDIV      0x42
+! #define ADE7758_VADIV     0x44
+! #define ADE7758_VARDIV    0x43
+! #define ADE7758_APCFNUM   0x45
+! #define ADE7758_APCFDEN   0x46
+! #define ADE7758_VARCFNUM  0x47
+! #define ADE7758_VARCFDEN  0x48
+! #define ADE7758_CHKSUM    0x7E
+! #define ADE7758_VERSION   0x7F
+  
+  #define ADE7758_READ_REG(a)    a
+  #define ADE7758_WRITE_REG(a) ((a) | 0x80)
+--- 9,271 ----
+  #ifndef _ADE7758_H
+  #define _ADE7758_H
+  
+! #define ADE7854_AIGAIN    0x4380
+! #define ADE7854_AVGAIN    0x4381
+! #define ADE7854_BIGAIN    0x4382
+! #define ADE7854_BVGAIN    0x4383
+! #define ADE7854_CIGAIN    0x4384
+! #define ADE7854_CVGAIN    0x4385
+! #define ADE7854_NIGAIN    0x4386
+! #ifdef CONFIG_ADE7854
+! #define ADE7854_AIRMSOS   0x4387
+! #define ADE7854_AVRMSOS   0x4388
+! #define ADE7854_BIRMSOS   0x4389
+! #define ADE7854_BVRMSOS   0x438A
+! #define ADE7854_CIRMSOS   0x438B
+! #define ADE7854_CVRMSOS   0x438C
+! #define ADE7854_NIRMSOS   0x438D
+! #define ADE7854_AVAGAIN   0x438E
+! #define ADE7854_BVAGAIN   0x438F
+! #define ADE7854_CVAGAIN   0x4390
+! #define ADE7854_AWGAIN    0x4391
+! #define ADE7854_AWATTOS   0x4392
+! #define ADE7854_BWGAIN    0x4393
+! #define ADE7854_BWATTOS   0x4394
+! #define ADE7854_CWGAIN    0x4395
+! #define ADE7854_CWATTOS   0x4396
+! #define ADE7854_AVARGAIN  0x4397
+! #define ADE7854_AVAROS    0x4398
+! #define ADE7854_BVARGAIN  0x4399
+! #define ADE7854_BVAROS    0x439A
+! #define ADE7854_CVARGAIN  0x439B
+! #define ADE7854_CVAROS    0x439C
+! #define ADE7854_AFWGAIN   0x439D
+! #define ADE7854_AFWATTOS  0x439E
+! #define ADE7854_BFWGAIN   0x439F
+! #define ADE7854_BFWATTOS  0x43A0
+! #define ADE7854_CFWGAIN   0x43A1
+! #define ADE7854_CFWATTOS  0x43A2
+! #define ADE7854_AFVARGAIN 0x43A3
+! #define ADE7854_AFVAROS   0x43A4
+! #define ADE7854_BFVARGAIN 0x43A5
+! #define ADE7854_BFVAROS   0x43A6
+! #define ADE7854_CFVARGAIN 0x43A7
+! #define ADE7854_CFVAROS   0x43A8
+! #define ADE7854_VATHR1    0x43A9
+! #define ADE7854_VATHR0    0x43AA
+! #define ADE7854_WTHR1     0x43AB
+! #define ADE7854_WTHR0     0x43AC
+! #define ADE7854_VARTHR1   0x43AD
+! #define ADE7854_VARTHR0   0x43AE
+! #define ADE7854_RSV       0x43AF
+! #define ADE7854_VANOLOAD  0x43B0
+! #define ADE7854_APNOLOAD  0x43B1
+! #define ADE7854_VARNOLOAD 0x43B2
+! #define ADE7854_VLEVEL    0x43B3
+! #define ADE7854_DICOEFF   0x43B5
+! #define ADE7854_HPFDIS    0x43B6
+! #define ADE7854_ISUMLVL   0x43B8
+! #define ADE7854_ISUM      0x43BF
+! #define ADE7854_AIRMS     0x43C0
+! #define ADE7854_AVRMS     0x43C1
+! #define ADE7854_BIRMS     0x43C2
+! #define ADE7854_BVRMS     0x43C3
+! #define ADE7854_CIRMS     0x43C4
+! #define ADE7854_CVRMS     0x43C5
+! #define ADE7854_NIRMS     0x43C6
+! #endif
+! #ifdef CONFIG_ADE7880
+! #define ADE7880_DICOEFF   0x4388
+! #define ADE7880_APGAIN    0x4389
+! #define ADE7880_AWATTOS   0x438A
+! #define ADE7880_BPGAIN    0x438B
+! #define ADE7880_BWATTOS   0x438C
+! #define ADE7880_CPGAIN    0x438D
+! #define ADE7880_CWATTOS   0x438E
+! #define ADE7880_AIRMSOS   0x438F
+! #define ADE7880_AVRMSOS   0x4390
+! #define ADE7880_BIRMSOS   0x4391
+! #define ADE7880_BVRMSOS   0x4392
+! #define ADE7880_CIRMSOS   0x4393
+! #define ADE7880_CVRMSOS   0x4394
+! #define ADE7880_NIRMSOS   0x4395
+! #define ADE7880_HPGAIN    0x4398
+! #define ADE7880_ISUMLVL   0x4399
+! #define ADE7880_VLEVEL   0x439F
+! #define ADE7880_AFWATTOS  0x43A2
+! #define ADE7880_BFWATTOS  0x43A3
+! #define ADE7880_CFWATTOS  0x43A4
+! #define ADE7880_AFVAROS   0x43A5
+! #define ADE7880_BFVAROS   0x43A6
+! #define ADE7880_CFVAROS   0x43A7
+! #define ADE7880_AFIRMSOS  0x43A8
+! #define ADE7880_BFIRMSOS  0x43A9
+! #define ADE7880_CFIRMSOS  0x43AA
+! #define ADE7880_AFVRMSOS  0x43AB
+! #define ADE7880_BFVRMSOS  0x43AC
+! #define ADE7880_CFVRMSOS  0x43AD
+! #define ADE7880_HXWATTOS  0x43AE
+! #define ADE7880_HYWATTOS  0x43AF
+! #define ADE7880_HZWATTOS  0x43B0
+! #define ADE7880_HXVAROS   0x43B1
+! #define ADE7880_HYVAROS   0x43B2
+! #define ADE7880_HZVAROS   0x43B3
+! #define ADE7880_HYIRMSOS  0x43B5
+! #define ADE7880_HZIRMSOS  0x43B6
+! #define ADE7880_HYVRMSOS  0x43B8
+! #define ADE7880_AIRMS     0x43C0
+! #define ADE7880_AVRMS     0x43C1
+! #define ADE7880_BIRMS     0x43C2
+! #define ADE7880_BVRMS     0x43C3
+! #define ADE7880_CIRMS     0x43C4
+! #define ADE7880_CVRMS     0x43C5
+! #define ADE7880_NIRMS     0x43C6
+! #define ADE7880_ISUM      0x43C7
+! #endif
+! #define ADE7854_RUN       0xE228
+! #define ADE7854_AWATTHR   0xE400
+! #define ADE7854_BWATTHR   0xE401
+! #define ADE7854_CWATTHR   0xE402
+! #define ADE7854_AFWATTHR  0xE403
+! #define ADE7854_BFWATTHR  0xE404
+! #define ADE7854_CFWATTHR  0xE405
+! #ifdef CONFIG_ADE7854
+! #define ADE7854_AVARHR    0xE406
+! #define ADE7854_BVARHR    0xE407
+! #define ADE7854_CVARHR    0xE408
+! #endif
+! #define ADE7854_AFVARHR   0xE409
+! #define ADE7854_BFVARHR   0xE40A
+! #define ADE7854_CFVARHR   0xE40B
+! #define ADE7854_AVAHR     0xE40C
+! #define ADE7854_BVAHR     0xE40D
+! #define ADE7854_CVAHR     0xE40E
+! #define ADE7854_IPEAK     0xE500
+! #define ADE7854_VPEAK     0xE501
+! #define ADE7854_STATUS0   0xE502
+! #define ADE7854_STATUS1   0xE503
+! #define ADE7854_AIMAV     0xE504
+! #define ADE7854_BIMAV     0xE505
+! #define ADE7854_CIMAV     0xE506
+! #define ADE7854_OILVL     0xE507
+! #define ADE7854_OVLVL     0xE508
+! #define ADE7854_SAGLVL    0xE509
+! #define ADE7854_MASK0     0xE50A
+! #define ADE7854_MASK1     0xE50B
+! #define ADE7854_IAWV      0xE50C
+! #define ADE7854_IBWV      0xE50D
+! #define ADE7854_ICWV      0xE50E
+! #define ADE7854_INWV      0xE50F
+! #define ADE7854_VAWV      0xE510
+! #define ADE7854_VBWV      0xE511
+! #define ADE7854_VCWV      0xE512
+! #define ADE7854_AWATT     0xE513
+! #define ADE7854_BWATT     0xE514
+! #define ADE7854_CWATT     0xE515
+! #ifdef CONFIG_ADE7854
+! #define ADE7854_AVAR      0xE516
+! #define ADE7854_BVAR      0xE517
+! #define ADE7854_CVAR      0xE518
+! #endif
+! #ifdef CONFIG_ADE7880
+! #define ADE7880_AFVAR     0xE516
+! #define ADE7880_BFVAR     0xE517
+! #define ADE7880_CFVAR     0xE518
+! #endif
+! #define ADE7854_AVA       0xE519
+! #define ADE7854_BVA       0xE51A
+! #define ADE7854_CVA       0xE51B
+! #define ADE7854_CHECKSUM  0xE51F
+! #define ADE7854_VNOM      0xE520
+! #ifdef CONFIG_ADE7880
+! #define ADE7880_LAST_RWDATA_24BIT 0xE5FF
+! #endif
+! #define ADE7854_PHSTATUS  0xE600
+! #define ADE7854_ANGLE0    0xE601
+! #define ADE7854_ANGLE1    0xE602
+! #define ADE7854_ANGLE2    0xE603
+! #ifdef ADE7854
+! #define ADE7854_PERIOD    0xE607
+! #endif 
+! #define ADE7854_PHNOLOAD  0xE608
+! #define ADE7854_LINECYC   0xE60C
+! #define ADE7854_ZXTOUT    0xE60D
+! #define ADE7854_COMPMODE  0xE60E
+! #define ADE7854_GAIN      0xE60F
+! #define ADE7854_CFMODE    0xE610
+! #define ADE7854_CF1DEN    0xE611
+! #define ADE7854_CF2DEN    0xE612
+! #define ADE7854_CF3DEN    0xE613
+! #define ADE7854_APHCAL    0xE614
+! #define ADE7854_BPHCAL    0xE615
+! #define ADE7854_CPHCAL    0xE616
+! #define ADE7854_PHSIGN    0xE617
+! #define ADE7854_CONFIG    0xE618
+! #define ADE7854_MMODE     0xE700
+! #define ADE7854_ACCMODE   0xE701
+! #define ADE7854_LCYCMODE  0xE702
+! #define ADE7854_PEAKCYC   0xE703
+! #define ADE7854_SAGCYC    0xE704
+! #define ADE7854_CFCYC     0xE705
+! #define ADE7854_HSDC_CFG  0xE706
+! #define ADE7854_VERSION	  0xE707
+! #ifdef CONFIG_ADE7880
+! #define ADE7880_LAST_RWDATA_8BIT 0xE7FD
+! #define ADE7880_FVRMS     0xE880
+! #define ADE7880_FIRMS     0xE881
+! #define ADE7880_FWATT     0xE882
+! #define ADE7880_FVAR      0xE883
+! #define ADE7880_FVA       0xE884
+! #define ADE7880_FPF       0xE885
+! #define ADE7880_VTHDN     0xE886
+! #define ADE7880_ITHDN     0xE887
+! #define ADE7880_HXVRMS    0xE888
+! #define ADE7880_HXIRMS    0xE889
+! #define ADE7880_HXWATT    0xE88A
+! #define ADE7880_HXVAR     0xE88B
+! #define ADE7880_HXVA      0xE88C
+! #define ADE7880_HXPF      0xE88D
+! #define ADE7880_HXVHD     0xE88E
+! #define ADE7880_HXIHD     0xE88F
+! #define ADE7880_HYVRMS    0xE890
+! #define ADE7880_HYIRMS    0xE891
+! #define ADE7880_HYWATT    0xE892
+! #define ADE7880_HYVAR     0xE893
+! #define ADE7880_HYVA      0xE894
+! #define ADE7880_HYPF      0xE895
+! #define ADE7880_HYVHD     0xE896
+! #define ADE7880_HYIHD     0xE897
+! #define ADE7880_HZVRMS    0xE898
+! #define ADE7880_HZIRMS    0xE899
+! #define ADE7880_HZWATT    0xE89A
+! #define ADE7880_HZVAR     0xE89B
+! #define ADE7880_HZVA      0xE89C
+! #define ADE7880_HZPF      0xE89D
+! #define ADE7880_HZVHD     0xE89E
+! #define ADE7880_HZIHD     0xE89F
+! #define ADE7880_HCONFIG   0xE900
+! #define ADE7880_APF       0xE902
+! #define ADE7880_BPF       0xE903
+! #define ADE7880_CPF       0xE904
+! #define ADE7880_APERIOD   0xE905
+! #define ADE7880_BPERIOD   0xE906
+! #define ADE7880_CPERIOD   0xE907
+! #define ADE7880_APNOLOAD  0xE908
+! #define ADE7880_VARNOLOAD 0xE909
+! #define ADE7880_VANOLOAD  0xE90A
+! #define ADE7880_LAST_ADD            0xE9FE
+! #define ADE7880_LAST_RWDATA_16BIT   0xE9FF
+! #define ADE7880_CONFIG3   0xEA00
+! #define ADE7880_LAST_OP   0xEA01
+! #define ADE7880_WTHR      0xEA02
+! #define ADE7880_VARTHR    0xEA03
+! #define ADE7880_VATHR     0xEA04
+! #define ADE7880_HX_REG    0xEA08
+! #define ADE7880_HY_REG    0xEA09
+! #define ADE7880_HZ_REG    0xEA0A
+! #endif
+! #define ADE7854_LPOILVL   0xEC00
+! #define ADE7854_CONFIG2   0xEC01
+  
+  #define ADE7758_READ_REG(a)    a
+  #define ADE7758_WRITE_REG(a) ((a) | 0x80)
+diff -cr linux-3.18.7-0117a/drivers/staging/iio/meter/ade7854.c linux-3.18.7-0117d/drivers/staging/iio/meter/ade7854.c
+*** linux-3.18.7-0117a/drivers/staging/iio/meter/ade7854.c	2015-02-18 15:00:35.636005788 +0100
+--- linux-3.18.7-0117d/drivers/staging/iio/meter/ade7854.c	2015-02-21 09:35:05.269795727 +0100
+***************
+*** 20,25 ****
+--- 20,26 ----
+  #include <linux/iio/iio.h>
+  #include <linux/iio/sysfs.h>
+  #include "meter.h"
++ #define ADE7880
+  #include "ade7854.h"
+  
+  static ssize_t ade7854_read_8bit(struct device *dev,
+***************
+*** 66,72 ****
+  	struct ade7854_state *st = iio_priv(indio_dev);
+  	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
+  
+! 	ret = st->read_reg_24(dev, this_attr->address, &val);
+  	if (ret)
+  		return ret;
+  
+--- 67,94 ----
+  	struct ade7854_state *st = iio_priv(indio_dev);
+  	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
+  
+! 	ret = st->read_reg_32(dev, this_attr->address, &val);
+! 	if (ret)
+! 		return ret;
+! #if 0
+! 	if (val >= 0x800000)
+! 		val-=0x1000000;
+! #endif
+! 
+! 	return sprintf(buf, "%d\n", val);
+! }
+! 
+! static ssize_t ade7854_read_24bitu(struct device *dev,
+! 		struct device_attribute *attr,
+! 		char *buf)
+! {
+! 	int ret;
+! 	u32 val;
+! 	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+! 	struct ade7854_state *st = iio_priv(indio_dev);
+! 	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
+! 
+! 	ret = st->read_reg_32(dev, this_attr->address, &val);
+  	if (ret)
+  		return ret;
+  
+***************
+*** 87,92 ****
+--- 109,131 ----
+  	if (ret)
+  		return ret;
+  
++ 	return sprintf(buf, "%d\n", val);
++ }
++ 
++ static ssize_t ade7854_read_32bitu(struct device *dev,
++ 		struct device_attribute *attr,
++ 		char *buf)
++ {
++ 	int ret;
++ 	u32 val = 0;
++ 	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
++ 	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
++ 	struct ade7854_state *st = iio_priv(indio_dev);
++ 
++ 	ret = st->read_reg_32(dev, this_attr->address, &val);
++ 	if (ret)
++ 		return ret;
++ 
+  	return sprintf(buf, "%u\n", val);
+  }
+  
+***************
+*** 147,153 ****
+  	ret = kstrtou32(buf, 10, &val);
+  	if (ret)
+  		goto error_ret;
+! 	ret = st->write_reg_24(dev, this_attr->address, val);
+  
+  error_ret:
+  	return ret ? ret : len;
+--- 186,192 ----
+  	ret = kstrtou32(buf, 10, &val);
+  	if (ret)
+  		goto error_ret;
+! 	ret = st->write_reg_32(dev, this_attr->address, val);
+  
+  error_ret:
+  	return ret ? ret : len;
+***************
+*** 180,189 ****
   	struct ade7854_state *st = iio_priv(indio_dev);
   	u16 val;
-+         u32 val32;
   
-+ 	st->read_reg_32(dev, ADE7854_CHECKSUM, &val32);
-+ 	printk("chksum 0x%x\n",val32);
   	st->read_reg_16(dev, ADE7854_CONFIG, &val);
   	val |= 1 << 7; /* Software Chip Reset */
+! 
+! 	return st->write_reg_16(dev, ADE7854_CONFIG, val);
+  }
   
+  static IIO_DEV_ATTR_AIGAIN(S_IWUSR | S_IRUGO,
+--- 219,233 ----
+  	struct ade7854_state *st = iio_priv(indio_dev);
+  	u16 val;
+  
++ 	st->write_reg_8(dev, 0xebff, 0);
++ 	st->write_reg_8(dev, 0xebff, 0);
++ 	st->write_reg_8(dev, 0xebff, 0);
++ 	
+  	st->read_reg_16(dev, ADE7854_CONFIG, &val);
+  	val |= 1 << 7; /* Software Chip Reset */
+! 	st->write_reg_16(dev, ADE7854_CONFIG, val);
+! 	val=1;
+! 	return st->write_reg_16(dev, ADE7854_RUN, val);
+  }
+  
+  static IIO_DEV_ATTR_AIGAIN(S_IWUSR | S_IRUGO,
 ***************
-*** 312,322 ****
-  		ADE7854_PEAKCYC);
-  static IIO_DEV_ATTR_CHKSUM(ade7854_read_24bit,
-  		ADE7854_CHECKSUM);
-! static IIO_DEV_ATTR_ANGLE0(ade7854_read_24bit,
-  		ADE7854_ANGLE0);
-! static IIO_DEV_ATTR_ANGLE1(ade7854_read_24bit,
-  		ADE7854_ANGLE1);
-! static IIO_DEV_ATTR_ANGLE2(ade7854_read_24bit,
-  		ADE7854_ANGLE2);
-  static IIO_DEV_ATTR_AIRMS(S_IRUGO,
+*** 214,219 ****
+--- 258,410 ----
   		ade7854_read_24bit,
---- 315,325 ----
-  		ADE7854_PEAKCYC);
-  static IIO_DEV_ATTR_CHKSUM(ade7854_read_24bit,
-  		ADE7854_CHECKSUM);
-! static IIO_DEV_ATTR_ANGLE0(ade7854_read_16bit,
-  		ADE7854_ANGLE0);
-! static IIO_DEV_ATTR_ANGLE1(ade7854_read_16bit,
-  		ADE7854_ANGLE1);
-! static IIO_DEV_ATTR_ANGLE2(ade7854_read_16bit,
-  		ADE7854_ANGLE2);
-  static IIO_DEV_ATTR_AIRMS(S_IRUGO,
-  		ade7854_read_24bit,
-***************
-*** 382,387 ****
---- 385,410 ----
-  		ADE7854_IBWV);
-  static IIO_DEV_ATTR_CURRENT_C(ade7854_read_24bit,
-  		ADE7854_ICWV);
+  		ade7854_write_24bit,
+  		ADE7854_CVGAIN);
++ static IIO_DEV_ATTR_VOLT_A(ade7854_read_24bit,
++ 		ADE7854_VAWV);
++ static IIO_DEV_ATTR_VOLT_B(ade7854_read_24bit,
++ 		ADE7854_VBWV);
++ static IIO_DEV_ATTR_VOLT_C(ade7854_read_24bit,
++ 		ADE7854_VCWV);
++ static IIO_DEV_ATTR_CURRENT_A(ade7854_read_24bit,
++ 		ADE7854_IAWV);
++ static IIO_DEV_ATTR_CURRENT_B(ade7854_read_24bit,
++ 		ADE7854_IBWV);
++ static IIO_DEV_ATTR_CURRENT_C(ade7854_read_24bit,
++ 		ADE7854_ICWV);
 + static IIO_DEV_ATTR_CURRENT_N(ade7854_read_24bit,
 + 		ADE7854_INWV);
 + static IIO_DEV_ATTR_WATT_A(ade7854_read_24bit,
@@ -60,25 +501,24 @@ diff -cr linux-3.18.7-0117a/drivers/staging/iio/meter/ade7854.c linux-3.18.7-011
 + 		ADE7854_BVA);
 + static IIO_DEV_ATTR_VA_C(ade7854_read_24bit,
 + 		ADE7854_CVA);
-+ static IIO_DEV_ATTR_VAR_A(ade7854_read_24bit,
-+ 		ADE7854_AVAR);
-+ static IIO_DEV_ATTR_VAR_B(ade7854_read_24bit,
-+ 		ADE7854_BVAR);
-+ static IIO_DEV_ATTR_VAR_C(ade7854_read_24bit,
-+ 		ADE7854_CVAR);
-  static IIO_DEV_ATTR_AWATTHR(ade7854_read_32bit,
-  		ADE7854_AWATTHR);
-  static IIO_DEV_ATTR_BWATTHR(ade7854_read_32bit,
-***************
-*** 406,411 ****
---- 429,661 ----
-  		ADE7854_BVAHR);
-  static IIO_DEV_ATTR_CVAHR(ade7854_read_32bit,
-  		ADE7854_CVAHR);
-+ static IIO_DEV_ATTR_VPERIOD(S_IRUGO,
-+                 ade7854_read_16bit,
-+                 NULL,
-+                 ADE7854_PERIOD);
++ static IIO_DEV_ATTR_AWATTHR(ade7854_read_32bit,
++ 		ADE7854_AWATTHR);
++ static IIO_DEV_ATTR_BWATTHR(ade7854_read_32bit,
++ 		ADE7854_BWATTHR);
++ static IIO_DEV_ATTR_CWATTHR(ade7854_read_32bit,
++ 		ADE7854_CWATTHR);
++ static IIO_DEV_ATTR_AFWATTHR(ade7854_read_32bit,
++ 		ADE7854_AFWATTHR);
++ static IIO_DEV_ATTR_BFWATTHR(ade7854_read_32bit,
++ 		ADE7854_BFWATTHR);
++ static IIO_DEV_ATTR_CFWATTHR(ade7854_read_32bit,
++ 		ADE7854_CFWATTHR);
++ static IIO_DEV_ATTR_AVAHR(ade7854_read_32bit,
++ 		ADE7854_AVAHR);
++ static IIO_DEV_ATTR_BVAHR(ade7854_read_32bit,
++ 		ADE7854_BVAHR);
++ static IIO_DEV_ATTR_CVAHR(ade7854_read_32bit,
++ 		ADE7854_CVAHR);
 + static IIO_DEV_ATTR_RUN(S_IWUSR | S_IRUGO,
 +                 ade7854_read_16bit,
 +                 ade7854_write_16bit,
@@ -96,127 +536,6 @@ diff -cr linux-3.18.7-0117a/drivers/staging/iio/meter/ade7854.c linux-3.18.7-011
 +                 ade7854_write_8bit,
 +                 ADE7854_GAIN);
 + 
-+ 
-+ 
-+ 
-+ static IIO_DEV_ATTR_NIRMSOS(S_IWUSR | S_IRUGO,
-+ 	ade7854_read_24bit,
-+ 	ade7854_write_24bit,
-+ 	ADE7854_NIRMSOS);
-+ static IIO_DEV_ATTR_AWGAIN(S_IWUSR | S_IRUGO,
-+ 	ade7854_read_24bit,
-+ 	ade7854_write_24bit,
-+ 	ADE7854_AWGAIN);
-+ static IIO_DEV_ATTR_BWGAIN(S_IWUSR | S_IRUGO,
-+ 	ade7854_read_24bit,
-+ 	ade7854_write_24bit,
-+ 	ADE7854_BWGAIN);
-+ static IIO_DEV_ATTR_CWGAIN(S_IWUSR | S_IRUGO,
-+ 	ade7854_read_24bit,
-+ 	ade7854_write_24bit,
-+ 	ADE7854_CWGAIN);
-+ static IIO_DEV_ATTR_AFWGAIN(S_IWUSR | S_IRUGO,
-+ 	ade7854_read_24bit,
-+ 	ade7854_write_24bit,
-+ 	ADE7854_AFWGAIN);
-+ static IIO_DEV_ATTR_AFWATTOS(S_IWUSR | S_IRUGO,
-+ 	ade7854_read_24bit,
-+ 	ade7854_write_24bit,
-+ 	ADE7854_AFWATTOS);
-+ static IIO_DEV_ATTR_BFWGAIN(S_IWUSR | S_IRUGO,
-+ 	ade7854_read_24bit,
-+ 	ade7854_write_24bit,
-+ 	ADE7854_BFWGAIN);
-+ static IIO_DEV_ATTR_BFWATTOS(S_IWUSR | S_IRUGO,
-+ 	ade7854_read_24bit,
-+ 	ade7854_write_24bit,
-+ 	ADE7854_BFWATTOS);
-+ static IIO_DEV_ATTR_CFWGAIN(S_IWUSR | S_IRUGO,
-+ 	ade7854_read_24bit,
-+ 	ade7854_write_24bit,
-+ 	ADE7854_CFWGAIN);
-+ static IIO_DEV_ATTR_CFWATTOS(S_IWUSR | S_IRUGO,
-+ 	ade7854_read_24bit,
-+ 	ade7854_write_24bit,
-+ 	ADE7854_CFWATTOS);
-+ static IIO_DEV_ATTR_AFVARGAIN(S_IWUSR | S_IRUGO,
-+ 	ade7854_read_24bit,
-+ 	ade7854_write_24bit,
-+ 	ADE7854_AFVARGAIN);
-+ static IIO_DEV_ATTR_AFVAROS(S_IWUSR | S_IRUGO,
-+ 	ade7854_read_24bit,
-+ 	ade7854_write_24bit,
-+ 	ADE7854_AFVAROS);
-+ static IIO_DEV_ATTR_BFVARGAIN(S_IWUSR | S_IRUGO,
-+ 	ade7854_read_24bit,
-+ 	ade7854_write_24bit,
-+ 	ADE7854_BFVARGAIN);
-+ static IIO_DEV_ATTR_BFVAROS(S_IWUSR | S_IRUGO,
-+ 	ade7854_read_24bit,
-+ 	ade7854_write_24bit,
-+ 	ADE7854_BFVAROS);
-+ static IIO_DEV_ATTR_CFVARGAIN(S_IWUSR | S_IRUGO,
-+ 	ade7854_read_24bit,
-+ 	ade7854_write_24bit,
-+ 	ADE7854_CFVARGAIN);
-+ static IIO_DEV_ATTR_CFVAROS(S_IWUSR | S_IRUGO,
-+ 	ade7854_read_24bit,
-+ 	ade7854_write_24bit,
-+ 	ADE7854_CFVAROS);
-+ static IIO_DEV_ATTR_VATHR1(S_IWUSR | S_IRUGO,
-+ 	ade7854_read_24bitu,
-+ 	ade7854_write_24bit,
-+ 	ADE7854_VATHR1);
-+ static IIO_DEV_ATTR_VATHR0(S_IWUSR | S_IRUGO,
-+ 	ade7854_read_24bitu,
-+ 	ade7854_write_24bit,
-+ 	ADE7854_VATHR0);
-+ static IIO_DEV_ATTR_WTHR1(S_IWUSR | S_IRUGO,
-+ 	ade7854_read_24bitu,
-+ 	ade7854_write_24bit,
-+ 	ADE7854_WTHR1);
-+ static IIO_DEV_ATTR_WTHR0(S_IWUSR | S_IRUGO,
-+ 	ade7854_read_24bitu,
-+ 	ade7854_write_24bit,
-+ 	ADE7854_WTHR0);
-+ static IIO_DEV_ATTR_VARTHR1(S_IWUSR | S_IRUGO,
-+ 	ade7854_read_24bitu,
-+ 	ade7854_write_24bit,
-+ 	ADE7854_VARTHR1);
-+ static IIO_DEV_ATTR_VARTHR0(S_IWUSR | S_IRUGO,
-+ 	ade7854_read_24bitu,
-+ 	ade7854_write_24bit,
-+ 	ADE7854_VARTHR0);
-+ static IIO_DEV_ATTR_VANOLOAD(S_IWUSR | S_IRUGO,
-+ 	ade7854_read_24bit,
-+ 	ade7854_write_24bit,
-+ 	ADE7854_VANOLOAD);
-+ static IIO_DEV_ATTR_APNOLOAD(S_IWUSR | S_IRUGO,
-+ 	ade7854_read_24bit,
-+ 	ade7854_write_24bit,
-+ 	ADE7854_APNOLOAD);
-+ static IIO_DEV_ATTR_VARNOLOAD(S_IWUSR | S_IRUGO,
-+ 	ade7854_read_24bit,
-+ 	ade7854_write_24bit,
-+ 	ADE7854_VARNOLOAD);
-+ static IIO_DEV_ATTR_VLEVEL(S_IWUSR | S_IRUGO,
-+ 	ade7854_read_24bit,
-+ 	ade7854_write_24bit,
-+ 	ADE7854_VLEVEL);
-+ static IIO_DEV_ATTR_DICOEFF(S_IWUSR | S_IRUGO,
-+ 	ade7854_read_24bit,
-+ 	ade7854_write_24bit,
-+ 	ADE7854_DICOEFF);
-+ static IIO_DEV_ATTR_HPFDIS(S_IWUSR | S_IRUGO,
-+ 	ade7854_read_24bitu,
-+ 	ade7854_write_24bit,
-+ 	ADE7854_HPFDIS);
-+ static IIO_DEV_ATTR_ISUMLVL(S_IWUSR | S_IRUGO,
-+ 	ade7854_read_24bit,
-+ 	ade7854_write_24bit,
-+ 	ADE7854_ISUMLVL);
-+ static IIO_DEV_ATTR_ISUM(ade7854_read_32bitu,
-+ 	ADE7854_ISUM);
 + static IIO_DEV_ATTR_AFVARHR(ade7854_read_32bit,
 + 	ADE7854_AFVARHR);
 + static IIO_DEV_ATTR_BFVARHR(ade7854_read_32bit,
@@ -302,15 +621,729 @@ diff -cr linux-3.18.7-0117a/drivers/staging/iio/meter/ade7854.c linux-3.18.7-011
 + 	ade7854_write_8bit,
 + 	ADE7854_LPOILVL);
 + 
++ #ifdef ADE7854
+  static IIO_DEV_ATTR_APPARENT_POWER_A_GAIN(S_IWUSR | S_IRUGO,
+  		ade7854_read_24bit,
+  		ade7854_write_24bit,
+***************
+*** 312,322 ****
+  		ADE7854_PEAKCYC);
+  static IIO_DEV_ATTR_CHKSUM(ade7854_read_24bit,
+  		ADE7854_CHECKSUM);
+! static IIO_DEV_ATTR_ANGLE0(ade7854_read_24bit,
+  		ADE7854_ANGLE0);
+! static IIO_DEV_ATTR_ANGLE1(ade7854_read_24bit,
+  		ADE7854_ANGLE1);
+! static IIO_DEV_ATTR_ANGLE2(ade7854_read_24bit,
+  		ADE7854_ANGLE2);
+  static IIO_DEV_ATTR_AIRMS(S_IRUGO,
+  		ade7854_read_24bit,
+--- 503,513 ----
+  		ADE7854_PEAKCYC);
+  static IIO_DEV_ATTR_CHKSUM(ade7854_read_24bit,
+  		ADE7854_CHECKSUM);
+! static IIO_DEV_ATTR_ANGLE0(ade7854_read_16bit,
+  		ADE7854_ANGLE0);
+! static IIO_DEV_ATTR_ANGLE1(ade7854_read_16bit,
+  		ADE7854_ANGLE1);
+! static IIO_DEV_ATTR_ANGLE2(ade7854_read_16bit,
+  		ADE7854_ANGLE2);
+  static IIO_DEV_ATTR_AIRMS(S_IRUGO,
+  		ade7854_read_24bit,
+***************
+*** 370,411 ****
+  		ade7854_read_16bit,
+  		ade7854_write_16bit,
+  		ADE7854_CVRMSOS);
+! static IIO_DEV_ATTR_VOLT_A(ade7854_read_24bit,
+! 		ADE7854_VAWV);
+! static IIO_DEV_ATTR_VOLT_B(ade7854_read_24bit,
+! 		ADE7854_VBWV);
+! static IIO_DEV_ATTR_VOLT_C(ade7854_read_24bit,
+! 		ADE7854_VCWV);
+! static IIO_DEV_ATTR_CURRENT_A(ade7854_read_24bit,
+! 		ADE7854_IAWV);
+! static IIO_DEV_ATTR_CURRENT_B(ade7854_read_24bit,
+! 		ADE7854_IBWV);
+! static IIO_DEV_ATTR_CURRENT_C(ade7854_read_24bit,
+! 		ADE7854_ICWV);
+! static IIO_DEV_ATTR_AWATTHR(ade7854_read_32bit,
+! 		ADE7854_AWATTHR);
+! static IIO_DEV_ATTR_BWATTHR(ade7854_read_32bit,
+! 		ADE7854_BWATTHR);
+! static IIO_DEV_ATTR_CWATTHR(ade7854_read_32bit,
+! 		ADE7854_CWATTHR);
+! static IIO_DEV_ATTR_AFWATTHR(ade7854_read_32bit,
+! 		ADE7854_AFWATTHR);
+! static IIO_DEV_ATTR_BFWATTHR(ade7854_read_32bit,
+! 		ADE7854_BFWATTHR);
+! static IIO_DEV_ATTR_CFWATTHR(ade7854_read_32bit,
+! 		ADE7854_CFWATTHR);
+  static IIO_DEV_ATTR_AVARHR(ade7854_read_32bit,
+  		ADE7854_AVARHR);
+  static IIO_DEV_ATTR_BVARHR(ade7854_read_32bit,
+  		ADE7854_BVARHR);
+  static IIO_DEV_ATTR_CVARHR(ade7854_read_32bit,
+  		ADE7854_CVARHR);
+! static IIO_DEV_ATTR_AVAHR(ade7854_read_32bit,
+! 		ADE7854_AVAHR);
+! static IIO_DEV_ATTR_BVAHR(ade7854_read_32bit,
+! 		ADE7854_BVAHR);
+! static IIO_DEV_ATTR_CVAHR(ade7854_read_32bit,
+! 		ADE7854_CVAHR);
+  
+  static int ade7854_set_irq(struct device *dev, bool enable)
+  {
+--- 561,1069 ----
+  		ade7854_read_16bit,
+  		ade7854_write_16bit,
+  		ADE7854_CVRMSOS);
+! static IIO_DEV_ATTR_VAR_A(ade7854_read_24bit,
+! 		ADE7854_AVAR);
+! static IIO_DEV_ATTR_VAR_B(ade7854_read_24bit,
+! 		ADE7854_BVAR);
+! static IIO_DEV_ATTR_VAR_C(ade7854_read_24bit,
+! 		ADE7854_CVAR);
+  static IIO_DEV_ATTR_AVARHR(ade7854_read_32bit,
+  		ADE7854_AVARHR);
+  static IIO_DEV_ATTR_BVARHR(ade7854_read_32bit,
+  		ADE7854_BVARHR);
+  static IIO_DEV_ATTR_CVARHR(ade7854_read_32bit,
+  		ADE7854_CVARHR);
+! static IIO_DEV_ATTR_VPERIOD(S_IRUGO,
+!                 ade7854_read_16bit,
+!                 NULL,
+!                 ADE7854_PERIOD);
+! static IIO_DEV_ATTR_NIRMSOS(S_IWUSR | S_IRUGO,
+! 	ade7854_read_24bit,
+! 	ade7854_write_24bit,
+! 	ADE7854_NIRMSOS);
+! static IIO_DEV_ATTR_AWGAIN(S_IWUSR | S_IRUGO,
+! 	ade7854_read_24bit,
+! 	ade7854_write_24bit,
+! 	ADE7854_AWGAIN);
+! static IIO_DEV_ATTR_BWGAIN(S_IWUSR | S_IRUGO,
+! 	ade7854_read_24bit,
+! 	ade7854_write_24bit,
+! 	ADE7854_BWGAIN);
+! static IIO_DEV_ATTR_CWGAIN(S_IWUSR | S_IRUGO,
+! 	ade7854_read_24bit,
+! 	ade7854_write_24bit,
+! 	ADE7854_CWGAIN);
+! static IIO_DEV_ATTR_AFWGAIN(S_IWUSR | S_IRUGO,
+! 	ade7854_read_24bit,
+! 	ade7854_write_24bit,
+! 	ADE7854_AFWGAIN);
+! static IIO_DEV_ATTR_AFWATTOS(S_IWUSR | S_IRUGO,
+! 	ade7854_read_24bit,
+! 	ade7854_write_24bit,
+! 	ADE7854_AFWATTOS);
+! static IIO_DEV_ATTR_BFWGAIN(S_IWUSR | S_IRUGO,
+! 	ade7854_read_24bit,
+! 	ade7854_write_24bit,
+! 	ADE7854_BFWGAIN);
+! static IIO_DEV_ATTR_BFWATTOS(S_IWUSR | S_IRUGO,
+! 	ade7854_read_24bit,
+! 	ade7854_write_24bit,
+! 	ADE7854_BFWATTOS);
+! static IIO_DEV_ATTR_CFWGAIN(S_IWUSR | S_IRUGO,
+! 	ade7854_read_24bit,
+! 	ade7854_write_24bit,
+! 	ADE7854_CFWGAIN);
+! static IIO_DEV_ATTR_CFWATTOS(S_IWUSR | S_IRUGO,
+! 	ade7854_read_24bit,
+! 	ade7854_write_24bit,
+! 	ADE7854_CFWATTOS);
+! static IIO_DEV_ATTR_AFVARGAIN(S_IWUSR | S_IRUGO,
+! 	ade7854_read_24bit,
+! 	ade7854_write_24bit,
+! 	ADE7854_AFVARGAIN);
+! static IIO_DEV_ATTR_AFVAROS(S_IWUSR | S_IRUGO,
+! 	ade7854_read_24bit,
+! 	ade7854_write_24bit,
+! 	ADE7854_AFVAROS);
+! static IIO_DEV_ATTR_BFVARGAIN(S_IWUSR | S_IRUGO,
+! 	ade7854_read_24bit,
+! 	ade7854_write_24bit,
+! 	ADE7854_BFVARGAIN);
+! static IIO_DEV_ATTR_BFVAROS(S_IWUSR | S_IRUGO,
+! 	ade7854_read_24bit,
+! 	ade7854_write_24bit,
+! 	ADE7854_BFVAROS);
+! static IIO_DEV_ATTR_CFVARGAIN(S_IWUSR | S_IRUGO,
+! 	ade7854_read_24bit,
+! 	ade7854_write_24bit,
+! 	ADE7854_CFVARGAIN);
+! static IIO_DEV_ATTR_CFVAROS(S_IWUSR | S_IRUGO,
+! 	ade7854_read_24bit,
+! 	ade7854_write_24bit,
+! 	ADE7854_CFVAROS);
+! static IIO_DEV_ATTR_VATHR1(S_IWUSR | S_IRUGO,
+! 	ade7854_read_24bitu,
+! 	ade7854_write_24bit,
+! 	ADE7854_VATHR1);
+! static IIO_DEV_ATTR_VATHR0(S_IWUSR | S_IRUGO,
+! 	ade7854_read_24bitu,
+! 	ade7854_write_24bit,
+! 	ADE7854_VATHR0);
+! static IIO_DEV_ATTR_WTHR1(S_IWUSR | S_IRUGO,
+! 	ade7854_read_24bitu,
+! 	ade7854_write_24bit,
+! 	ADE7854_WTHR1);
+! static IIO_DEV_ATTR_WTHR0(S_IWUSR | S_IRUGO,
+! 	ade7854_read_24bitu,
+! 	ade7854_write_24bit,
+! 	ADE7854_WTHR0);
+! static IIO_DEV_ATTR_VARTHR1(S_IWUSR | S_IRUGO,
+! 	ade7854_read_24bitu,
+! 	ade7854_write_24bit,
+! 	ADE7854_VARTHR1);
+! static IIO_DEV_ATTR_VARTHR0(S_IWUSR | S_IRUGO,
+! 	ade7854_read_24bitu,
+! 	ade7854_write_24bit,
+! 	ADE7854_VARTHR0);
+! static IIO_DEV_ATTR_VANOLOAD(S_IWUSR | S_IRUGO,
+! 	ade7854_read_24bit,
+! 	ade7854_write_24bit,
+! 	ADE7854_VANOLOAD);
+! static IIO_DEV_ATTR_APNOLOAD(S_IWUSR | S_IRUGO,
+! 	ade7854_read_24bit,
+! 	ade7854_write_24bit,
+! 	ADE7854_APNOLOAD);
+! static IIO_DEV_ATTR_VARNOLOAD(S_IWUSR | S_IRUGO,
+! 	ade7854_read_24bit,
+! 	ade7854_write_24bit,
+! 	ADE7854_VARNOLOAD);
+! static IIO_DEV_ATTR_VLEVEL(S_IWUSR | S_IRUGO,
+! 	ade7854_read_24bit,
+! 	ade7854_write_24bit,
+! 	ADE7854_VLEVEL);
+! static IIO_DEV_ATTR_DICOEFF(S_IWUSR | S_IRUGO,
+! 	ade7854_read_24bit,
+! 	ade7854_write_24bit,
+! 	ADE7854_DICOEFF);
+! static IIO_DEV_ATTR_HPFDIS(S_IWUSR | S_IRUGO,
+! 	ade7854_read_24bitu,
+! 	ade7854_write_24bit,
+! 	ADE7854_HPFDIS);
+! static IIO_DEV_ATTR_ISUMLVL(S_IWUSR | S_IRUGO,
+! 	ade7854_read_24bit,
+! 	ade7854_write_24bit,
+! 	ADE7854_ISUMLVL);
+! static IIO_DEV_ATTR_ISUM(ade7854_read_32bitu,
+! 	ADE7854_ISUM);
+! #endif
+! 
+! #ifdef ADE7880
+! static IIO_DEV_ATTR_DICOEFF(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_DICOEFF);
+! static IIO_DEV_ATTR_APGAIN(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_APGAIN);
+! static IIO_DEV_ATTR_AWATTOS(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_AWATTOS);
+! static IIO_DEV_ATTR_BPGAIN(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_BPGAIN);
+! static IIO_DEV_ATTR_BWATTOS(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_BWATTOS);
+! static IIO_DEV_ATTR_CPGAIN(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_CPGAIN);
+! static IIO_DEV_ATTR_CWATTOS(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_CWATTOS);
+! static IIO_DEV_ATTR_AIRMSOS(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_AIRMSOS);
+! static IIO_DEV_ATTR_AVRMSOS(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_AVRMSOS);
+! static IIO_DEV_ATTR_BIRMSOS(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_BIRMSOS);
+! static IIO_DEV_ATTR_BVRMSOS(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_BVRMSOS);
+! static IIO_DEV_ATTR_CIRMSOS(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_CIRMSOS);
+! static IIO_DEV_ATTR_CVRMSOS(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_CVRMSOS);
+! static IIO_DEV_ATTR_NIRMSOS(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_NIRMSOS);
+! static IIO_DEV_ATTR_HPGAIN(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_HPGAIN);
+! static IIO_DEV_ATTR_ISUMLVL(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_ISUMLVL);
+! static IIO_DEV_ATTR_VLEVEL(S_IWUSR | S_IRUGO,
+!         ade7854_read_32bitu,
+!         ade7854_write_32bit,
+! 	ADE7880_VLEVEL);
+! static IIO_DEV_ATTR_AFWATTOS(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_AFWATTOS);
+! static IIO_DEV_ATTR_BFWATTOS(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_BFWATTOS);
+! static IIO_DEV_ATTR_CFWATTOS(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_CFWATTOS);
+! static IIO_DEV_ATTR_AFVAROS(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_AFVAROS);
+! static IIO_DEV_ATTR_BFVAROS(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_BFVAROS);
+! static IIO_DEV_ATTR_CFVAROS(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_CFVAROS);
+! static IIO_DEV_ATTR_LAST_RWDATA32(
+!         ade7854_read_32bit,
+! 	ADE7880_LAST_RWDATA32);
+! static IIO_DEV_ATTR_AFIRMSOS(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_AFIRMSOS);
+! static IIO_DEV_ATTR_BFIRMSOS(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_BFIRMSOS);
+! static IIO_DEV_ATTR_CFIRMSOS(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_CFIRMSOS);
+! static IIO_DEV_ATTR_AFVRMSOS(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_AFVRMSOS);
+! static IIO_DEV_ATTR_BFVRMSOS(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_BFVRMSOS);
+! static IIO_DEV_ATTR_CFVRMSOS(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_CFVRMSOS);
+! static IIO_DEV_ATTR_HXWATTOS(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_HXWATTOS);
+! static IIO_DEV_ATTR_HYWATTOS(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_HYWATTOS);
+! static IIO_DEV_ATTR_HZWATTOS(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_HZWATTOS);
+! static IIO_DEV_ATTR_HXVAROS(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_HXVAROS);
+! static IIO_DEV_ATTR_HYVAROS(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_HYVAROS);
+! static IIO_DEV_ATTR_HZVAROS(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_HZVAROS);
+! static IIO_DEV_ATTR_HYIRMSOS(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_HYIRMSOS);
+! static IIO_DEV_ATTR_HZIRMSOS(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_HZIRMSOS);
+! static IIO_DEV_ATTR_HYVRMSOS(S_IWUSR | S_IRUGO,
+!         ade7854_read_24bit,
+!         ade7854_write_24bit,
+! 	ADE7880_HYVRMSOS);
+! static IIO_DEV_ATTR_AIRMS(S_IRUGO,
+!         ade7854_read_24bitu,
+! 	NULL,
+! 	ADE7880_AIRMS);
+! static IIO_DEV_ATTR_AVRMS(S_IRUGO,
+!         ade7854_read_24bitu,
+! 	NULL,
+! 	ADE7880_AVRMS);
+! static IIO_DEV_ATTR_BIRMS(S_IRUGO,
+!         ade7854_read_24bitu,
+! 	NULL,
+! 	ADE7880_BIRMS);
+! static IIO_DEV_ATTR_BVRMS(S_IRUGO,
+!         ade7854_read_24bitu,
+! 	NULL,
+! 	ADE7880_BVRMS);
+! static IIO_DEV_ATTR_CIRMS(S_IRUGO,
+!         ade7854_read_24bitu,
+! 	NULL,
+! 	ADE7880_CIRMS);
+! static IIO_DEV_ATTR_CVRMS(S_IRUGO,
+!         ade7854_read_24bitu,
+! 	NULL,
+! 	ADE7880_CVRMS);
+! static IIO_DEV_ATTR_NIRMS(S_IRUGO,
+!         ade7854_read_24bitu,
+! 	NULL,
+! 	ADE7880_NIRMS);
+! static IIO_DEV_ATTR_ISUM(
+!         ade7854_read_24bitu,
+! 	ADE7880_ISUM);
+! static IIO_DEV_ATTR_AFVAR(
+!         ade7854_read_32bitu,
+! 	ADE7880_AFVAR);
+! static IIO_DEV_ATTR_BFVAR(
+!         ade7854_read_32bitu,
+! 	ADE7880_BFVAR);
+! static IIO_DEV_ATTR_CFVAR(
+!         ade7854_read_32bitu,
+! 	ADE7880_CFVAR);
+! static IIO_DEV_ATTR_LAST_RWDATA8(
+!         ade7854_read_8bit,
+! 	ADE7880_LAST_RWDATA8);
+! static IIO_DEV_ATTR_FVRMS(
+!         ade7854_read_24bitu,
+! 	ADE7880_FVRMS);
+! static IIO_DEV_ATTR_FIRMS(
+!         ade7854_read_24bitu,
+! 	ADE7880_FIRMS);
+! static IIO_DEV_ATTR_FWATT(
+!         ade7854_read_24bitu,
+! 	ADE7880_FWATT);
+! static IIO_DEV_ATTR_FVAR(
+!         ade7854_read_24bitu,
+! 	ADE7880_FVAR);
+! static IIO_DEV_ATTR_FVA(
+!         ade7854_read_24bitu,
+! 	ADE7880_FVA);
+! static IIO_DEV_ATTR_FPF(
+!         ade7854_read_24bitu,
+! 	ADE7880_FPF);
+! static IIO_DEV_ATTR_VTHDN(
+!         ade7854_read_24bitu,
+! 	ADE7880_VTHDN);
+! static IIO_DEV_ATTR_ITHDN(
+!         ade7854_read_24bitu,
+! 	ADE7880_ITHDN);
+! static IIO_DEV_ATTR_HXVRMS(
+!         ade7854_read_24bitu,
+! 	ADE7880_HXVRMS);
+! static IIO_DEV_ATTR_HXIRMS(
+!         ade7854_read_24bitu,
+! 	ADE7880_HXIRMS);
+! static IIO_DEV_ATTR_HXWATT(
+!         ade7854_read_24bitu,
+! 	ADE7880_HXWATT);
+! static IIO_DEV_ATTR_HXVAR(
+!         ade7854_read_24bitu,
+! 	ADE7880_HXVAR);
+! static IIO_DEV_ATTR_HXVA(
+!         ade7854_read_24bitu,
+! 	ADE7880_HXVA);
+! static IIO_DEV_ATTR_HXPF(
+!         ade7854_read_24bitu,
+! 	ADE7880_HXPF);
+! static IIO_DEV_ATTR_HXVHD(
+!         ade7854_read_24bitu,
+! 	ADE7880_HXVHD);
+! static IIO_DEV_ATTR_HXIHD(
+!         ade7854_read_24bitu,
+! 	ADE7880_HXIHD);
+! static IIO_DEV_ATTR_HYVRMS(
+!         ade7854_read_24bitu,
+! 	ADE7880_HYVRMS);
+! static IIO_DEV_ATTR_HYIRMS(
+!         ade7854_read_24bitu,
+! 	ADE7880_HYIRMS);
+! static IIO_DEV_ATTR_HYWATT(
+!         ade7854_read_24bitu,
+! 	ADE7880_HYWATT);
+! static IIO_DEV_ATTR_HYVAR(
+!         ade7854_read_24bitu,
+! 	ADE7880_HYVAR);
+! static IIO_DEV_ATTR_HYVA(
+!         ade7854_read_24bitu,
+! 	ADE7880_HYVA);
+! static IIO_DEV_ATTR_HYPF(
+!         ade7854_read_24bitu,
+! 	ADE7880_HYPF);
+! static IIO_DEV_ATTR_HYVHD(
+!         ade7854_read_24bitu,
+! 	ADE7880_HYVHD);
+! static IIO_DEV_ATTR_HYIHD(
+!         ade7854_read_24bitu,
+! 	ADE7880_HYIHD);
+! static IIO_DEV_ATTR_HZVRMS(
+!         ade7854_read_24bitu,
+! 	ADE7880_HZVRMS);
+! static IIO_DEV_ATTR_HZIRMS(
+!         ade7854_read_24bitu,
+! 	ADE7880_HZIRMS);
+! static IIO_DEV_ATTR_HZWATT(
+!         ade7854_read_24bitu,
+! 	ADE7880_HZWATT);
+! static IIO_DEV_ATTR_HZVAR(
+!         ade7854_read_24bitu,
+! 	ADE7880_HZVAR);
+! static IIO_DEV_ATTR_HZVA(
+!         ade7854_read_24bitu,
+! 	ADE7880_HZVA);
+! static IIO_DEV_ATTR_HZPF(
+!         ade7854_read_24bitu,
+! 	ADE7880_HZPF);
+! static IIO_DEV_ATTR_HZVHD(
+!         ade7854_read_24bitu,
+! 	ADE7880_HZVHD);
+! static IIO_DEV_ATTR_HZIHD(
+!         ade7854_read_24bitu,
+! 	ADE7880_HZIHD);
+! static IIO_DEV_ATTR_HCONFIG(S_IWUSR | S_IRUGO,
+!         ade7854_read_16bit,
+!         ade7854_write_16bit,
+! 	ADE7880_HCONFIG);
+! static IIO_DEV_ATTR_APF(
+!         ade7854_read_16bit,
+! 	ADE7880_APF);
+! static IIO_DEV_ATTR_BPF(
+!         ade7854_read_16bit,
+! 	ADE7880_BPF);
+! static IIO_DEV_ATTR_CPF(
+!         ade7854_read_16bit,
+! 	ADE7880_CPF);
+! static IIO_DEV_ATTR_APERIOD(
+!         ade7854_read_16bit,
+! 	ADE7880_APERIOD);
+! static IIO_DEV_ATTR_BPERIOD(
+!         ade7854_read_16bit,
+! 	ADE7880_BPERIOD);
+! static IIO_DEV_ATTR_CPERIOD(
+!         ade7854_read_16bit,
+! 	ADE7880_CPERIOD);
+! static IIO_DEV_ATTR_APNOLOAD(S_IWUSR | S_IRUGO,
+!         ade7854_read_16bit,
+!         ade7854_write_16bit,
+! 	ADE7880_APNOLOAD);
+! static IIO_DEV_ATTR_VARNOLOAD(S_IWUSR | S_IRUGO,
+!         ade7854_read_16bit,
+!         ade7854_write_16bit,
+! 	ADE7880_VARNOLOAD);
+! static IIO_DEV_ATTR_VANOLOAD(S_IWUSR | S_IRUGO,
+!         ade7854_read_16bit,
+!         ade7854_write_16bit,
+! 	ADE7880_VANOLOAD);
+! static IIO_DEV_ATTR_LAST_ADD(
+!         ade7854_read_16bit,
+! 	ADE7880_LAST_ADD);
+! static IIO_DEV_ATTR_LAST_RWDATA16(
+!         ade7854_read_16bit,
+! 	ADE7880_LAST_RWDATA16);
+! static IIO_DEV_ATTR_CONFIG3(S_IWUSR | S_IRUGO,
+!         ade7854_read_8bit,
+!         ade7854_write_8bit,
+! 	ADE7880_CONFIG3);
+! static IIO_DEV_ATTR_LAST_OP(
+!         ade7854_read_8bit,
+! 	ADE7880_LAST_OP);
+! static IIO_DEV_ATTR_WTHR(S_IWUSR | S_IRUGO,
+!         ade7854_read_8bit,
+!         ade7854_write_8bit,
+! 	ADE7880_WTHR);
+! static IIO_DEV_ATTR_VARTHR(S_IWUSR | S_IRUGO,
+!         ade7854_read_8bit,
+!         ade7854_write_8bit,
+! 	ADE7880_VARTHR);
+! static IIO_DEV_ATTR_VATHR(S_IWUSR | S_IRUGO,
+!         ade7854_read_8bit,
+!         ade7854_write_8bit,
+! 	ADE7880_VATHR);
+! static IIO_DEV_ATTR_HX_REG(S_IWUSR | S_IRUGO,
+!         ade7854_read_8bit,
+!         ade7854_write_8bit,
+! 	ADE7880_HX_REG);
+! static IIO_DEV_ATTR_HY_REG(S_IWUSR | S_IRUGO,
+!         ade7854_read_8bit,
+!         ade7854_write_8bit,
+! 	ADE7880_HY_REG);
+! static IIO_DEV_ATTR_HZ_REG(S_IWUSR | S_IRUGO,
+!         ade7854_read_8bit,
+!         ade7854_write_8bit,
+! 	ADE7880_HZ_REG);
+! #endif
   
   static int ade7854_set_irq(struct device *dev, bool enable)
   {
 ***************
-*** 525,530 ****
---- 775,853 ----
-  	&iio_dev_attr_current_a.dev_attr.attr,
-  	&iio_dev_attr_current_b.dev_attr.attr,
-  	&iio_dev_attr_current_c.dev_attr.attr,
+*** 457,462 ****
+--- 1115,1230 ----
+  static IIO_CONST_ATTR(name, "ade7854");
+  
+  static struct attribute *ade7854_attributes[] = {
++ 
++ #ifdef ADE7880
++ 	&iio_dev_attr_dicoeff.dev_attr.attr,
++ 	&iio_dev_attr_apgain.dev_attr.attr,
++ 	&iio_dev_attr_awattos.dev_attr.attr,
++ 	&iio_dev_attr_bpgain.dev_attr.attr,
++ 	&iio_dev_attr_bwattos.dev_attr.attr,
++ 	&iio_dev_attr_cpgain.dev_attr.attr,
++ 	&iio_dev_attr_cwattos.dev_attr.attr,
++ 	&iio_dev_attr_airmsos.dev_attr.attr,
++ 	&iio_dev_attr_avrmsos.dev_attr.attr,
++ 	&iio_dev_attr_birmsos.dev_attr.attr,
++ 	&iio_dev_attr_bvrmsos.dev_attr.attr,
++ 	&iio_dev_attr_cirmsos.dev_attr.attr,
++ 	&iio_dev_attr_cvrmsos.dev_attr.attr,
++ 	&iio_dev_attr_nirmsos.dev_attr.attr,
++ 	&iio_dev_attr_hpgain.dev_attr.attr,
++ 	&iio_dev_attr_isumlvl.dev_attr.attr,
++ 	&iio_dev_attr_vlevel.dev_attr.attr,
++ 	&iio_dev_attr_afwattos.dev_attr.attr,
++ 	&iio_dev_attr_bfwattos.dev_attr.attr,
++ 	&iio_dev_attr_cfwattos.dev_attr.attr,
++ 	&iio_dev_attr_afvaros.dev_attr.attr,
++ 	&iio_dev_attr_bfvaros.dev_attr.attr,
++ 	&iio_dev_attr_cfvaros.dev_attr.attr,
++ 	&iio_dev_attr_last_rwdata32.dev_attr.attr,
++ 	&iio_dev_attr_afirmsos.dev_attr.attr,
++ 	&iio_dev_attr_bfirmsos.dev_attr.attr,
++ 	&iio_dev_attr_cfirmsos.dev_attr.attr,
++ 	&iio_dev_attr_afvrmsos.dev_attr.attr,
++ 	&iio_dev_attr_bfvrmsos.dev_attr.attr,
++ 	&iio_dev_attr_cfvrmsos.dev_attr.attr,
++ 	&iio_dev_attr_hxwattos.dev_attr.attr,
++ 	&iio_dev_attr_hywattos.dev_attr.attr,
++ 	&iio_dev_attr_hzwattos.dev_attr.attr,
++ 	&iio_dev_attr_hxvaros.dev_attr.attr,
++ 	&iio_dev_attr_hyvaros.dev_attr.attr,
++ 	&iio_dev_attr_hzvaros.dev_attr.attr,
++ 	&iio_dev_attr_hyirmsos.dev_attr.attr,
++ 	&iio_dev_attr_hzirmsos.dev_attr.attr,
++ 	&iio_dev_attr_hyvrmsos.dev_attr.attr,
++ 	&iio_dev_attr_airms.dev_attr.attr,
++ 	&iio_dev_attr_avrms.dev_attr.attr,
++ 	&iio_dev_attr_birms.dev_attr.attr,
++ 	&iio_dev_attr_bvrms.dev_attr.attr,
++ 	&iio_dev_attr_cirms.dev_attr.attr,
++ 	&iio_dev_attr_cvrms.dev_attr.attr,
++ 	&iio_dev_attr_nirms.dev_attr.attr,
++ 	&iio_dev_attr_isum.dev_attr.attr,
++ 	&iio_dev_attr_afvar.dev_attr.attr,
++ 	&iio_dev_attr_bfvar.dev_attr.attr,
++ 	&iio_dev_attr_cfvar.dev_attr.attr,
++ 	&iio_dev_attr_last_rwdata8.dev_attr.attr,
++ 	&iio_dev_attr_fvrms.dev_attr.attr,
++ 	&iio_dev_attr_firms.dev_attr.attr,
++ 	&iio_dev_attr_fwatt.dev_attr.attr,
++ 	&iio_dev_attr_fvar.dev_attr.attr,
++ 	&iio_dev_attr_fva.dev_attr.attr,
++ 	&iio_dev_attr_fpf.dev_attr.attr,
++ 	&iio_dev_attr_vthdn.dev_attr.attr,
++ 	&iio_dev_attr_ithdn.dev_attr.attr,
++ 	&iio_dev_attr_hxvrms.dev_attr.attr,
++ 	&iio_dev_attr_hxirms.dev_attr.attr,
++ 	&iio_dev_attr_hxwatt.dev_attr.attr,
++ 	&iio_dev_attr_hxvar.dev_attr.attr,
++ 	&iio_dev_attr_hxva.dev_attr.attr,
++ 	&iio_dev_attr_hxpf.dev_attr.attr,
++ 	&iio_dev_attr_hxvhd.dev_attr.attr,
++ 	&iio_dev_attr_hxihd.dev_attr.attr,
++ 	&iio_dev_attr_hyvrms.dev_attr.attr,
++ 	&iio_dev_attr_hyirms.dev_attr.attr,
++ 	&iio_dev_attr_hywatt.dev_attr.attr,
++ 	&iio_dev_attr_hyvar.dev_attr.attr,
++ 	&iio_dev_attr_hyva.dev_attr.attr,
++ 	&iio_dev_attr_hypf.dev_attr.attr,
++ 	&iio_dev_attr_hyvhd.dev_attr.attr,
++ 	&iio_dev_attr_hyihd.dev_attr.attr,
++ 	&iio_dev_attr_hzvrms.dev_attr.attr,
++ 	&iio_dev_attr_hzirms.dev_attr.attr,
++ 	&iio_dev_attr_hzwatt.dev_attr.attr,
++ 	&iio_dev_attr_hzvar.dev_attr.attr,
++ 	&iio_dev_attr_hzva.dev_attr.attr,
++ 	&iio_dev_attr_hzpf.dev_attr.attr,
++ 	&iio_dev_attr_hzvhd.dev_attr.attr,
++ 	&iio_dev_attr_hzihd.dev_attr.attr,
++ 	&iio_dev_attr_hconfig.dev_attr.attr,
++ 	&iio_dev_attr_apf.dev_attr.attr,
++ 	&iio_dev_attr_bpf.dev_attr.attr,
++ 	&iio_dev_attr_cpf.dev_attr.attr,
++ 	&iio_dev_attr_aperiod.dev_attr.attr,
++ 	&iio_dev_attr_bperiod.dev_attr.attr,
++ 	&iio_dev_attr_cperiod.dev_attr.attr,
++ 	&iio_dev_attr_apnoload.dev_attr.attr,
++ 	&iio_dev_attr_varnoload.dev_attr.attr,
++ 	&iio_dev_attr_vanoload.dev_attr.attr,
++ 	&iio_dev_attr_last_add.dev_attr.attr,
++ 	&iio_dev_attr_last_rwdata16.dev_attr.attr,
++ 	&iio_dev_attr_config3.dev_attr.attr,
++ 	&iio_dev_attr_last_op.dev_attr.attr,
++ 	&iio_dev_attr_wthr.dev_attr.attr,
++ 	&iio_dev_attr_varthr.dev_attr.attr,
++ 	&iio_dev_attr_vathr.dev_attr.attr,
++ 	&iio_dev_attr_hx_reg.dev_attr.attr,
++ 	&iio_dev_attr_hy_reg.dev_attr.attr,
++ 	&iio_dev_attr_hz_reg.dev_attr.attr,
++ #endif
++ 
++ 	&iio_const_attr_sampling_frequency_available.dev_attr.attr,
++ 
++ 	/* common attributes */
+  	&iio_dev_attr_aigain.dev_attr.attr,
+  	&iio_dev_attr_bigain.dev_attr.attr,
+  	&iio_dev_attr_cigain.dev_attr.attr,
+***************
+*** 464,469 ****
+--- 1232,1294 ----
+  	&iio_dev_attr_avgain.dev_attr.attr,
+  	&iio_dev_attr_bvgain.dev_attr.attr,
+  	&iio_dev_attr_cvgain.dev_attr.attr,
++ 	&iio_dev_attr_awatthr.dev_attr.attr,
++ 	&iio_dev_attr_bwatthr.dev_attr.attr,
++ 	&iio_dev_attr_cwatthr.dev_attr.attr,
++ 	&iio_dev_attr_afwatthr.dev_attr.attr,
++ 	&iio_dev_attr_bfwatthr.dev_attr.attr,
++ 	&iio_dev_attr_cfwatthr.dev_attr.attr,
++ 	&iio_dev_attr_avahr.dev_attr.attr,
++ 	&iio_dev_attr_bvahr.dev_attr.attr,
++ 	&iio_dev_attr_cvahr.dev_attr.attr,
++ 	&iio_dev_attr_volt_a.dev_attr.attr,
++ 	&iio_dev_attr_volt_b.dev_attr.attr,
++ 	&iio_dev_attr_volt_c.dev_attr.attr,
++ 	&iio_dev_attr_current_a.dev_attr.attr,
++ 	&iio_dev_attr_current_b.dev_attr.attr,
++ 	&iio_dev_attr_current_c.dev_attr.attr,
 + 	&iio_dev_attr_current_n.dev_attr.attr,
 + 	&iio_dev_attr_watt_a.dev_attr.attr,
 + 	&iio_dev_attr_watt_b.dev_attr.attr,
@@ -318,46 +1351,10 @@ diff -cr linux-3.18.7-0117a/drivers/staging/iio/meter/ade7854.c linux-3.18.7-011
 + 	&iio_dev_attr_va_a.dev_attr.attr,
 + 	&iio_dev_attr_va_b.dev_attr.attr,
 + 	&iio_dev_attr_va_c.dev_attr.attr,
-+ 	&iio_dev_attr_var_a.dev_attr.attr,
-+ 	&iio_dev_attr_var_b.dev_attr.attr,
-+ 	&iio_dev_attr_var_c.dev_attr.attr,
-+ 	&iio_dev_attr_vperiod.dev_attr.attr,
 + 	&iio_dev_attr_run.dev_attr.attr,
 + 	&iio_dev_attr_config.dev_attr.attr,
 + 	&iio_dev_attr_config2.dev_attr.attr,
 + 	&iio_dev_attr_pga_gain.dev_attr.attr,
-+ 
-+ 
-+ 	&iio_dev_attr_nirmsos.dev_attr.attr,
-+ 	&iio_dev_attr_awgain.dev_attr.attr,
-+ 	&iio_dev_attr_bwgain.dev_attr.attr,
-+ 	&iio_dev_attr_cwgain.dev_attr.attr,
-+ 	&iio_dev_attr_afwgain.dev_attr.attr,
-+ 	&iio_dev_attr_afwattos.dev_attr.attr,
-+ 	&iio_dev_attr_bfwgain.dev_attr.attr,
-+ 	&iio_dev_attr_bfwattos.dev_attr.attr,
-+ 	&iio_dev_attr_cfwgain.dev_attr.attr,
-+ 	&iio_dev_attr_cfwattos.dev_attr.attr,
-+ 	&iio_dev_attr_afvargain.dev_attr.attr,
-+ 	&iio_dev_attr_afvaros.dev_attr.attr,
-+ 	&iio_dev_attr_bfvargain.dev_attr.attr,
-+ 	&iio_dev_attr_bfvaros.dev_attr.attr,
-+ 	&iio_dev_attr_cfvargain.dev_attr.attr,
-+ 	&iio_dev_attr_cfvaros.dev_attr.attr,
-+ 	&iio_dev_attr_vathr1.dev_attr.attr,
-+ 	&iio_dev_attr_vathr0.dev_attr.attr,
-+ 	&iio_dev_attr_wthr1.dev_attr.attr,
-+ 	&iio_dev_attr_wthr0.dev_attr.attr,
-+ 	&iio_dev_attr_varthr1.dev_attr.attr,
-+ 	&iio_dev_attr_varthr0.dev_attr.attr,
-+ 	&iio_dev_attr_vanoload.dev_attr.attr,
-+ 	&iio_dev_attr_apnoload.dev_attr.attr,
-+ 	&iio_dev_attr_varnoload.dev_attr.attr,
-+ 	&iio_dev_attr_vlevel.dev_attr.attr,
-+ 	&iio_dev_attr_dicoeff.dev_attr.attr,
-+ 	&iio_dev_attr_hpfdis.dev_attr.attr,
-+ 	&iio_dev_attr_isumlvl.dev_attr.attr,
-+ 	&iio_dev_attr_isum.dev_attr.attr,
 + 	&iio_dev_attr_afvarhr.dev_attr.attr,
 + 	&iio_dev_attr_bfvarhr.dev_attr.attr,
 + 	&iio_dev_attr_cfvarhr.dev_attr.attr,
@@ -384,17 +1381,184 @@ diff -cr linux-3.18.7-0117a/drivers/staging/iio/meter/ade7854.c linux-3.18.7-011
 + 	&iio_dev_attr_hsdc_cfg.dev_attr.attr,
 + 	&iio_dev_attr_version.dev_attr.attr,
 + 	&iio_dev_attr_lpoilvl.dev_attr.attr,
++ 
++ 	&iio_const_attr_name.dev_attr.attr,
++ 
++ #ifdef ADE7854
++ 	/* ade7858 only attributes */
+  	&iio_dev_attr_linecyc.dev_attr.attr,
+  	&iio_dev_attr_sagcyc.dev_attr.attr,
+  	&iio_dev_attr_cfcyc.dev_attr.attr,
+***************
+*** 481,503 ****
+  	&iio_dev_attr_reactive_power_a_offset.dev_attr.attr,
+  	&iio_dev_attr_reactive_power_b_offset.dev_attr.attr,
+  	&iio_dev_attr_reactive_power_c_offset.dev_attr.attr,
+- 	&iio_dev_attr_awatthr.dev_attr.attr,
+- 	&iio_dev_attr_bwatthr.dev_attr.attr,
+- 	&iio_dev_attr_cwatthr.dev_attr.attr,
+- 	&iio_dev_attr_afwatthr.dev_attr.attr,
+- 	&iio_dev_attr_bfwatthr.dev_attr.attr,
+- 	&iio_dev_attr_cfwatthr.dev_attr.attr,
+  	&iio_dev_attr_avarhr.dev_attr.attr,
+  	&iio_dev_attr_bvarhr.dev_attr.attr,
+  	&iio_dev_attr_cvarhr.dev_attr.attr,
+  	&iio_dev_attr_angle0.dev_attr.attr,
+  	&iio_dev_attr_angle1.dev_attr.attr,
+  	&iio_dev_attr_angle2.dev_attr.attr,
+- 	&iio_dev_attr_avahr.dev_attr.attr,
+- 	&iio_dev_attr_bvahr.dev_attr.attr,
+- 	&iio_dev_attr_cvahr.dev_attr.attr,
+- 	&iio_const_attr_sampling_frequency_available.dev_attr.attr,
+- 	&iio_const_attr_name.dev_attr.attr,
+  	&iio_dev_attr_vpeak.dev_attr.attr,
+  	&iio_dev_attr_ipeak.dev_attr.attr,
+  	&iio_dev_attr_aphcal.dev_attr.attr,
+--- 1306,1317 ----
+***************
+*** 519,530 ****
+  	&iio_dev_attr_avrmsos.dev_attr.attr,
+  	&iio_dev_attr_bvrmsos.dev_attr.attr,
+  	&iio_dev_attr_cvrmsos.dev_attr.attr,
+! 	&iio_dev_attr_volt_a.dev_attr.attr,
+! 	&iio_dev_attr_volt_b.dev_attr.attr,
+! 	&iio_dev_attr_volt_c.dev_attr.attr,
+! 	&iio_dev_attr_current_a.dev_attr.attr,
+! 	&iio_dev_attr_current_b.dev_attr.attr,
+! 	&iio_dev_attr_current_c.dev_attr.attr,
   	NULL,
   };
   
-Nur in linux-3.18.7-0117c/drivers/staging/iio/meter: ade7854.c.orig.
-Nur in linux-3.18.7-0117c/drivers/staging/iio/meter: ade7854.c.rej.
-diff -cr linux-3.18.7-0117a/drivers/staging/iio/meter/ade7854.h linux-3.18.7-0117c/drivers/staging/iio/meter/ade7854.h
+--- 1333,1373 ----
+  	&iio_dev_attr_avrmsos.dev_attr.attr,
+  	&iio_dev_attr_bvrmsos.dev_attr.attr,
+  	&iio_dev_attr_cvrmsos.dev_attr.attr,
+! 	&iio_dev_attr_var_a.dev_attr.attr,
+! 	&iio_dev_attr_var_b.dev_attr.attr,
+! 	&iio_dev_attr_var_c.dev_attr.attr,
+! 	&iio_dev_attr_vperiod.dev_attr.attr,
+! 	&iio_dev_attr_nirmsos.dev_attr.attr,
+! 	&iio_dev_attr_awgain.dev_attr.attr,
+! 	&iio_dev_attr_bwgain.dev_attr.attr,
+! 	&iio_dev_attr_cwgain.dev_attr.attr,
+! 	&iio_dev_attr_afwgain.dev_attr.attr,
+! 	&iio_dev_attr_afwattos.dev_attr.attr,
+! 	&iio_dev_attr_bfwgain.dev_attr.attr,
+! 	&iio_dev_attr_bfwattos.dev_attr.attr,
+! 	&iio_dev_attr_cfwgain.dev_attr.attr,
+! 	&iio_dev_attr_cfwattos.dev_attr.attr,
+! 	&iio_dev_attr_afvargain.dev_attr.attr,
+! 	&iio_dev_attr_afvaros.dev_attr.attr,
+! 	&iio_dev_attr_bfvargain.dev_attr.attr,
+! 	&iio_dev_attr_bfvaros.dev_attr.attr,
+! 	&iio_dev_attr_cfvargain.dev_attr.attr,
+! 	&iio_dev_attr_cfvaros.dev_attr.attr,
+! 	&iio_dev_attr_vathr1.dev_attr.attr,
+! 	&iio_dev_attr_vathr0.dev_attr.attr,
+! 	&iio_dev_attr_wthr1.dev_attr.attr,
+! 	&iio_dev_attr_wthr0.dev_attr.attr,
+! 	&iio_dev_attr_varthr1.dev_attr.attr,
+! 	&iio_dev_attr_varthr0.dev_attr.attr,
+! 	&iio_dev_attr_vanoload.dev_attr.attr,
+! 	&iio_dev_attr_apnoload.dev_attr.attr,
+! 	&iio_dev_attr_varnoload.dev_attr.attr,
+! 	&iio_dev_attr_vlevel.dev_attr.attr,
+! 	&iio_dev_attr_dicoeff.dev_attr.attr,
+! 	&iio_dev_attr_hpfdis.dev_attr.attr,
+! 	&iio_dev_attr_isumlvl.dev_attr.attr,
+! 	&iio_dev_attr_isum.dev_attr.attr,
+! #endif
+  	NULL,
+  };
+  
+diff -cr linux-3.18.7-0117a/drivers/staging/iio/meter/ade7854.h linux-3.18.7-0117d/drivers/staging/iio/meter/ade7854.h
 *** linux-3.18.7-0117a/drivers/staging/iio/meter/ade7854.h	2015-02-18 14:20:01.934431245 +0100
---- linux-3.18.7-0117c/drivers/staging/iio/meter/ade7854.h	2015-02-18 14:51:21.090938555 +0100
+--- linux-3.18.7-0117d/drivers/staging/iio/meter/ade7854.h	2015-02-21 09:35:05.269795727 +0100
+***************
+*** 8,13 ****
+--- 8,14 ----
+  #define ADE7854_CIGAIN    0x4384
+  #define ADE7854_CVGAIN    0x4385
+  #define ADE7854_NIGAIN    0x4386
++ #ifdef ADE7854
+  #define ADE7854_AIRMSOS   0x4387
+  #define ADE7854_AVRMSOS   0x4388
+  #define ADE7854_BIRMSOS   0x4389
+***************
+*** 64,69 ****
+--- 65,119 ----
+  #define ADE7854_CIRMS     0x43C4
+  #define ADE7854_CVRMS     0x43C5
+  #define ADE7854_NIRMS     0x43C6
++ #endif
++ #ifdef ADE7880
++ #define ADE7880_DICOEFF   0x4388
++ #define ADE7880_APGAIN    0x4389
++ #define ADE7880_AWATTOS   0x438A
++ #define ADE7880_BPGAIN    0x438B
++ #define ADE7880_BWATTOS   0x438C
++ #define ADE7880_CPGAIN    0x438D
++ #define ADE7880_CWATTOS   0x438E
++ #define ADE7880_AIRMSOS   0x438F
++ #define ADE7880_AVRMSOS   0x4390
++ #define ADE7880_BIRMSOS   0x4391
++ #define ADE7880_BVRMSOS   0x4392
++ #define ADE7880_CIRMSOS   0x4393
++ #define ADE7880_CVRMSOS   0x4394
++ #define ADE7880_NIRMSOS   0x4395
++ #define ADE7880_HPGAIN    0x4398
++ #define ADE7880_ISUMLVL   0x4399
++ #define ADE7880_VLEVEL   0x439F
++ #define ADE7880_AFWATTOS  0x43A2
++ #define ADE7880_BFWATTOS  0x43A3
++ #define ADE7880_CFWATTOS  0x43A4
++ #define ADE7880_AFVAROS   0x43A5
++ #define ADE7880_BFVAROS   0x43A6
++ #define ADE7880_CFVAROS   0x43A7
++ #define ADE7880_AFIRMSOS  0x43A8
++ #define ADE7880_BFIRMSOS  0x43A9
++ #define ADE7880_CFIRMSOS  0x43AA
++ #define ADE7880_AFVRMSOS  0x43AB
++ #define ADE7880_BFVRMSOS  0x43AC
++ #define ADE7880_CFVRMSOS  0x43AD
++ #define ADE7880_HXWATTOS  0x43AE
++ #define ADE7880_HYWATTOS  0x43AF
++ #define ADE7880_HZWATTOS  0x43B0
++ #define ADE7880_HXVAROS   0x43B1
++ #define ADE7880_HYVAROS   0x43B2
++ #define ADE7880_HZVAROS   0x43B3
++ #define ADE7880_HYIRMSOS  0x43B5
++ #define ADE7880_HZIRMSOS  0x43B6
++ #define ADE7880_HYVRMSOS  0x43B8
++ #define ADE7880_AIRMS     0x43C0
++ #define ADE7880_AVRMS     0x43C1
++ #define ADE7880_BIRMS     0x43C2
++ #define ADE7880_BVRMS     0x43C3
++ #define ADE7880_CIRMS     0x43C4
++ #define ADE7880_CVRMS     0x43C5
++ #define ADE7880_NIRMS     0x43C6
++ #define ADE7880_ISUM      0x43C7
++ #endif
+  #define ADE7854_RUN       0xE228
+  #define ADE7854_AWATTHR   0xE400
+  #define ADE7854_BWATTHR   0xE401
+***************
+*** 71,79 ****
+--- 121,131 ----
+  #define ADE7854_AFWATTHR  0xE403
+  #define ADE7854_BFWATTHR  0xE404
+  #define ADE7854_CFWATTHR  0xE405
++ #ifdef ADE7854
+  #define ADE7854_AVARHR    0xE406
+  #define ADE7854_BVARHR    0xE407
+  #define ADE7854_CVARHR    0xE408
++ #endif
+  #define ADE7854_AFVARHR   0xE409
+  #define ADE7854_BFVARHR   0xE40A
+  #define ADE7854_CFVARHR   0xE40B
 ***************
 *** 84,89 ****
---- 84,92 ----
+--- 136,144 ----
   #define ADE7854_VPEAK     0xE501
   #define ADE7854_STATUS0   0xE502
   #define ADE7854_STATUS1   0xE503
@@ -405,8 +1569,8 @@ diff -cr linux-3.18.7-0117a/drivers/staging/iio/meter/ade7854.h linux-3.18.7-011
   #define ADE7854_OVLVL     0xE508
   #define ADE7854_SAGLVL    0xE509
 ***************
-*** 92,103 ****
---- 95,110 ----
+*** 92,113 ****
+--- 147,184 ----
   #define ADE7854_IAWV      0xE50C
   #define ADE7854_IBWV      0xE50D
   #define ADE7854_ICWV      0xE50E
@@ -417,12 +1581,34 @@ diff -cr linux-3.18.7-0117a/drivers/staging/iio/meter/ade7854.h linux-3.18.7-011
   #define ADE7854_AWATT     0xE513
   #define ADE7854_BWATT     0xE514
   #define ADE7854_CWATT     0xE515
++ #ifdef ADE7854
 + #define ADE7854_AVAR      0xE516
 + #define ADE7854_BVAR      0xE517
 + #define ADE7854_CVAR      0xE518
++ #endif
++ #ifdef ADE7880
++ #define ADE7880_AFVAR     0xE516
++ #define ADE7880_BFVAR     0xE517
++ #define ADE7880_CFVAR     0xE518
++ #endif
   #define ADE7854_AVA       0xE519
   #define ADE7854_BVA       0xE51A
   #define ADE7854_CVA       0xE51B
+  #define ADE7854_CHECKSUM  0xE51F
+  #define ADE7854_VNOM      0xE520
++ #ifdef ADE7880
++ #define ADE7880_LAST_RWDATA32 0xE5FF
++ #endif
+  #define ADE7854_PHSTATUS  0xE600
+  #define ADE7854_ANGLE0    0xE601
+  #define ADE7854_ANGLE1    0xE602
+  #define ADE7854_ANGLE2    0xE603
++ #ifdef ADE7854
+  #define ADE7854_PERIOD    0xE607
++ #endif 
+  #define ADE7854_PHNOLOAD  0xE608
+  #define ADE7854_LINECYC   0xE60C
+  #define ADE7854_ZXTOUT    0xE60D
 ***************
 *** 129,136 ****
   #define ADE7854_SAGCYC    0xE704
@@ -433,19 +1619,75 @@ diff -cr linux-3.18.7-0117a/drivers/staging/iio/meter/ade7854.h linux-3.18.7-011
   #define ADE7854_READ_REG   0x1
   #define ADE7854_WRITE_REG  0x0
   
---- 136,144 ----
+--- 200,263 ----
   #define ADE7854_SAGCYC    0xE704
   #define ADE7854_CFCYC     0xE705
   #define ADE7854_HSDC_CFG  0xE706
 + #define ADE7854_VERSION	  0xE707
++ #ifdef ADE7880
++ #define ADE7880_LAST_RWDATA8 0xE7FD
++ #define ADE7880_FVRMS     0xE880
++ #define ADE7880_FIRMS     0xE881
++ #define ADE7880_FWATT     0xE882
++ #define ADE7880_FVAR      0xE883
++ #define ADE7880_FVA       0xE884
++ #define ADE7880_FPF       0xE885
++ #define ADE7880_VTHDN     0xE886
++ #define ADE7880_ITHDN     0xE887
++ #define ADE7880_HXVRMS    0xE888
++ #define ADE7880_HXIRMS    0xE889
++ #define ADE7880_HXWATT    0xE88A
++ #define ADE7880_HXVAR     0xE88B
++ #define ADE7880_HXVA      0xE88C
++ #define ADE7880_HXPF      0xE88D
++ #define ADE7880_HXVHD     0xE88E
++ #define ADE7880_HXIHD     0xE88F
++ #define ADE7880_HYVRMS    0xE890
++ #define ADE7880_HYIRMS    0xE891
++ #define ADE7880_HYWATT    0xE892
++ #define ADE7880_HYVAR     0xE893
++ #define ADE7880_HYVA      0xE894
++ #define ADE7880_HYPF      0xE895
++ #define ADE7880_HYVHD     0xE896
++ #define ADE7880_HYIHD     0xE897
++ #define ADE7880_HZVRMS    0xE898
++ #define ADE7880_HZIRMS    0xE899
++ #define ADE7880_HZWATT    0xE89A
++ #define ADE7880_HZVAR     0xE89B
++ #define ADE7880_HZVA      0xE89C
++ #define ADE7880_HZPF      0xE89D
++ #define ADE7880_HZVHD     0xE89E
++ #define ADE7880_HZIHD     0xE89F
++ #define ADE7880_HCONFIG   0xE900
++ #define ADE7880_APF       0xE902
++ #define ADE7880_BPF       0xE903
++ #define ADE7880_CPF       0xE904
++ #define ADE7880_APERIOD   0xE905
++ #define ADE7880_BPERIOD   0xE906
++ #define ADE7880_CPERIOD   0xE907
++ #define ADE7880_APNOLOAD  0xE908
++ #define ADE7880_VARNOLOAD 0xE909
++ #define ADE7880_VANOLOAD  0xE90A
++ #define ADE7880_LAST_ADD            0xE9FE
++ #define ADE7880_LAST_RWDATA16   0xE9FF
++ #define ADE7880_CONFIG3   0xEA00
++ #define ADE7880_LAST_OP   0xEA01
++ #define ADE7880_WTHR      0xEA02
++ #define ADE7880_VARTHR    0xEA03
++ #define ADE7880_VATHR     0xEA04
++ #define ADE7880_HX_REG    0xEA08
++ #define ADE7880_HY_REG    0xEA09
++ #define ADE7880_HZ_REG    0xEA0A
++ #endif
 + #define ADE7854_LPOILVL   0xEC00
   #define ADE7854_CONFIG2   0xEC01
   #define ADE7854_READ_REG   0x1
   #define ADE7854_WRITE_REG  0x0
   
-diff -cr linux-3.18.7-0117a/drivers/staging/iio/meter/meter.h linux-3.18.7-0117c/drivers/staging/iio/meter/meter.h
+Nur in linux-3.18.7-0117d/drivers/staging/iio/meter: ade7880.h.
+diff -cr linux-3.18.7-0117a/drivers/staging/iio/meter/meter.h linux-3.18.7-0117d/drivers/staging/iio/meter/meter.h
 *** linux-3.18.7-0117a/drivers/staging/iio/meter/meter.h	2015-02-18 14:20:02.454424744 +0100
---- linux-3.18.7-0117c/drivers/staging/iio/meter/meter.h	2015-02-18 14:54:00.059951169 +0100
+--- linux-3.18.7-0117d/drivers/staging/iio/meter/meter.h	2015-02-21 09:35:05.270795715 +0100
 ***************
 *** 86,91 ****
 --- 86,94 ----
@@ -514,7 +1756,7 @@ diff -cr linux-3.18.7-0117a/drivers/staging/iio/meter/meter.h linux-3.18.7-0117c
   
 ***************
 *** 394,396 ****
---- 433,549 ----
+--- 433,739 ----
   #define IIO_EVENT_ATTR_VPKLVL_EXC(_evlist, _show, _store, _mask) \
   	IIO_EVENT_ATTR_SH(vpklvl_exc, _evlist, _show, _store, _mask)
   
@@ -631,6 +1873,194 @@ diff -cr linux-3.18.7-0117a/drivers/staging/iio/meter/meter.h linux-3.18.7-0117c
 + 	IIO_DEVICE_ATTR(version, S_IRUGO, _show, NULL, _addr)
 + #define IIO_DEV_ATTR_LPOILVL(_mode, _show, _store, _addr) \
 + 	IIO_DEVICE_ATTR(lpoilvl, _mode, _show, _store, _addr)
-+ 
-Nur in linux-3.18.7-0117c/drivers/staging/iio/meter: meter.h.orig.
-Nur in linux-3.18.7-0117c/drivers/staging/iio/meter: meter.h.rej.
++ /* ADE7880 only */
++ #define IIO_DEV_ATTR_DICOEFF(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(dicoeff, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_APGAIN(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(apgain, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_AWATTOS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(awattos, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_BPGAIN(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(bpgain, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_BWATTOS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(bwattos, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_CPGAIN(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(cpgain, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_CWATTOS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(cwattos, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_AIRMSOS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(airmsos, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_AVRMSOS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(avrmsos, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_BIRMSOS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(birmsos, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_BVRMSOS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(bvrmsos, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_CIRMSOS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(cirmsos, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_CVRMSOS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(cvrmsos, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_NIRMSOS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(nirmsos, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_HPGAIN(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(hpgain, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_ISUMLVL(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(isumlvl, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_VLEVEL(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(vlevel, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_AFWATTOS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(afwattos, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_BFWATTOS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(bfwattos, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_CFWATTOS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(cfwattos, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_AFVAROS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(afvaros, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_BFVAROS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(bfvaros, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_CFVAROS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(cfvaros, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_LAST_RWDATA32(_show, _addr) \
++ 	IIO_DEVICE_ATTR(last_rwdata32, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_AFIRMSOS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(afirmsos, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_BFIRMSOS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(bfirmsos, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_CFIRMSOS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(cfirmsos, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_AFVRMSOS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(afvrmsos, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_BFVRMSOS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(bfvrmsos, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_CFVRMSOS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(cfvrmsos, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_HXWATTOS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(hxwattos, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_HYWATTOS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(hywattos, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_HZWATTOS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(hzwattos, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_HXVAROS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(hxvaros, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_HYVAROS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(hyvaros, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_HZVAROS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(hzvaros, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_HYIRMSOS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(hyirmsos, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_HZIRMSOS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(hzirmsos, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_HYVRMSOS(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(hyvrmsos, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_AFVAR(_show, _addr) \
++ 	IIO_DEVICE_ATTR(afvar, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_BFVAR(_show, _addr) \
++ 	IIO_DEVICE_ATTR(bfvar, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_CFVAR(_show, _addr) \
++ 	IIO_DEVICE_ATTR(cfvar, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_LAST_RWDATA8(_show, _addr) \
++ 	IIO_DEVICE_ATTR(last_rwdata8, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_FVRMS(_show, _addr) \
++ 	IIO_DEVICE_ATTR(fvrms, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_FIRMS(_show, _addr) \
++ 	IIO_DEVICE_ATTR(firms, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_FWATT(_show, _addr) \
++ 	IIO_DEVICE_ATTR(fwatt, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_FVAR(_show, _addr) \
++ 	IIO_DEVICE_ATTR(fvar, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_FVA(_show, _addr) \
++ 	IIO_DEVICE_ATTR(fva, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_FPF(_show, _addr) \
++ 	IIO_DEVICE_ATTR(fpf, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_VTHDN(_show, _addr) \
++ 	IIO_DEVICE_ATTR(vthdn, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_ITHDN(_show, _addr) \
++ 	IIO_DEVICE_ATTR(ithdn, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_HXVRMS(_show, _addr) \
++ 	IIO_DEVICE_ATTR(hxvrms, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_HXIRMS(_show, _addr) \
++ 	IIO_DEVICE_ATTR(hxirms, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_HXWATT(_show, _addr) \
++ 	IIO_DEVICE_ATTR(hxwatt, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_HXVAR(_show, _addr) \
++ 	IIO_DEVICE_ATTR(hxvar, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_HXVA(_show, _addr) \
++ 	IIO_DEVICE_ATTR(hxva, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_HXPF(_show, _addr) \
++ 	IIO_DEVICE_ATTR(hxpf, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_HXVHD(_show, _addr) \
++ 	IIO_DEVICE_ATTR(hxvhd, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_HXIHD(_show, _addr) \
++ 	IIO_DEVICE_ATTR(hxihd, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_HYVRMS(_show, _addr) \
++ 	IIO_DEVICE_ATTR(hyvrms, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_HYIRMS(_show, _addr) \
++ 	IIO_DEVICE_ATTR(hyirms, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_HYWATT(_show, _addr) \
++ 	IIO_DEVICE_ATTR(hywatt, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_HYVAR(_show, _addr) \
++ 	IIO_DEVICE_ATTR(hyvar, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_HYVA(_show, _addr) \
++ 	IIO_DEVICE_ATTR(hyva, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_HYPF(_show, _addr) \
++ 	IIO_DEVICE_ATTR(hypf, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_HYVHD(_show, _addr) \
++ 	IIO_DEVICE_ATTR(hyvhd, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_HYIHD(_show, _addr) \
++ 	IIO_DEVICE_ATTR(hyihd, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_HZVRMS(_show, _addr) \
++ 	IIO_DEVICE_ATTR(hzvrms, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_HZIRMS(_show, _addr) \
++ 	IIO_DEVICE_ATTR(hzirms, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_HZWATT(_show, _addr) \
++ 	IIO_DEVICE_ATTR(hzwatt, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_HZVAR(_show, _addr) \
++ 	IIO_DEVICE_ATTR(hzvar, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_HZVA(_show, _addr) \
++ 	IIO_DEVICE_ATTR(hzva, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_HZPF(_show, _addr) \
++ 	IIO_DEVICE_ATTR(hzpf, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_HZVHD(_show, _addr) \
++ 	IIO_DEVICE_ATTR(hzvhd, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_HZIHD(_show, _addr) \
++ 	IIO_DEVICE_ATTR(hzihd, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_HCONFIG(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(hconfig, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_APF(_show, _addr) \
++ 	IIO_DEVICE_ATTR(apf, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_BPF(_show, _addr) \
++ 	IIO_DEVICE_ATTR(bpf, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_CPF(_show, _addr) \
++ 	IIO_DEVICE_ATTR(cpf, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_APERIOD(_show, _addr) \
++ 	IIO_DEVICE_ATTR(aperiod, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_BPERIOD(_show, _addr) \
++ 	IIO_DEVICE_ATTR(bperiod, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_CPERIOD(_show, _addr) \
++ 	IIO_DEVICE_ATTR(cperiod, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_APNOLOAD(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(apnoload, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_VARNOLOAD(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(varnoload, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_VANOLOAD(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(vanoload, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_LAST_ADD(_show, _addr) \
++ 	IIO_DEVICE_ATTR(last_add, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_LAST_RWDATA16(_show, _addr) \
++ 	IIO_DEVICE_ATTR(last_rwdata16, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_CONFIG3(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(config3, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_LAST_OP(_show, _addr) \
++ 	IIO_DEVICE_ATTR(last_op, S_IRUGO, _show, NULL, _addr)
++ #define IIO_DEV_ATTR_WTHR(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(wthr, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_VARTHR(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(varthr, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_VATHR(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(vathr, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_HX_REG(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(hx_reg, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_HY_REG(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(hy_reg, _mode, _show, _store, _addr)
++ #define IIO_DEV_ATTR_HZ_REG(_mode, _show, _store, _addr) \
++ 	IIO_DEVICE_ATTR(hz_reg, _mode, _show, _store, _addr)
