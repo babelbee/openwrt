@@ -1025,6 +1025,7 @@ $(eval $(call KernelPackage,ade7854-i2c))
 define KernelPackage/rtc-pcf8563
   SUBMENU:=$(OTHER_MENU)
   TITLE:=PCF8563 RTC Support
+  DEPENDS:=kmod-i2c-core
   KCONFIG:= \
     CONFIG_RTC_CLASS=y \
     CONFIG_RTC_DRV_PCF8563
