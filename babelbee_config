@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# OpenWrt Configuration
+# OpenWrt Configuration for the Babelbee project
 #
 CONFIG_MODULES=y
 CONFIG_HAVE_DOT_CONFIG=y
@@ -1887,7 +1887,15 @@ CONFIG_PACKAGE_libxtables=y
 # CONFIG_PACKAGE_libcyassl is not set
 # CONFIG_PACKAGE_libgnutls is not set
 # CONFIG_PACKAGE_libgnutls-openssl is not set
-# CONFIG_PACKAGE_libopenssl is not set
+CONFIG_PACKAGE_libopenssl=y
+
+#
+# Configuration
+#
+CONFIG_OPENSSL_WITH_EC=y
+# CONFIG_OPENSSL_WITH_EC2M is not set
+# CONFIG_OPENSSL_WITH_SSL3 is not set
+# CONFIG_OPENSSL_ENGINE_CRYPTO is not set
 CONFIG_PACKAGE_libpolarssl=y
 
 #
@@ -1967,7 +1975,7 @@ CONFIG_PACKAGE_libpolarssl=y
 # CONFIG_PACKAGE_libaudiofile is not set
 # CONFIG_PACKAGE_libavahi-client is not set
 # CONFIG_PACKAGE_libavahi-compat-libdnssd is not set
-# CONFIG_PACKAGE_libavahi-dbus-support is not set
+CONFIG_PACKAGE_libavahi-dbus-support=y
 # CONFIG_PACKAGE_libavahi-nodbus-support is not set
 # CONFIG_PACKAGE_libavl is not set
 # CONFIG_PACKAGE_libbfd is not set
@@ -1978,17 +1986,59 @@ CONFIG_PACKAGE_libblobmsg-json=y
 # CONFIG_PACKAGE_libcares is not set
 # CONFIG_PACKAGE_libcharset is not set
 # CONFIG_PACKAGE_libconfig is not set
-# CONFIG_PACKAGE_libcurl is not set
-# CONFIG_PACKAGE_libdaemon is not set
+CONFIG_PACKAGE_libcurl=y
+
+#
+# SSL support
+#
+# CONFIG_LIBCURL_POLARSSL is not set
+# CONFIG_LIBCURL_CYASSL is not set
+# CONFIG_LIBCURL_AXTLS is not set
+CONFIG_LIBCURL_OPENSSL=y
+# CONFIG_LIBCURL_GNUTLS is not set
+# CONFIG_LIBCURL_NOSSL is not set
+
+#
+# Supported protocols
+#
+# CONFIG_LIBCURL_DICT is not set
+CONFIG_LIBCURL_FILE=y
+CONFIG_LIBCURL_FTP=y
+# CONFIG_LIBCURL_GOPHER is not set
+CONFIG_LIBCURL_HTTP=y
+CONFIG_LIBCURL_COOKIES=y
+# CONFIG_LIBCURL_IMAP is not set
+# CONFIG_LIBCURL_LDAP is not set
+# CONFIG_LIBCURL_POP3 is not set
+# CONFIG_LIBCURL_RTSP is not set
+CONFIG_LIBCURL_SSH2=y
+CONFIG_LIBCURL_NO_SMB="!"
+# CONFIG_LIBCURL_SMTP is not set
+# CONFIG_LIBCURL_TELNET is not set
+CONFIG_LIBCURL_TFTP=y
+
+#
+# Miscellaneous
+#
+CONFIG_LIBCURL_PROXY=y
+# CONFIG_LIBCURL_CRYPTO_AUTH is not set
+# CONFIG_LIBCURL_TLS_SRP is not set
+# CONFIG_LIBCURL_LIBIDN is not set
+# CONFIG_LIBCURL_THREADED_RESOLVER is not set
+CONFIG_LIBCURL_ZLIB=y
+# CONFIG_LIBCURL_UNIX_SOCKETS is not set
+# CONFIG_LIBCURL_LIBCURL_OPTION is not set
+CONFIG_LIBCURL_VERBOSE=y
+CONFIG_PACKAGE_libdaemon=y
 # CONFIG_PACKAGE_libdaq is not set
 # CONFIG_PACKAGE_libdb47 is not set
 # CONFIG_PACKAGE_libdbi is not set
+# CONFIG_PACKAGE_libdevmapper is not set
 # CONFIG_PACKAGE_libdmapsharing is not set
 # CONFIG_PACKAGE_libdnet is not set
 # CONFIG_PACKAGE_libelf1 is not set
 # CONFIG_PACKAGE_libdb47xx is not set
-# CONFIG_PACKAGE_libdbus is not set
-# CONFIG_PACKAGE_libdevmapper is not set
+CONFIG_PACKAGE_libdbus=y
 # CONFIG_PACKAGE_libesmtp is not set
 # CONFIG_PACKAGE_libev is not set
 # CONFIG_PACKAGE_libevent is not set
@@ -1999,7 +2049,7 @@ CONFIG_PACKAGE_libblobmsg-json=y
 # CONFIG_PACKAGE_libevent2-pthreads is not set
 # CONFIG_PACKAGE_libevhtp is not set
 # CONFIG_PACKAGE_libexif is not set
-# CONFIG_PACKAGE_libexpat is not set
+CONFIG_PACKAGE_libexpat=y
 # CONFIG_PACKAGE_libexslt is not set
 # CONFIG_PACKAGE_libf2fs is not set
 # CONFIG_PACKAGE_libfaad2 is not set
@@ -2116,7 +2166,7 @@ CONFIG_PACKAGE_librrd1=y
 # CONFIG_PACKAGE_libspeex is not set
 # CONFIG_PACKAGE_libspeexdsp is not set
 # CONFIG_PACKAGE_libssh is not set
-# CONFIG_PACKAGE_libssh2 is not set
+CONFIG_PACKAGE_libssh2=y
 # CONFIG_PACKAGE_libstoken is not set
 # CONFIG_PACKAGE_libtasn1 is not set
 # CONFIG_PACKAGE_libtheora is not set
@@ -2194,31 +2244,31 @@ CONFIG_PACKAGE_luci-base=y
 #
 # Translations
 #
-# CONFIG_LUCI_LANG_uk is not set
-# CONFIG_LUCI_LANG_hu is not set
-# CONFIG_LUCI_LANG_pt is not set
-# CONFIG_LUCI_LANG_ro is not set
-CONFIG_LUCI_LANG_en=y
-# CONFIG_LUCI_LANG_el is not set
-# CONFIG_LUCI_LANG_sk is not set
-# CONFIG_LUCI_LANG_ru is not set
-# CONFIG_LUCI_LANG_vi is not set
-CONFIG_LUCI_LANG_de=y
-# CONFIG_LUCI_LANG_no is not set
-# CONFIG_LUCI_LANG_ms is not set
-# CONFIG_LUCI_LANG_pl is not set
-# CONFIG_LUCI_LANG_zh-cn is not set
-# CONFIG_LUCI_LANG_he is not set
-# CONFIG_LUCI_LANG_zh-tw is not set
-# CONFIG_LUCI_LANG_tr is not set
-# CONFIG_LUCI_LANG_sv is not set
-# CONFIG_LUCI_LANG_ja is not set
-# CONFIG_LUCI_LANG_pt-br is not set
 # CONFIG_LUCI_LANG_ca is not set
-# CONFIG_LUCI_LANG_es is not set
 # CONFIG_LUCI_LANG_cs is not set
+CONFIG_LUCI_LANG_de=y
+# CONFIG_LUCI_LANG_el is not set
+CONFIG_LUCI_LANG_en=y
+# CONFIG_LUCI_LANG_es is not set
 # CONFIG_LUCI_LANG_fr is not set
+# CONFIG_LUCI_LANG_he is not set
+# CONFIG_LUCI_LANG_hu is not set
 # CONFIG_LUCI_LANG_it is not set
+# CONFIG_LUCI_LANG_ja is not set
+# CONFIG_LUCI_LANG_ms is not set
+# CONFIG_LUCI_LANG_no is not set
+# CONFIG_LUCI_LANG_pl is not set
+# CONFIG_LUCI_LANG_pt is not set
+# CONFIG_LUCI_LANG_pt-br is not set
+# CONFIG_LUCI_LANG_ro is not set
+# CONFIG_LUCI_LANG_ru is not set
+# CONFIG_LUCI_LANG_sk is not set
+# CONFIG_LUCI_LANG_sv is not set
+# CONFIG_LUCI_LANG_tr is not set
+# CONFIG_LUCI_LANG_uk is not set
+# CONFIG_LUCI_LANG_vi is not set
+# CONFIG_LUCI_LANG_zh-cn is not set
+# CONFIG_LUCI_LANG_zh-tw is not set
 CONFIG_PACKAGE_luci-mod-admin-full=y
 # CONFIG_PACKAGE_luci-mod-failsafe is not set
 # CONFIG_PACKAGE_luci-mod-freifunk is not set
@@ -2547,7 +2597,7 @@ CONFIG_POSTFIX_CDB=y
 # File Transfer
 #
 # CONFIG_PACKAGE_aria2 is not set
-# CONFIG_PACKAGE_curl is not set
+CONFIG_PACKAGE_curl=y
 # CONFIG_PACKAGE_lftp is not set
 # CONFIG_PACKAGE_rsync is not set
 # CONFIG_PACKAGE_rsyncd is not set
