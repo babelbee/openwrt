@@ -163,5 +163,6 @@ babelbee_init(void)
 	i2c_register_board_info(1, babelbee_i2c_devices2, ARRAY_SIZE(babelbee_i2c_devices2));
 	spi_register_board_info(babelbee_spi_devices, ARRAY_SIZE(babelbee_spi_devices));
 	platform_device_register(&babelbee_led_device);
+	babelbee_gpio_init();
 }
 
