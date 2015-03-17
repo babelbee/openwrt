@@ -950,6 +950,20 @@ endef
 
 $(eval $(call KernelPackage,thermal-kirkwood))
 
+define KernelPackage/thermal-bcm2708
+  SUBMENU:=$(OTHER_MENU)
+  TITLE:=Temperature sensor on Broadcom 2708
+  DEPENDS:=@TARGET_brcm2708_bcm2708 +kmod-thermal
+  KCONFIG:=CONFIG_BCM2708_THERMAL
+endef
+
+define KernelPackage/thermal-bcm2708/description
+ Support for the BCM2708 thermal sensor driver into the Linux thermal
+ framework.
+endef
+
+$(eval $(call KernelPackage,thermal-bcm2708))
+
 
 define KernelPackage/gpio-beeper
   SUBMENU:=$(OTHER_MENU)
@@ -1023,19 +1037,14 @@ endef
 
 $(eval $(call KernelPackage,ade7854-i2c))
 
-define KernelPackage/rtc-pcf8563
+define KernelPackage/rtc
   SUBMENU:=$(OTHER_MENU)
-  TITLE:=PCF8563 RTC Support
-  DEPENDS:=kmod-i2c-core
-  KCONFIG:= \
-    CONFIG_RTC_CLASS=y \
-    CONFIG_RTC_DRV_PCF8563
-  FILES:=$(LINUX_DIR)/drivers/rtc/rtc-pcf8563.ko
-  AUTOLOAD:=$(call AutoLoad,20,rtc-pcf8563)
+  TITLE:=RTC Support
+  DEPENDS:=@TARGET_brcm2708_bcm2708 +@RTC_SUPPORT
 endef
 
-define KernelPackage/rtc-pcf8563/description
-  Support for PCF8563 RTC
+define KernelPackage/rtc/description
+  Support for rtc
 endef
 
-$(eval $(call KernelPackage,rtc-pcf8563))
+$(eval $(call KernelPackage,rtc))
