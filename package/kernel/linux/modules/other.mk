@@ -1041,6 +1041,7 @@ define KernelPackage/rtc
   SUBMENU:=$(OTHER_MENU)
   TITLE:=RTC Support
   DEPENDS:=@TARGET_brcm2708_bcm2708 +@RTC_SUPPORT
+  KCONFIG:=CONFIG_RTC_CLASS=y
 endef
 
 define KernelPackage/rtc/description

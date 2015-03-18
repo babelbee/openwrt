@@ -3,3 +3,7 @@ config BRCM2708_SD_BOOT_PARTSIZE
 	depends on TARGET_brcm2708
 	default 20
 
+config BRCM2708_EXTRA_CMDLINE
+	string "Extra command line arguments for the kernel"
+	depends on TARGET_brcm2708
+

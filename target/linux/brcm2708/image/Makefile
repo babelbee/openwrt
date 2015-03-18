@@ -23,7 +23,8 @@ define Image/Build/RaspberryPi
 	mcopy -i $(KDIR)/boot.img $(BUILD_DIR)/brcm2708-gpu-fw-boot/start_cd.elf ::
 	mcopy -i $(KDIR)/boot.img $(BUILD_DIR)/brcm2708-gpu-fw-boot/fixup.dat ::
 	mcopy -i $(KDIR)/boot.img $(BUILD_DIR)/brcm2708-gpu-fw-boot/fixup_cd.dat ::
-	mcopy -i $(KDIR)/boot.img cmdline.txt ::
+	cat cmdline.txt
+	echo $(shell cat cmdline.txt) $(CONFIG_BRCM2708_EXTRA_CMDLINE) | mcopy -i $(KDIR)/boot.img - ::cmdline.txt
 	mcopy -i $(KDIR)/boot.img config.txt ::
 	mcopy -i $(KDIR)/boot.img $(KDIR)/Image ::kernel.img  # Copy OpenWrt built kernel
 	./gen_rpi_sdcard_img.sh $(BIN_DIR)/$(IMG_PREFIX)-sdcard-vfat-$(1).img $(KDIR)/boot.img $(KDIR)/root.$(1) \
