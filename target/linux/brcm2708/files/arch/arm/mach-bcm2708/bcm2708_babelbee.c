@@ -9,6 +9,9 @@
 
 extern int bcm_register_device(struct platform_device *pdev);
 
+void babelbee_gpio_init(void);
+
+
 static struct platform_device babelbee_gpio_device = {
 	.name = "babelbee-gpio",
 	.id = -1,
@@ -19,7 +22,7 @@ static int
 babelbee_pcf857x_setup(struct i2c_client *client, int gpio, unsigned int ngpio, void *context)
 {
 	int i;
-	printk("babelbee_pcf857x_setup(%p,%d,%d,%p)\n",client,gpio,ngpio,context);
+	printk("Babelbee: pcf857x_setup(%p,%d,%d,%p)\n",client,gpio,ngpio,context);
 	for (i = 0 ; i < 8 ; i++) {
 		int gpio=BCM2708_NR_GPIOS+7-i;
 		char name[16],*namep;
@@ -31,6 +34,10 @@ babelbee_pcf857x_setup(struct i2c_client *client, int gpio, unsigned int ngpio, 
 		gpio_export(gpio, 0);
 		gpio_export_link(&babelbee_gpio_device.dev, namep, gpio);
 	}
+
+        printk("Babelbee: HACK: enforcing late GPIO init");
+	babelbee_gpio_init(); 
+
 	return 0;
 }
 
@@ -140,6 +147,7 @@ static struct platform_device babelbee_led_device = {
 void
 babelbee_gpio_init(void)
 {
+        printk("Babelbee: ADE7880 reset");
 	/* ade reset */
 	gpio_request(44, "ade_reset");
 	gpio_direction_output(44, 1);
@@ -152,6 +160,7 @@ babelbee_gpio_init(void)
 	gpio_direction_input(22);
 	gpio_export(22, 0);
 	gpio_export_link(&babelbee_gpio_device.dev, "button2", 22);
+	printk("Babelbee: registered buttons");
 }
 
 void
@@ -163,6 +172,6 @@ babelbee_init(void)
 	i2c_register_board_info(1, babelbee_i2c_devices2, ARRAY_SIZE(babelbee_i2c_devices2));
 	spi_register_board_info(babelbee_spi_devices, ARRAY_SIZE(babelbee_spi_devices));
 	platform_device_register(&babelbee_led_device);
-	babelbee_gpio_init();
+	//	babelbee_gpio_init();
 }
 
