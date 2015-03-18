@@ -35,7 +35,7 @@ babelbee_pcf857x_setup(struct i2c_client *client, int gpio, unsigned int ngpio, 
 		gpio_export_link(&babelbee_gpio_device.dev, namep, gpio);
 	}
 
-        printk("Babelbee: HACK: enforcing late GPIO init");
+        printk("Babelbee: HACK: enforcing late GPIO init\n");
 	babelbee_gpio_init(); 
 
 	return 0;
@@ -88,14 +88,6 @@ static struct platform_device babelbee_spi_gpio = {
 
 static struct spi_board_info babelbee_spi_devices[] = {
 	{	
-		.modalias	= "ade7854",
-		.bus_num	= 3,
-		.chip_select	= 0,
-		.mode		= SPI_MODE_3,
-		.max_speed_hz	= 5000000, /* 5 MHz */
-		.controller_data = (void *)43,
-	},
-	{	
 		.modalias = "mcp2515",
 		.platform_data = &mcp251x_info0,
 		.bus_num	= 0,
@@ -103,6 +95,14 @@ static struct spi_board_info babelbee_spi_devices[] = {
 		.irq = gpio_to_irq(19),
 		.max_speed_hz = 2*1000*1000,
 	},
+        {
+ 	        .modalias       = "ade7854",
+	        .bus_num        = 3,
+	        .chip_select    = 0,
+	        .mode           = SPI_MODE_3,
+	        .max_speed_hz   = 5000000, /* 5 MHz */
+	        .controller_data = (void *)43,
+        },
 	{	
 		.modalias = "mcp2515",
 		.platform_data = &mcp251x_info1,
@@ -147,7 +147,7 @@ static struct platform_device babelbee_led_device = {
 void
 babelbee_gpio_init(void)
 {
-        printk("Babelbee: ADE7880 reset");
+        printk("Babelbee: ADE7880 reset\n");
 	/* ade reset */
 	gpio_request(44, "ade_reset");
 	gpio_direction_output(44, 1);
@@ -160,12 +160,14 @@ babelbee_gpio_init(void)
 	gpio_direction_input(22);
 	gpio_export(22, 0);
 	gpio_export_link(&babelbee_gpio_device.dev, "button2", 22);
-	printk("Babelbee: registered buttons");
+	printk("Babelbee: registered buttons\n");
 }
 
 void
 babelbee_init(void)
 {
+        printk("Babelbee: registering devices\n");
+
 	bcm_register_device(&babelbee_spi_gpio);
 	bcm_register_device(&babelbee_gpio_device);
 	i2c_register_board_info(0, babelbee_i2c_devices1, ARRAY_SIZE(babelbee_i2c_devices1));
