@@ -1,0 +1,26 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2014 OpenWrt.org
+
+. $IPKG_INSTROOT/lib/functions.sh
+
+START=30
+
+boot() {
+	cylinders=32
+	start=$((128*cylinders))
+	mkdir -p /storage
+	if [ ! -e /dev/mmcblk0p3 ]
+	then
+		size=$(sfdisk -s /dev/mmcblk0)
+		(
+			echo $start,$((size/cylinders-start)),L
+		) | sfdisk --force -N3 --no-reread /dev/mmcblk0
+		partx -a 3 /dev/mmcblk0
+	fi
+	for i in 1 2
+	do
+		mount /dev/mmcblk0p3 /storage && break
+		mkfs.ext4 /dev/mmcblk0p3
+	done
+	return 0
+}
