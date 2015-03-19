@@ -65,10 +65,12 @@ static struct i2c_board_info __initdata babelbee_i2c_devices2[] = {
 
 static struct mcp251x_platform_data mcp251x_info0 = {
 	.oscillator_frequency = 20000000,
+	.clock_flags = 4,
 };
 
 static struct mcp251x_platform_data mcp251x_info1 = {
 	.oscillator_frequency = 20000000,
+	.clock_flags = 4,
 };
 
 static struct spi_gpio_platform_data babelbee_spi_gpio_pdata = {
@@ -91,8 +93,8 @@ static struct spi_board_info babelbee_spi_devices[] = {
 		.modalias = "mcp2515",
 		.platform_data = &mcp251x_info0,
 		.bus_num	= 0,
-		.chip_select = 0,
-		.irq = gpio_to_irq(19),
+		.chip_select = 1,
+		.irq = gpio_to_irq(20),
 		.max_speed_hz = 2*1000*1000,
 	},
         {
@@ -107,8 +109,8 @@ static struct spi_board_info babelbee_spi_devices[] = {
 		.modalias = "mcp2515",
 		.platform_data = &mcp251x_info1,
 		.bus_num	= 0,
-		.chip_select = 1,
-		.irq = gpio_to_irq(20),
+		.chip_select = 0,
+		.irq = gpio_to_irq(19),
 		.max_speed_hz = 2*1000*1000,
 	},
 };
@@ -150,7 +152,9 @@ babelbee_gpio_init(void)
         printk("Babelbee: ADE7880 reset\n");
 	/* ade reset */
 	gpio_request(44, "ade_reset");
-	gpio_direction_output(44, 1);
+	gpio_direction_output(44, 0);
+	gpio_request(18, "can_reset");
+	gpio_direction_output(18, 0);
 
 	gpio_request(21, "button1");
 	gpio_direction_input(21);
@@ -161,6 +165,8 @@ babelbee_gpio_init(void)
 	gpio_export(22, 0);
 	gpio_export_link(&babelbee_gpio_device.dev, "button2", 22);
 	printk("Babelbee: registered buttons\n");
+	gpio_set_value_cansleep(44, 1);
+	gpio_set_value_cansleep(18, 1);
 }
 
 void

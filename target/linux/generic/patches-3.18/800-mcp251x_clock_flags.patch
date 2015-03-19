@@ -1,0 +1,103 @@
+diff -cr linux-3.18.7/include/linux/can/platform/mcp251x.h linux-3.18.7.new/include/linux/can/platform/mcp251x.h
+*** linux-3.18.7/include/linux/can/platform/mcp251x.h	2015-02-11 08:01:12.000000000 +0100
+--- linux-3.18.7.new/include/linux/can/platform/mcp251x.h	2015-03-19 14:07:29.148615252 +0100
+***************
+*** 16,21 ****
+--- 16,22 ----
+  
+  struct mcp251x_platform_data {
+  	unsigned long oscillator_frequency;
++ 	u8 clock_flags;
+  };
+  
+  #endif /* !_CAN_PLATFORM_MCP251X_H */
+*** linux-3.18.7/drivers/net/can/spi/mcp251x.c	2015-02-11 08:01:12.000000000 +0100
+--- linux-3.18.7.new/drivers/net/can/spi/mcp251x.c	2015-03-19 14:12:03.045191074 +0100
+***************
+*** 101,106 ****
+--- 101,107 ----
+  #  define CANCTRL_REQOP_NORMAL	    0x00
+  #  define CANCTRL_OSM		    0x08
+  #  define CANCTRL_ABAT		    0x10
++ 
+  #define TEC	      0x1c
+  #define REC	      0x1d
+  #define CNF1	      0x2a
+***************
+*** 269,274 ****
+--- 270,276 ----
+  	struct regulator *power;
+  	struct regulator *transceiver;
+  	struct clk *clk;
++ 	u8 clock_flags;
+  };
+  
+  #define MCP251X_IS(_model) \
+***************
+*** 508,514 ****
+  
+  static void mcp251x_hw_sleep(struct spi_device *spi)
+  {
+! 	mcp251x_write_reg(spi, CANCTRL, CANCTRL_REQOP_SLEEP);
+  }
+  
+  static netdev_tx_t mcp251x_hard_start_xmit(struct sk_buff *skb,
+--- 510,517 ----
+  
+  static void mcp251x_hw_sleep(struct spi_device *spi)
+  {
+! 	struct mcp251x_priv *priv = spi_get_drvdata(spi);
+! 	mcp251x_write_reg(spi, CANCTRL, CANCTRL_REQOP_SLEEP | priv->clock_flags);
+  }
+  
+  static netdev_tx_t mcp251x_hard_start_xmit(struct sk_buff *skb,
+***************
+*** 565,577 ****
+  
+  	if (priv->can.ctrlmode & CAN_CTRLMODE_LOOPBACK) {
+  		/* Put device into loopback mode */
+! 		mcp251x_write_reg(spi, CANCTRL, CANCTRL_REQOP_LOOPBACK);
+  	} else if (priv->can.ctrlmode & CAN_CTRLMODE_LISTENONLY) {
+  		/* Put device into listen-only mode */
+! 		mcp251x_write_reg(spi, CANCTRL, CANCTRL_REQOP_LISTEN_ONLY);
+  	} else {
+  		/* Put device into normal mode */
+! 		mcp251x_write_reg(spi, CANCTRL, CANCTRL_REQOP_NORMAL);
+  
+  		/* Wait for the device to enter normal mode */
+  		timeout = jiffies + HZ;
+--- 568,580 ----
+  
+  	if (priv->can.ctrlmode & CAN_CTRLMODE_LOOPBACK) {
+  		/* Put device into loopback mode */
+! 		mcp251x_write_reg(spi, CANCTRL, CANCTRL_REQOP_LOOPBACK | priv->clock_flags);
+  	} else if (priv->can.ctrlmode & CAN_CTRLMODE_LISTENONLY) {
+  		/* Put device into listen-only mode */
+! 		mcp251x_write_reg(spi, CANCTRL, CANCTRL_REQOP_LISTEN_ONLY | priv->clock_flags);
+  	} else {
+  		/* Put device into normal mode */
+! 		mcp251x_write_reg(spi, CANCTRL, CANCTRL_REQOP_NORMAL | priv->clock_flags);
+  
+  		/* Wait for the device to enter normal mode */
+  		timeout = jiffies + HZ;
+***************
+*** 663,669 ****
+  	/* Check for power up default value */
+  	if ((ctrl & 0x17) != 0x07)
+  		return -ENODEV;
+- 
+  	return 0;
+  }
+  
+--- 666,671 ----
+***************
+*** 1071,1076 ****
+--- 1073,1080 ----
+  		priv->model = spi_get_device_id(spi)->driver_data;
+  	priv->net = net;
+  	priv->clk = clk;
++ 	if (pdata)
++ 		priv->clock_flags=pdata->clock_flags;
+  
+  	spi_set_drvdata(spi, priv);
+  
